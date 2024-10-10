@@ -1,8 +1,17 @@
-import React from 'react';
+import {useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
 
 function App() {
+  //Form에서 입력하는 
+  const [formData, setFormData] = useState({
+    id: '',
+    password: '',
+    name: '',
+    school: '',
+    phone: '',
+  });
+
   return (
     <div className="App">
       <header className="App-header">
