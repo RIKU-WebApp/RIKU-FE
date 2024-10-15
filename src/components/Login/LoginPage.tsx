@@ -1,59 +1,63 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
-
-// 모바일 레이아웃 및 조건부 스타일링을 위한 스타일드 컴포넌트
-const LoginForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  margin: 0 auto;
-`;
-
-const Input = styled.input<{ isInvalid: boolean }>`
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid ${props => (props.isInvalid ? 'red' : '#ccc')};
-  border-radius: 4px;
-  margin-bottom: 10px;
-  width: 100%;
-  box-sizing: border-box;
-`;
-
-const WarningText = styled.p`
-  font-size: 12px;
-  color: red;
-  margin-top: -10px;
-  margin-bottom: 10px;
-`;
-
-const Button = styled.button`
-  padding: 10px;
-  font-size: 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
-
+import riku_logo from '../../assets/riku_logo.png'; //라이쿠 로고 불러오기
+import { Link } from 'react-router-dom'; // Link 컴포넌트 import
 
 //로그인 페이지 
 function LoginPage() {
 
+  const [id, setID] = useState<string>(''); //ID state
+  const [password, setPassword] = useState<string>(''); //비밀번호가 유효한지 확인하기 위한 state
   
+  //Tailwind를 사용하여 스타일링 진행
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-white p-4">
+      <div className="bg-white p-6 rounded-lg w-full max-w-sm">
+        <img src={riku_logo} alt="Riku_Logo" className="mx-auto mb-12 mt-8 w-auto h-auto"/> {/* 원본 크기 유지 */}
 
-  //비밀번호가 유효한지 확인하기 위한 state
-  const [password, setPassword] = useState<string>('');
-    
+        {/* 학번 입력 */}
+        <div className="mb-4">
+          <input
+            id="student-id"
+            type="text"
+            value={id}
+            onChange={(e) => setID(e.target.value)}
+            placeholder="학번(ID)를 입력하세요"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
-    
+        {/* 비밀번호 입력 */}
+        <div className="mb-6">
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="비밀번호를 입력하세요"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
+        {/* 로그인 버튼 */}
+        <button className="w-full py-2 bg-kuGreen text-white rounded-md hover:bg-kuDarkGreen transition-colors">
+          로그인하기
+        </button>
+
+        {/* 회원가입 / ID/PW 찾기 */}
+        <div className="flex flex-col items-center mt-4 text-sm text-gray-500 space-y-1">
+          <div className="flex space-x-4">
+            <Link to="/student-id" className="hover:text-gray-700">
+              회원가입하기
+            </Link>
+            <span>|</span>
+            <a href="#" className="hover:text-gray-700">
+              ID/PW 찾기
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default LoginPage;

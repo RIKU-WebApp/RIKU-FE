@@ -49,9 +49,6 @@ function validatePassword(password: string) {
 }
 
 
-//학번은 문자가 아니어야 함
-
-
 
 //비밀번호 입력 페이지
 function PasswordInput() {

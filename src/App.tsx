@@ -1,34 +1,28 @@
 import {useState} from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import logo from './logo.svg';
 import './App.css';
 
+import LoginPage from './components/Login/LoginPage';
+
+import StudentidInput from './components/createAccount/StudentidInput';
+import PasswordInput from './components/createAccount/PasswordInput'
+
+
+//최상단 컴포넌트
 function App() {
-  //Form에서 입력하는 
-  const [formData, setFormData] = useState({
-    id: '',
-    password: '',
-    name: '',
-    school: '',
-    phone: '',
-  });
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        {/* 라우터 설정 */}
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/student-id" element={<StudentidInput />} />
+         </Routes>
+      </div>
+    </Router>
+    
   );
 }
 
