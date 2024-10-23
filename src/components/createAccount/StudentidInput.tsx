@@ -23,7 +23,7 @@ function StudentidInput() {
   const [studentID, setStudentID] = useState<string>("");
   const [validationMessage, setValidationMessage] = useState<string>("");
   const [isValidID, setIsValidID] = useState<boolean>(false);
-  const navigate = useNavigate(); // to handle navigation after submission
+  const navigate = useNavigate(); //제출 후에 다음 화면으로 넘어가기 위해 useNavigate() hook 활용!
 
   //Form의 입력 값이 바뀔 때마다 취하는 액션을 정의한 handleChange 메소드
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +41,7 @@ function StudentidInput() {
     //학번이 유효한 경우
     if (isValidID) {
       alert("학번이 유효합니다!");
-      navigate('/next-step'); //'/next-step'라는 값을 가진 컴포넌트로 이동한다 (navigating)
+      navigate('/password-input'); //'/next-step'라는 값을 가진 컴포넌트로 이동한다 (navigating)
     } else {
       alert("학번을 다시 확인해주세요.");
     }
@@ -56,11 +56,15 @@ function StudentidInput() {
         </button>
         <span className="text-gray-400 text-sm">1/5</span>
       </div>
+
+      
   
       {/* Main Form */}
       <form onSubmit={handleSubmit} className="w-full max-w-sm mt-16">
         {/* '아이디를 입력해 주세요' 텍스트 */}
-        <h1 className="text-left font-medium text-black mb-4">아이디를 입력해 주세요.</h1>
+        <div className="w-full max-w-sm">
+          <h1 className="text-left font-bold text-2xl text-black mb-12">학번을 입력해 주세요.</h1>
+        </div>
   
         {/* 학번 입력 필드 */}
         <div className="mb-6">
@@ -68,22 +72,22 @@ function StudentidInput() {
             type="text"
             value={studentID}
             onChange={handleChange}
-            placeholder="아이디"
+            placeholder="학번(StudentID)"
             className={`w-full px-4 py-2 border ${isValidID ? 'border-gray-300' : 'border-red-500'} rounded-md focus:outline-none focus:ring-2 focus:ring-kuDarkGreen`}
           />
           {!isValidID && <p className="text-red-500 text-sm mt-2">{validationMessage}</p>}
         </div>
-  
+
         {/* 다음 버튼 */}
         <button
           type="submit"
-          className={`w-full py-3 text-gray-500 bg-gray-100 rounded-md ${isValidID ? 'hover:bg-gray-300' : ''} transition-colors`}
+          className={`w-full py-3 mt-72 rounded-md ${isValidID ? 'bg-kuDarkGreen text-kuWhite hover: hover:bg-kuGreen' : ' text-gray-500 bg-gray-100'} transition-colors`}
           disabled={!isValidID}
         >
           다음
         </button>
       </form>
-  
+
       {/* 빈 공간 추가 */}
       <div className="mb-4"></div>
     </div>

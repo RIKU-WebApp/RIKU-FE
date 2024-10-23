@@ -19,6 +19,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route path="/student-id" element={<StudentidInput />} />
+          <Route path="/password-input" element={<PasswordInput/>} /> 
          </Routes>
       </div>
     </Router>
