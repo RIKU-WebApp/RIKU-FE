@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; //react-router-dom 라이브러리를 사용 (useNavigation 사용할 예정)
 
+//redux를 사용하기 위한 구문
+import { useDispatch } from 'react-redux'; 
+import { setPassword } from '../../redux/slices/signupSlice' //Action Creator를 import 해온다!
+
 //비밀번호가 유효한지 확인하는 메소드 validatePassword
 function validatePassword(password: string) {
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,20}$/;
+  // 영문, 숫자, 특수문자 조합 8~20자리까지 가능
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/;
 
   if (!passwordRegex.test(password)) {
-    return { valid: false, message: "영문, 숫자 조합 8~20자리까지 가능합니다." };
+    return { valid: false, message: "영문, 숫자, 특수문자 조합 8~20자리까지 가능합니다." };
   } else {
     return { valid: true, message: "유효한 비밀번호 형식입니다" };
   }
@@ -14,18 +19,19 @@ function validatePassword(password: string) {
 
 //비밀번호를 입력하는 화면인 PasswordInput
 function PasswordInput() {
-  const [password, setPassword] = useState<string>("");
+  const [password, setPasswordInput] = useState<string>("");
   const [passwordConfirm, setPasswordConfirm] = useState<string>("");
   const [validationMessage, setValidationMessage] = useState<string>("");
   const [validationMessageInConfirm, setValidationMessageInConfirm] = useState<string>("");
   const [isValidPW, setIsValidPW] = useState<boolean>(false);
   const [isValidPWConfirm, setIsValidPWConfirm] = useState<boolean>(false);
   const navigate = useNavigate(); //제출 후에 다음 화면으로 넘어가기 위해 useNavigate() hook 활용!
+  const dispatch = useDispatch(); //redux 저장소 사용을 위해 useDispatch 사용
 
   //'비밀번호' 입력 란의 입력 값이 바뀔 때마다 취하는 액션을 정의한 handleChangeInPassword 메소드
   const handleChangeInPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    setPassword(input);
+    setPasswordInput(input);
 
     const result = validatePassword(input);
     setValidationMessage(result.message);
@@ -54,7 +60,11 @@ function PasswordInput() {
     //비밀번호가 유효한 경우
     if (isValidPW) {
       alert("비밀번호가 유효합니다");
-      navigate('/next-step'); //'/next-step'라는 값을 가진 컴포넌트로 이동한다 (navigating)
+
+      //redux 저장소에 password 정보 저장
+      dispatch(setPassword(password));
+
+      navigate('/name-input'); //'/next-step'라는 값을 가진 컴포넌트로 이동한다 (navigating)
     } else {
       alert("비밀번호 설정을 다시 확인해주세요.");
     }
@@ -88,7 +98,9 @@ function PasswordInput() {
             placeholder="비밀번호"
             className={`w-full px-4 py-2 border ${password === '' ? 'border-gray-300' : isValidPW ? 'border-gray-300' : 'border-red-500'} rounded-md focus:outline-none`}
           />
-          {!(isValidPW || password === '') && <p className="text-red-500 text-sm mt-2">{validationMessage}</p>}
+          <div className="w-full max-w-sm">
+            {!(isValidPW || password === '') && <p className="text-red-500 text-sm text-left mt-2">{validationMessage}</p>}
+          </div>
         </div>
 
         {/* 비밀번호 입력 확인 필드(재입력) */}
@@ -98,9 +110,12 @@ function PasswordInput() {
             value={passwordConfirm}
             onChange={handleChangeInPasswordConfirm}
             placeholder="비밀번호 확인"
-            className={`w-full px-4 py-2 border ${passwordConfirm === '' ? 'border-gray-300' : isValidPWConfirm ? 'border-gray-300' : 'border-red-500'} rounded-md focus:outline-none`}
+            className={`w-full px-4 py-2 border ${passwordConfirm === '' ? 'border-gray-300' : isValidPWConfirm ? 'border-kuDarkGreen' : 'border-red-500'} rounded-md focus:outline-none`}
           />
-          {!(isValidPWConfirm || passwordConfirm === '') && <p className="text-red-500 text-sm mt-2">{validationMessageInConfirm}</p>}
+          <div className="w-full max-w-sm">
+            {!(passwordConfirm === '') ? 
+              (isValidPWConfirm ? <p className="text-kuDarkGreen text-sm mt-2 text-left">{validationMessageInConfirm}</p> : <p className="text-red-500 text-sm mt-2 text-left">{validationMessageInConfirm}</p>) : null}
+          </div>
         </div>
 
         {/* 다음 버튼 */}

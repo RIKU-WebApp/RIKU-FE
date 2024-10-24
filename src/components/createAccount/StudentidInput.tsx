@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; //react-router-dom 라이브러리를 사용 (useNavigation 사용할 예정)
 
+import { useDispatch } from 'react-redux'; 
+import { setStudentID } from '../../redux/slices/signupSlice' //Action Creator를 import 해온다!
+
+import axios from 'axios'; //axios(서버와의 통신을 위한 라이브러리) import!
+
 //학번의 유효성을 검사하는 메소드 validateStudentID
 function validateStudentID(id: string) {
   const currentYear = new Date().getFullYear();
@@ -20,28 +25,47 @@ function validateStudentID(id: string) {
 
 //학생의 학번을 입력하는 화면인 studentIDInput (추후 중복 검사 후 다음 화면으로 넘어가게 설계해야 함)
 function StudentidInput() {
-  const [studentID, setStudentID] = useState<string>("");
+  const [studentID, setStudentIDInput] = useState<string>("");
   const [validationMessage, setValidationMessage] = useState<string>("");
   const [isValidID, setIsValidID] = useState<boolean>(false);
   const navigate = useNavigate(); //제출 후에 다음 화면으로 넘어가기 위해 useNavigate() hook 활용!
+  const dispatch = useDispatch(); //redux 사용을 위해 useDispatch 훅 활용
 
   //Form의 입력 값이 바뀔 때마다 취하는 액션을 정의한 handleChange 메소드
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    setStudentID(input);
+    setStudentIDInput(input);
 
     const result = validateStudentID(input);
     setValidationMessage(result.message);
     setIsValidID(result.valid);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    //학번이 유효한 경우
+    //학번이 유효한 형태인 경우
     if (isValidID) {
+      // //학번 중복 확인을 서버 요청을 통해 먼저 진행해야 한다 (try-catch 구문 활용)
+      // try {
+      //   const response = await axios.get(`/validate/loginId?loginId=${studentID}`);
+      //   // 서버로부터 성공적인 응답을 받은 경우 처리
+      //   alert('학번이 중복되지 않습니다! 다음으로 넘어갑니다');
+        
+      // } catch(error) {
+      //   // 오류가 발생한 경우 처리
+      //   if (axios.isAxiosError(error)) {
+      //     alert('An error occurred while validating the Login ID: ' + (error.response?.data?.message || error.message));
+      //   } else {
+      //     alert('An unexpected error occurred');
+      //   }
+      // }
+
       alert("학번이 유효합니다!");
+      //redux 저장소에 studentID 저장
+      dispatch(setStudentID(studentID));
       navigate('/password-input'); //'/next-step'라는 값을 가진 컴포넌트로 이동한다 (navigating)
+      
     } else {
       alert("학번을 다시 확인해주세요.");
     }
@@ -73,9 +97,11 @@ function StudentidInput() {
             value={studentID}
             onChange={handleChange}
             placeholder="학번(StudentID)"
-            className={`w-full px-4 py-2 border ${isValidID ? 'border-gray-300' : 'border-red-500'} rounded-md focus:outline-none focus:ring-2 focus:ring-kuDarkGreen`}
+            className={`w-full px-4 py-2 border ${studentID === '' ? 'border-gray-300' : isValidID ? 'border-gray-300' : 'border-red-500'} rounded-md focus:outline-none`}
           />
-          {!isValidID && <p className="text-red-500 text-sm mt-2">{validationMessage}</p>}
+          <div className="w-full max-w-sm">
+            {!(isValidID || studentID === '') && <p className="text-red-500 text-sm mt-2 text-left">{validationMessage}</p>}
+          </div>
         </div>
 
         {/* 다음 버튼 */}
