@@ -23,6 +23,7 @@ function App() {
         <div className="App">
           {/* 라우터 설정 */}
           <Routes>
+            <Route path="/" element={<LoginPage />} /> {/* 초기 화면 설정 */}
             <Route path="/login-page" element={<LoginPage />} />
             <Route path="/student-id" element={<StudentidInput />} />
             <Route path="/password-input" element={<PasswordInput/>} /> 

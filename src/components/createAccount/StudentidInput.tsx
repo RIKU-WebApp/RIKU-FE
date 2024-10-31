@@ -80,8 +80,6 @@ function StudentidInput() {
         </button>
         <span className="text-gray-400 text-sm">1/5</span>
       </div>
-
-      
   
       {/* Main Form */}
       <form onSubmit={handleSubmit} className="w-full max-w-sm mt-16">

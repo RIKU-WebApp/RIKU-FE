@@ -42,7 +42,7 @@ function TelNumberInput() {
         <button onClick={() => navigate(-1)} className="text-black text-lg">
           &larr;
         </button>
-        <span className="text-gray-400 text-sm">2/5</span>
+        <span className="text-gray-400 text-sm">5/5</span>
       </div>
 
       
@@ -52,7 +52,7 @@ function TelNumberInput() {
         {/* '아이디를 입력해 주세요' 텍스트 */}
         <div className="w-full max-w-sm">
           <h1 className="text-left font-bold text-2xl text-black mt-12">전화번호를 입력해 주세요.</h1>
-          <h3 className="text-left font-medium text-sm text-gray-500 mb-12">전화번호 입력은 선택 사항입니다</h3>
+          <h3 className="text-left font-medium text-sm text-gray-500 mb-12">전화번호 입력은 선택 사항입니다(ex. 010-1111-1111)</h3>
         </div>
   
         {/* 전화번호 필드 */}

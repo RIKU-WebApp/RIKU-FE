@@ -92,7 +92,7 @@ function PasswordInput() {
         {/* 비밀번호 입력 필드 */}
         <div className="mb-6">
           <input
-            type="text"
+            type="password"
             value={password}
             onChange={handleChangeInPassword}
             placeholder="비밀번호"
@@ -106,7 +106,7 @@ function PasswordInput() {
         {/* 비밀번호 입력 확인 필드(재입력) */}
         <div className="mb-6">
           <input
-            type="text"
+            type="password"
             value={passwordConfirm}
             onChange={handleChangeInPasswordConfirm}
             placeholder="비밀번호 확인"
