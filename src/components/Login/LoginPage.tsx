@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
 import riku_logo from '../../assets/riku_logo.png'; //라이쿠 로고 불러오기
-import { Link } from 'react-router-dom'; // Link 컴포넌트 import
+import { Link, useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
 
 //로그인 페이지 
 function LoginPage() {
+
+  const navigate = useNavigate(); //useNavigate 훅을 사용해 navigate 함수 생성
+
+  //로그인 버튼을 눌렀을 때 수행해야 할 로직을 담은 함수 (추후 로그인 API 연동 예정)
+  function handleLoginClick()
+  {
+    navigate('/schedule-page'); //버튼 클릭 시 '/schedule-page'로 이동
+  }
 
   const [id, setID] = useState<string>(''); //ID state
   const [password, setPassword] = useState<string>(''); //비밀번호가 유효한지 확인하기 위한 state
@@ -39,7 +47,9 @@ function LoginPage() {
         </div>
 
         {/* 로그인 버튼 */}
-        <button className="w-full py-2 bg-kuGreen text-white rounded-md hover:bg-kuDarkGreen transition-colors">
+        <button 
+          className="w-full py-2 bg-kuGreen text-white rounded-md hover:bg-kuDarkGreen transition-colors"
+          onClick={handleLoginClick}>
           로그인하기
         </button>
 

@@ -10,6 +10,7 @@ import PasswordInput from './components/createAccount/PasswordInput';
 import NameInput from './components/createAccount/NameInput';
 import SchoolInputInfo from './components/createAccount/SchoolInfoInput';
 import TelNumberInput from './components/createAccount/TelNumberInput';
+import SchedulePage from './components/Main/SchedulePage';
 
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
@@ -30,6 +31,7 @@ function App() {
             <Route path='/name-input' element={<NameInput/>} />
             <Route path='/school-info' element={<SchoolInputInfo/>} />
             <Route path='/telNum-input' element={<TelNumberInput/>} />
+            <Route path='/schedule-page' element={<SchedulePage/>} />
           </Routes>
         </div>
       </Router>
