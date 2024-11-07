@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import plusBtn from '../../assets/plus_Icon.svg'; //라이쿠 로고 불러오기
+
 import { 
     format, 
     addMonths, 
@@ -43,11 +45,14 @@ function SchedulePage() {
   //서버로부터 일정 정보를 받아올 것임 (그리고 그것을 state로 관리할 것임 / 현재는 하드코딩 해놓음)
   let [event, setEvent] = useState([
     {"type": "[정규런]", "place": "뚝섬 유원지", "time": "19:00", "gathering_Place": "자양역 물품보관함"}, 
-    {"type": "[행사]", "place": "라이쿠 여름방학 깜짝 회식", "time": "20:30", "gathering_Place": "홍콩 포차"}]
+    {"type": "[행사]", "place": "라이쿠 여름방학 깜짝 회식", "time": "20:30", "gathering_Place": "홍콩 포차"},
+    {"type": "[번개런]", "place": "올림픽공원", "time": "21:30", "gathering_Place": "올림픽공원 평화의 문"}
+    ]
   );
 
   //marker 색깔을 state로 관리할 것이다
-  let [markerColor, setMarkerColor] = useState(['bg-blue-500', 'bg-orange-600']);
+  let [markerColor, setMarkerColor] = useState(['bg-blue-500', 'bg-orange-600', 'bg-purple-400']);
+  const [isFloatingButtonOpen, setIsFloatingButtonOpen] = useState(false);
 
   const calendarDaysList = makeCalendarDays(pointDate);
   let weeks: Date[][] = [];
@@ -81,18 +86,23 @@ function SchedulePage() {
     }
   };
 
+  //플로팅 버튼을 눌렀을 때.. 동작하는 floatingButton
+  const toggleFloatingButton = () => {
+    setIsFloatingButtonOpen(!isFloatingButtonOpen);
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center bg-white px-6 py-10">
       {/* 캘린더 상단의 화살표로 월을 조절하는 부분 */}
       <div className="flex flex-col items-center justify-center space-y-0 mb-4">
-        <span className="text-base font-light text-black">{pointDate.getFullYear()}</span>
+        <span className="text-xs font-light text-black">{pointDate.getFullYear()}</span>
         <div className="flex items-center justify-center space-x-4 mb-4">
           <button onClick={prevMonth} aria-label="Previous month" className="p-2 rounded-full hover:bg-gray-100">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <span className="text-lg font-semibold text-black">{pointDate.getMonth()+1}월</span>
+          <span className="text-2xl font-semibold text-black">{pointDate.getMonth()+1}월</span>
           <button onClick={nextMonth} aria-label="Next month" className="p-2 rounded-full hover:bg-gray-100">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -102,15 +112,21 @@ function SchedulePage() {
       </div>          
 
       {/* 실제적으로 달력이 보이는 부분 */}
-      <div className="grid grid-cols-7 gap-2 mb-4 text-center w-full max-w-sm">
+      <div className="grid grid-cols-7 mb-4 text-center w-full max-w-sm">
         {dayOfTheWeek.map((dayName, index) => (
-          <div key={index} className="font-bold text-gray-600">{dayName}</div>
+          <div key={index}>
+            <div className="font-bold text-gray-600">
+              {dayName}
+            </div>
+            <div className="w-full h-px bg-gray-200 mt-2"/>
+          </div>
         ))}
+        
       </div>
 
       {/* 중첩 map 함수를 사용해서 달력을 출력할 것이다 */}
       {weeks.map((week, index) => (
-        <div key={index} className="grid grid-cols-7 gap-2 mb-4 text-center w-full max-w-sm">
+        <div key={index} className="grid grid-cols-7 mb-2 text-center w-full max-w-sm">
           {week.map((day, subIndex) => {
             let isSelected = format(day, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
             let isCurrentMonth = day.getMonth() === pointDate.getMonth();
@@ -128,17 +144,23 @@ function SchedulePage() {
                 >
                   <span className="text-base font-normal">{day.getDate()}</span>
                   {/* marker를 날짜 아래에 배치하여 하나의 요소처럼 보이게 함 */}
-                  {isCurrentMonth && (
-                    <div className={`w-2 h-2 mt-4 rounded-full ${isSelected ? 'outline outline-1 outline-white bg-purple-500' : 'bg-purple-500'}`} />
+                  {isCurrentMonth ? (
+                    <div className={`w-2 h-2 mt-2 rounded-full ${isSelected ? 'outline outline-1 outline-white bg-orange-400' : 'bg-orange-400'}`} />
+                  ) : (
+                    <div className={`w-2 h-2 mt-2 rounded-full bg-white`} />
                   )}
                 </button>
+                {/* 마지막 줄이 아닌 경우에만 선을 추가 */}
+                {index < weeks.length - 1 && (
+                  <div className="w-full h-px bg-gray-200 mt-2" />
+                )}
             </div>
             );
           })}
         </div>
       ))}
 
-      {/* 하단의 일정 출력되는 곳 */}
+      {/* 하단의 일정 출력되는 곳 (Event 섹션 카드는.. 일정이 있는대로 map 함수로 렌더링할 것이다) */}
       <div className="w-full max-w-sm mt-6 flex flex-col items-start">
         <span className="text-xl font-bold mb-4">{selectedDate.getMonth() + 1}월 {selectedDate.getDate()}일</span>
         {
@@ -154,6 +176,27 @@ function SchedulePage() {
           ))
         }
       </div>
+      {/* 플로팅 버튼 */}
+      <button
+        onClick={toggleFloatingButton}
+        className={`fixed bottom-10 right-10 w-16 h-16 rounded-full bg-kuDarkGreen text-white flex items-center justify-center shadow-lg hover:bg-kuDarkGreen-dark focus:outline-none z-50 transition-transform duration-300 ${isFloatingButtonOpen ? 'rotate-45' : 'rotate-0'}`}
+      >
+        <img
+          src={plusBtn}
+          alt='플로팅 버튼 아이콘'
+          className={`w-8 h-8 transition-transform duration-300 ${isFloatingButtonOpen ? 'rotate-20' : 'rotate-0'}`}
+        />
+      </button>
+      
+      {isFloatingButtonOpen && (
+        <div onClick={() => setIsFloatingButtonOpen(!isFloatingButtonOpen)} className="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-500 ease-in-out flex justify-end items-end p-8 z-40">
+          <div onClick={(e) => e.stopPropagation()} className="fixed bottom-28 right-10 flex flex-col space-y-4 pointer-events-auto">
+            <button className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl bg-white text-black font-semibold shadow-lg py-2 px-4 hover:bg-gray-100 transition-transform duration-300 ease-out transform ${isFloatingButtonOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>번개런 일정 추가하기</button>
+            <button className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl bg-white text-black font-semibold shadow-lg py-2 px-4 hover:bg-gray-100 transition-transform duration-500 ease-out transform ${isFloatingButtonOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>정규런 일정 추가하기</button>
+            <button className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl bg-white text-black font-semibold shadow-lg py-2 px-4 hover:bg-gray-100 transition-transform duration-700 ease-out transform ${isFloatingButtonOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>행사 일정 추가하기</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
