@@ -54,6 +54,11 @@ function SchedulePage() {
   let [markerColor, setMarkerColor] = useState(['bg-blue-500', 'bg-orange-600', 'bg-purple-400']);
   const [isFloatingButtonOpen, setIsFloatingButtonOpen] = useState(false);
 
+  //각 버튼의 개별 상태를 관리하여 순차적 pop-up 효과를 구현
+  const [showFirstButton, setShowFirstButton] = useState(false);
+  const [showSecondButton, setShowSecondButton] = useState(false);
+  const [showThirdButton, setShowThirdButton] = useState(false);
+
   const calendarDaysList = makeCalendarDays(pointDate);
   let weeks: Date[][] = [];
   let week: Date[] = [];
@@ -90,6 +95,25 @@ function SchedulePage() {
   const toggleFloatingButton = () => {
     setIsFloatingButtonOpen(!isFloatingButtonOpen);
   };
+
+  //플로팅 버튼의 상태가 변경될 때 순차적으로 pop-up 시키는 효과 적용
+  useEffect(() => {
+    if(isFloatingButtonOpen) {
+      // 플로팅 버튼이 열리면 순차적으로 각 버튼을 표시
+      setShowFirstButton(false);
+      setShowSecondButton(false);
+      setShowThirdButton(false);
+
+      setTimeout(() => setShowThirdButton(true), 100); // 세 번째 버튼(맨 밑 버튼) 100ms 후 표시
+      setTimeout(() => setShowSecondButton(true), 200); // 두 번째 버튼 200ms 후 표시
+      setTimeout(() => setShowFirstButton(true), 300); // 첫 번째 버튼(맨 위 버튼) 300ms 후 표시
+    } else {
+      // 플로팅 버튼이 닫힐 때 모든 버튼을 즉시 숨기기
+      setShowFirstButton(false);
+      setShowSecondButton(false);
+      setShowThirdButton(false);
+    }
+  }, [isFloatingButtonOpen]); //isFloatingButtonOpen state값이 바뀔 때마다 적용
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-white px-6 py-10">
@@ -145,9 +169,16 @@ function SchedulePage() {
                   <span className="text-base font-normal">{day.getDate()}</span>
                   {/* marker를 날짜 아래에 배치하여 하나의 요소처럼 보이게 함 */}
                   {isCurrentMonth ? (
-                    <div className={`w-2 h-2 mt-2 rounded-full ${isSelected ? 'outline outline-1 outline-white bg-orange-400' : 'bg-orange-400'}`} />
-                  ) : (
-                    <div className={`w-2 h-2 mt-2 rounded-full bg-white`} />
+                    <div className={'flex flex-col items-center justify-center'}>
+                      <div className={`w-1.5 h-1.5 mt-2 rounded-full ${isSelected ? 'outline outline-1 outline-white bg-orange-400' : 'bg-orange-400'}`} />
+                      <span className={`font-bold text-xs mt-2 ${isSelected ? 'text-white' : 'text-gray-500'}`}>+2</span>
+                    </div>
+                    
+                  ) : ( 
+                    <div className={'flex flex-col items-center justify-center'}>
+                      <div className={`w-1.5 h-1.5 mt-2 rounded-full bg-transparent`} />
+                      <span className={'font-bold text-xs mt-2 text-transparent'}>+2</span>
+                    </div>
                   )}
                 </button>
                 {/* 마지막 줄이 아닌 경우에만 선을 추가 */}
@@ -188,12 +219,36 @@ function SchedulePage() {
         />
       </button>
       
+      {/* 플로팅 버튼이 열렸을 때 나타나는 옵션들 */}
       {isFloatingButtonOpen && (
-        <div onClick={() => setIsFloatingButtonOpen(!isFloatingButtonOpen)} className="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-500 ease-in-out flex justify-end items-end p-8 z-40">
+        <div onClick={() => setIsFloatingButtonOpen(false)} className="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-500 ease-in-out flex justify-end items-end p-8 z-40">
           <div onClick={(e) => e.stopPropagation()} className="fixed bottom-28 right-10 flex flex-col space-y-4 pointer-events-auto">
-            <button className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl bg-white text-black font-semibold shadow-lg py-2 px-4 hover:bg-gray-100 transition-transform duration-300 ease-out transform ${isFloatingButtonOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>번개런 일정 추가하기</button>
-            <button className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl bg-white text-black font-semibold shadow-lg py-2 px-4 hover:bg-gray-100 transition-transform duration-500 ease-out transform ${isFloatingButtonOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>정규런 일정 추가하기</button>
-            <button className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl bg-white text-black font-semibold shadow-lg py-2 px-4 hover:bg-gray-100 transition-transform duration-700 ease-out transform ${isFloatingButtonOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>행사 일정 추가하기</button>
+            {/* 첫 번째 버튼 */}
+            <button
+              className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl bg-white text-black font-semibold shadow-lg py-2 px-4 hover:bg-gray-100 transition-all duration-300 ease-out transform ${
+                showFirstButton ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+              }`}
+            >
+              번개런 일정 추가하기
+            </button>
+
+            {/* 두 번째 버튼 */}
+            <button
+              className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl bg-white text-black font-semibold shadow-lg py-2 px-4 hover:bg-gray-100 transition-all duration-300 ease-out transform ${
+                showSecondButton ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+              }`}
+            >
+              정규런 일정 추가하기
+            </button>
+
+            {/* 세 번째 버튼 */}
+            <button
+              className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl bg-white text-black font-semibold shadow-lg py-2 px-4 hover:bg-gray-100 transition-all duration-300 ease-out transform ${
+                showThirdButton ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+              }`}
+            >
+              행사 일정 추가하기
+            </button>
           </div>
         </div>
       )}
