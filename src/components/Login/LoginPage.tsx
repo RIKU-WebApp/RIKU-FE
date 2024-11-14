@@ -10,7 +10,7 @@ function LoginPage() {
   //로그인 버튼을 눌렀을 때 수행해야 할 로직을 담은 함수 (추후 로그인 API 연동 예정)
   function handleLoginClick()
   {
-    navigate('/schedule-page'); //버튼 클릭 시 '/schedule-page'로 이동
+    navigate('/my-page'); //버튼 클릭 시 '/schedule-page'로 이동
   }
 
   const [id, setID] = useState<string>(''); //ID state
