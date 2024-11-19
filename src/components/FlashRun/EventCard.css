@@ -1,0 +1,55 @@
+.event-card {
+    display: flex;
+    justify-content: space-between; /* 좌우 끝에 배치 */
+    align-items: flex-start; /* 요소를 상단에 정렬 */
+    width: 327px;
+    height: 225px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 0; /* 패딩 제거 */
+    position: relative; /* 절대 위치를 위한 기준 */
+    margin-bottom: 30px;
+}
+
+/* 왼쪽, 오른쪽 사이드 공통 스타일 */
+.left-side, .right-side {
+    display: flex;
+    flex-direction: column; /* 수직 정렬 */
+    padding: 10px; /* 안쪽 여백 */
+    align-self: flex-start; /* 상단에 정렬 */
+}
+
+/* 추가 스타일 - 필요에 따라 적용 */
+.left-side div,
+.right-side div {
+    margin-bottom: 4px;
+}
+
+.right-side {
+    text-align: right; /* 오른쪽 정렬 */
+}
+
+.title {
+    color : 'black';
+    font-size: 24px;
+    font-family: 'Inter';
+    font-weight: 700;
+}
+
+.date {
+    font-size: 16px;
+    
+}
+
+/* 하단 이미지 스타일 */
+.event-image {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%; /* 가로로 꽉 채움 */
+    height: 144px; /* 고정 높이 설정 */
+    object-fit: cover; /* 이미지 비율을 유지하며 영역을 채움 */
+    border-radius: 0 0 12px 12px; /* 하단에만 둥근 모서리 적용 */
+}
+

@@ -1,0 +1,61 @@
+.container {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.run-title {
+    width: 100%; /* 부모 컨테이너의 전체 너비 사용 */
+    text-align: left; /* 텍스트 왼쪽 정렬 */
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px; /* 이미지와 간격을 주기 위한 여백 */
+    margin-left: 25px;
+}
+
+.image-Wrapper {
+    position: relative; /* 텍스트를 이미지 위에 배치하기 위해 relative 설정 */
+    
+}
+
+.content-image {
+    filter: brightness(70%);
+}
+
+.mapname {
+    position: absolute;
+    top: 35%; /* 이미지의 중앙에 배치 */
+    left: 50%; /* 이미지의 중앙에 배치 */
+    transform: translate(-50%, -50%); /* 중앙 정렬을 위한 transform */
+    color: white; /* 텍스트 색상 */
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.day{
+    position: absolute;
+    top: 47%; /* 이미지의 중앙에 배치 */
+    left: 50%; /* 이미지의 중앙에 배치 */
+    transform: translate(-50%, -50%); /* 중앙 정렬을 위한 transform */
+    color: white; /* 텍스트 색상 */
+    font-size: 16px;
+}
+
+.circle-image {
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    left: 0%;
+}
+
+.progress-image {
+    position: absolute;
+    left: 28%;
+    top: 55%;
+
+}
+
+
+

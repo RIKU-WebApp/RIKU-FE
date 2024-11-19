@@ -1,0 +1,42 @@
+.main-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin: 10px;
+}
+
+.main-photo {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.content-Wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-bottom: 90px;
+  
+
+ 
+}
+
+.content-container {
+  
+
+  margin-top: 30px;
+  width: 375px;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2개의 열로 구성 */
+  grid-template-rows: 1fr 1fr; /* 2개의 행으로 구성 */
+  gap: 0px; /* 컴포넌트 간격 */
+  justify-content: center; /* 그리드의 열을 가운데 정렬 */
+  align-content: center; /* 그리드의 행을 가운데 정렬 */
+}
+
+.floatbutton{
+  
+  max-width: 375px;
+  right: 0;
+}
