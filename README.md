@@ -1,8 +1,22 @@
-# React + Vite
+# 👟 Developer & Runner: 이운태
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+안녕하세요! 저는 러닝과 개발에 열정을 가진 개발자 **이운태**입니다.  
+풀코스 마라톤 PB(Personal Best)는 **3시간 35분 1초**로, 매일 조금 더 나아지기 위해 노력합니다.  
+러닝처럼 개발에서도 꾸준함과 성장을 믿으며, 팀과 함께 달리는 즐거움을 추구합니다.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌟 About Me
+
+- **풀코스 마라톤 기록**: 3:35:01  
+- **취미**: 러닝, 산책, 새로운 기술 탐구  
+- **개발 철학**:  
+  > 러닝처럼, 매일 한 발짝씩 나아가는 꾸준함이 성공의 열쇠다.
+
+---
+
+## 🛠 Skills
+
+### Frontend
+- React (TypeScript)
+- HTML, CSS, JavaScript
