@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'
-import Main from './components/Main.tsx';
+import Main from './components/MainPage/Main.tsx';
 import FlashRunList from './components/FlashRun/FlashRunList.tsx';
 import FlashRunAdmin from './components/FlashRun/FlashRunAdmin';
 import React from 'react';

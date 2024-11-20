@@ -13,6 +13,10 @@ declare module '*.png' {
     export default jpegUrl;
   }
   
-
+  declare module '*.svg' {
+    const value: string;
+    export default value;
+  }
+  
   
   

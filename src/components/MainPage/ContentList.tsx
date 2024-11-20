@@ -1,7 +1,7 @@
 import './ContentList.css';
-import RunImage from '../assets/Run/run-image.svg';
-import RunCircle from '../assets/Run/run-circle.svg';
-import RunInProgress from '../assets/Run/run-InProgress.svg';
+import RunImage from '../../assets/Run-img/run-image.svg';
+import RunCircle from '../../assets/Run-img/run-circle.svg';
+import RunInProgress from '../../assets/Run-img/run-InProgress.svg';
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
 
@@ -9,11 +9,13 @@ import React from 'react';
 interface ContentListProps {
     name: string;
     path: string;
+    run_name:string;
+    run_date:string;
     onClick?: () => void;
 
 }
 
-const ContentList: React.FC<ContentListProps> = ({ name, path }) => {
+const ContentList: React.FC<ContentListProps> = ({ name, path, run_name, run_date }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -29,8 +31,8 @@ const ContentList: React.FC<ContentListProps> = ({ name, path }) => {
                 <img src={RunImage} alt='runimage' className='content-image' />
                 <img src={RunCircle} alt='runcircle' className='circle-image' />
                 <img src={RunInProgress} alt='runinprogress' className='progress-image' />
-                <div className='mapname'>반포한강</div>
-                <div className='day'>8/13 수요일</div>
+                <div className='mapname'>{run_name}</div>
+                <div className='day'>{run_date}</div>
             </div>
         </div>
     );

@@ -1,6 +1,6 @@
 import './EventCard.css';
-import flashrunimage from '../../assets/Run/flashrunimage.svg';
-import runargent from '../../assets/Run/run-urgent.svg';
+import flashrunimage from '../../assets/Run-img/flashrunimage.svg';
+import runargent from '../../assets/Run-img/run-urgent.svg';
 import React from 'react';
 
 

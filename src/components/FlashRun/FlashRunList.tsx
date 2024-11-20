@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import EventCard from "./EventCard";
-import BackIcon from '../../assets/Main/back-icon.svg';
+import BackIcon from '../../assets/Main-img/back-icon.svg';
 
 
 

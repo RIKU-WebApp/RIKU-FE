@@ -1,8 +1,8 @@
 import './Main.css';
 import ContentList from './ContentList.tsx';
-import toplogo from '../assets/Main/toplogo.svg';
-import RikuMainPhoto from '../assets/Main/RikuMainPhoto.svg';
-import NavBar from './NavBar.tsx';
+import toplogo from '../../assets/Main-img/toplogo.svg';
+import RikuMainPhoto from '../../assets/Main-img/RikuMainPhoto.svg';
+import NavBar from '../NavBar.tsx'
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -27,10 +27,10 @@ const Main: React.FC = () => {
     </div>
     <div className='content-Wrapper'>
         <div className='content-container'>
-            <ContentList name='정규런' path='/run' />
-            <ContentList name='번개런' path='/flash-run' onClick={handleCardClick}/>
-            <ContentList name='훈련' path='/training'/>
-            <ContentList name='행사' path='/event'/>
+            <ContentList name='정규런' path='/run' run_name='다음학기에~' run_date='...' />
+            <ContentList name='번개런' path='/flash-run' onClick={handleCardClick} run_name='일감호'run_date='11/10 일요일'/>
+            <ContentList name='훈련' path='/training' run_name='주말훈련'run_date='11/15'/>
+            <ContentList name='행사' path='/event' run_name='행사X' run_date='...'/>
         </div>
     </div>
     <div className='footer'>
