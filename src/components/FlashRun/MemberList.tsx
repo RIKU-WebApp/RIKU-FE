@@ -11,9 +11,7 @@ const containerStyle: React.CSSProperties = {
 const contentStyle: React.CSSProperties = {
     display: 'inline-block',
     alignContent: 'center',
-    
 }
-
 
 function MemberList ({ number, name }) {
     return(

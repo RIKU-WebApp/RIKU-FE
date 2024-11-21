@@ -2,11 +2,12 @@
 
 module.exports = {
   content: [
-    "./src/**/*.{js,jsx,ts,tsx}" // src 폴더 내 모든 파일을 대상으로 설정
+    "./src/**/*.{js,jsx,ts,tsx}", // src 폴더 내 모든 JS/TS 파일
+    "./index.html"                // Vite의 기본 HTML 파일 포함
   ],
   theme: {
     extend: {
-      colors: { //커스텀 색상 설정(Figma 활용)
+      colors: { // 커스텀 색상 설정
         kuDarkGreen: '#366943',
         kuCoolGray: '#B2B3B4',
         kuRed: '#D7260D',
@@ -26,5 +27,6 @@ module.exports = {
     },
   },
   plugins: [],
-}
+};
+
 

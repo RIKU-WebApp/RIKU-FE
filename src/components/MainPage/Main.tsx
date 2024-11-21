@@ -1,8 +1,8 @@
 import './Main.css';
-import ContentList from './ContentList.tsx';
+import ContentList from './ContentList';
 import toplogo from '../../assets/Main-img/toplogo.svg';
 import RikuMainPhoto from '../../assets/Main-img/RikuMainPhoto.svg';
-import NavBar from '../NavBar.tsx'
+import NavBar from '../NavBar'
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 

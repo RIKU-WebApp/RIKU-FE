@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import logo from './logo.svg';
 import './App.css';
@@ -11,11 +12,10 @@ import SchoolInputInfo from './components/createAccount/SchoolInfoInput';
 import TelNumberInput from './components/createAccount/TelNumberInput';
 import SchedulePage from './components/Main/SchedulePage';
 import MyPage from './components/Main/MyPage';
-import Main from './components/MainPage/Main.tsx';
-import FlashRunList from './components/FlashRun/FlashRunList.tsx';
+import Main from './components/MainPage/Main';
+import FlashRunList from './components/FlashRun/FlashRunList';
 import FlashRunAdmin from './components/FlashRun/FlashRunAdmin';
-import React from 'react';
-import MemberList from './components/FlashRun/MemberList.tsx';
+import MemberList from './components/FlashRun/MemberList';
 
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
