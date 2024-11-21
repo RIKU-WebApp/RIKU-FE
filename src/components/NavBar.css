@@ -1,0 +1,142 @@
+/* 전체 네비게이션 바 컨테이너 */
+.navbar-container {
+    position: relative; /* 부모 컨테이너 */
+    width: 100%;
+    max-width: 375px;
+    margin: 0 auto;
+}
+
+
+nav {
+    display: flex;
+    justify-content: center; /* nav 요소의 자식들을 가로로 중앙에 정렬 */
+    align-items: center; /* nav 요소의 자식들을 세로로 중앙에 정렬 */
+    width: 100%; /* 부모 컨테이너의 너비를 100%로 설정 */
+    max-width: 375px; /* 최대 너비 375px로 제한 */
+    height: 64px;
+    margin: 0 auto; /* 전체 페이지에서 중앙에 배치 */
+    border-top: 1.5px solid #ddd;
+    margin-top: 30px;
+    position: fixed;
+    bottom: 0;
+    left: 50%; /* 뷰포트의 중앙으로 이동 */
+    transform: translateX(-50%); /* 수평 이동을 반대로 하여 정확히 가운데 정렬 */
+    background-color: #fff; /* 배경색 추가 */
+    height: 64px;
+    z-index: 1000;
+    padding: 0 10px;
+}
+
+nav > div {
+    display: inline-block;
+    margin: 30px;
+    font-size: 9px;
+    text-align: center;
+    
+}
+
+.btn-container{
+    display: flex;
+    justify-content: center; /* nav 요소의 자식들을 가로로 중앙에 정렬 */
+    align-items: center; /* nav 요소의 자식들을 세로로 중앙에 정렬 */
+    max-width: 375px;
+}
+
+.floating-btn {
+    position: fixed;
+    bottom: 80px; /* 네비게이션바 위에서 80px 위로 띄움 */
+    left: calc(50% + 100px); /* 중앙에서 100px 이동한 위치 */
+    width: 60px;
+    height: 60px;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 50%; /* 둥근 버튼 */
+    color: white;
+    font-size: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1100;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    transform: rotate(0deg); /* 기본 회전 상태 */
+}
+    
+
+.floating-btn.open {
+    background-color: #4CAF50; /* 열렸을 때 빨간색으로 변경 */
+    transform: rotate(45deg); /* 버튼을 45도 회전시켜 X 모양 */
+}
+
+.nav-icon {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.floating-btn.open .icon {
+    transform: rotate(30deg); /* X 모양으로 회전 */
+}
+
+/* 플로팅 버튼 hover 효과 */
+.floating-btn:hover {
+    background-color: #45a049;
+}
+
+/* 오버레이 스타일 */
+.nav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6); /* 반투명한 어두운 배경 */
+    z-index: 1050; /* 네비게이션바보다 아래에 놓음 */
+}
+
+/* 메뉴 컨테이너 스타일 */
+.menu-container {
+    position: fixed;
+    left: calc(50% + 27px); /* 중앙에서 100px 이동한 위치 */
+    bottom: 150px; /* 버튼 위로 띄움 */
+    z-index: 1100; /* 오버레이 위로 표시 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 메뉴 리스트 스타일 */
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    animation: slide-down 0.3s ease-out; /* 애니메이션 효과 */
+}
+
+.menu-list li {
+    padding: 10px 20px;
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.menu-list li:last-child {
+    border-bottom: none; /* 마지막 항목은 경계선 없음 */
+}
+
+/* 메뉴가 부드럽게 내려오는 애니메이션 */
+@keyframes slide-down {
+    from {
+        transform: translateY(-20%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
