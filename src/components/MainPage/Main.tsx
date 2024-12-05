@@ -50,6 +50,7 @@ const Main: React.FC = () => {
         setShowFourthButton(false);
     }
     }, [isFloatingButtonOpen]); //isFloatingButtonOpen state값이 바뀔 때마다 적용
+    
 
     return (
     <div className="min-h-screen flex flex-col items-center">
