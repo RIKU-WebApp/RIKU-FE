@@ -8,12 +8,22 @@ function LoginPage() {
 
   const navigate = useNavigate(); //useNavigate 훅을 사용해 navigate 함수 생성
 
+  const [id, setID] = useState<string>(''); //ID state
+  const [password, setPassword] = useState<string>(''); //비밀번호가 유효한지 확인하기 위한 state
+
   //로그인 버튼을 눌렀을 때 수행해야 할 로직을 담은 함수 (추후 로그인 API 연동 예정)
   async function handleLoginClick()
   {
-    const url = '/api/example';
+
+    //post 요청 보낼 data 생성
+    const data = {
+      "studentId": id,
+      "password": password
+    }
+
+    const url = '/users/login';
     try {
-      const response = await customAxios.get(url);
+      const response = await customAxios.post(url, data);
       console.log(response.data);
     } catch(error) {
       console.error('응답 오류: ', error);
@@ -21,9 +31,6 @@ function LoginPage() {
 
     navigate('/main'); //버튼 클릭 시 '/schedule-page'로 이동
   }
-
-  const [id, setID] = useState<string>(''); //ID state
-  const [password, setPassword] = useState<string>(''); //비밀번호가 유효한지 확인하기 위한 state
   
   //Tailwind를 사용하여 스타일링 진행
   return (

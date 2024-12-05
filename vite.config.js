@@ -9,4 +9,13 @@ export default defineConfig({
   css: {
     postcss: './postcss.config.js', // PostCSS 설정 파일 경로 지정
   },
+  server: {
+    proxy: {
+      '/users': {
+        target: 'https://riku-server.shop',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 });

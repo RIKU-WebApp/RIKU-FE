@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; //react-router-dom 라이브러리를 사용 (useNavigation 사용할 예정)
+import { UNSAFE_ErrorResponseImpl, useNavigate } from 'react-router-dom'; //react-router-dom 라이브러리를 사용 (useNavigation 사용할 예정)
 
-import { useDispatch } from 'react-redux'; 
+import { useDispatch, useSelector} from 'react-redux'; //상태값을 가져오기 위해 useSelector 사용
 import { setTelNum } from '../../redux/slices/signupSlice' //Action Creator를 import 해온다!
+import { RootState } from '../../redux/store'
+
+import customAxios from '../../apis/customAxios' //커스텀 axios 컴포넌트 가져오기
 
 //비밀번호를 입력하는 화면인 PasswordInput
 function TelNumberInput() {
@@ -11,12 +14,43 @@ function TelNumberInput() {
   const [telNum, setTelNumInput] = useState<string>(''); //전화번호를 저장하는 state
 
   const dispatch = useDispatch(); //redux 사용을 위해 useDispatch 활용
+  const signupState = useSelector((state: RootState) => state.signup); //상태값 가져오기
 
   //'비밀번호' 입력 란의 입력 값이 바뀔 때마다 취하는 액션을 정의한 handleChangeInPassword 메소드
   const handleChangeTelNum = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     setTelNumInput(input);
   };
+
+  //서버에 회원가입 request 진행(POST 요청)
+  const signUpRequest = async () => {
+
+    //post 요청 보낼 data 세팅
+    const data = {
+      "studentId" : signupState.studentID,
+      "password": signupState.password,
+      "name": signupState.name,
+      "college": signupState.collegeName,
+      "major": signupState.departmentName,
+      "phone": signupState.telNum
+    }
+
+    console.log('구성된 데이터: ', data);
+
+    //해당 구역에 axios 요청을 진행할 것임(서버에 입력된 회원 정보를 저장해야 함)
+    try {
+      const response = await customAxios.post('/users/signup', data)
+      if(response.data.isSuccess === "true")
+      {
+        alert('정상적으로 회원 가입이 완료되었습니다');
+        navigate('/login-page'); //'/next-step'라는 값을 가진 컴포넌트로 이동한다 (navigating)
+      } else if(response.data.isSuccess === "false") {
+        alert(response.data.responseMessage);
+      }
+    } catch (error) {
+      alert(error);
+    }
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,11 +62,8 @@ function TelNumberInput() {
       alert("전화번호가 입력되었습니다. 이대로 진행합니다");
     }
     dispatch(setTelNum(telNum)); //redux 저장소에 저장
-
-    //해당 구역에 axios 요청을 진행할 것임(서버에 입력된 회원 정보를 저장해야 함)
-
-
-    navigate('/login-page'); //'/next-step'라는 값을 가진 컴포넌트로 이동한다 (navigating)
+    
+    signUpRequest(); //회원가입 수행
   };
 
   return (
