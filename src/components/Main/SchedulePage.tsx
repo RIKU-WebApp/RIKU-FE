@@ -58,6 +58,7 @@ function SchedulePage() {
   const [showFirstButton, setShowFirstButton] = useState(false);
   const [showSecondButton, setShowSecondButton] = useState(false);
   const [showThirdButton, setShowThirdButton] = useState(false);
+  const [showFourthButton, setShowFourthButton] = useState(false);
 
   const calendarDaysList = makeCalendarDays(pointDate);
   let weeks: Date[][] = [];
@@ -103,15 +104,18 @@ function SchedulePage() {
       setShowFirstButton(false);
       setShowSecondButton(false);
       setShowThirdButton(false);
+      setShowFourthButton(false);
 
-      setTimeout(() => setShowThirdButton(true), 100); // 세 번째 버튼(맨 밑 버튼) 100ms 후 표시
-      setTimeout(() => setShowSecondButton(true), 200); // 두 번째 버튼 200ms 후 표시
-      setTimeout(() => setShowFirstButton(true), 300); // 첫 번째 버튼(맨 위 버튼) 300ms 후 표시
+      setTimeout(() => setShowFourthButton(true), 100); // 세 번째 버튼(맨 밑 버튼) 100ms 후 표시
+      setTimeout(() => setShowThirdButton(true), 200); // 세 번째 버튼(맨 밑 버튼) 100ms 후 표시
+      setTimeout(() => setShowSecondButton(true), 300); // 두 번째 버튼 200ms 후 표시
+      setTimeout(() => setShowFirstButton(true), 400); // 첫 번째 버튼(맨 위 버튼) 300ms 후 표시
     } else {
       // 플로팅 버튼이 닫힐 때 모든 버튼을 즉시 숨기기
       setShowFirstButton(false);
       setShowSecondButton(false);
       setShowThirdButton(false);
+      setShowFourthButton(false);
     }
   }, [isFloatingButtonOpen]); //isFloatingButtonOpen state값이 바뀔 때마다 적용
 
@@ -245,6 +249,15 @@ function SchedulePage() {
             <button
               className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl bg-white text-black font-semibold shadow-lg py-2 px-4 hover:bg-gray-100 transition-all duration-300 ease-out transform ${
                 showThirdButton ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+              }`}
+            >
+              훈련 일정 추가하기
+            </button>
+
+            {/* 세 번째 버튼 */}
+            <button
+              className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl bg-white text-black font-semibold shadow-lg py-2 px-4 hover:bg-gray-100 transition-all duration-300 ease-out transform ${
+                showFourthButton ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
               }`}
             >
               행사 일정 추가하기

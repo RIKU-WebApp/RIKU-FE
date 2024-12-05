@@ -13,6 +13,7 @@ const contentStyle: React.CSSProperties = {
     alignContent: 'center',
 }
 
+//멤버 list 박스 1개
 function MemberList ({ number, name }) {
     return(
         <div style={containerStyle}>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import riku_logo from '../../assets/riku_logo.png'; //라이쿠 로고 불러오기
 import { Link, useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
+import customAxios from '../../apis/customAxios'; //커스텀 axios 호출
 
 //로그인 페이지 
 function LoginPage() {
@@ -8,8 +9,16 @@ function LoginPage() {
   const navigate = useNavigate(); //useNavigate 훅을 사용해 navigate 함수 생성
 
   //로그인 버튼을 눌렀을 때 수행해야 할 로직을 담은 함수 (추후 로그인 API 연동 예정)
-  function handleLoginClick()
+  async function handleLoginClick()
   {
+    const url = '/api/example';
+    try {
+      const response = await customAxios.get(url);
+      console.log(response.data);
+    } catch(error) {
+      console.error('응답 오류: ', error);
+    }
+
     navigate('/main'); //버튼 클릭 시 '/schedule-page'로 이동
   }
 

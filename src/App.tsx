@@ -26,7 +26,7 @@ function App() {
   return (
     <Provider store={store}>
       <Router>
-        <div className="App">
+        <div className="max-w-mobile bg-center mx-auto">
           {/* 라우터 설정 */}
           <Routes>
             <Route path="/" element={<LoginPage />} /> {/* 초기 화면 설정 */}

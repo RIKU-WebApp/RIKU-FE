@@ -24,6 +24,9 @@ module.exports = {
         kuWhite: '#FFFFFF',
         kuOrange: '#DEA93D',
       },
+      maxWidth: {
+        'mobile': '375px',
+      }
     },
   },
   plugins: [],
