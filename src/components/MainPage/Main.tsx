@@ -30,8 +30,9 @@ const Main: React.FC = () => {
     const [showFourthButton, setShowFourthButton] = useState(false);
     const navigate = useNavigate();
 
+    //그리드 레이아웃에 있는 동그라미 버튼(GridContent)를 눌렀을 시의 동작 수행
     const handleCardClick = () => {
-        navigate('/flash-run/user');
+        navigate('/flash-run');
     };
 
     //플로팅 버튼을 눌렀을 때.. 동작하는 floatingButton
@@ -81,6 +82,7 @@ const Main: React.FC = () => {
                         status={run.status}
                         image={run.image}
                         bgColor={run.bgColor}
+                        onClick={handleCardClick}
                     />
                 </div>
             ))}

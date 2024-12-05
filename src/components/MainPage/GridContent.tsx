@@ -7,14 +7,15 @@ interface RunCardProps {
     status: string;
     image: string; //이미지 경로(상대경로로 전달)
     bgColor: string;
+    onClick?: ()=>void; //클릭 이벤트 핸들러(선택적으로 전달)
 }
 
 //그리드에 들어갈 콘텐츠
 function GridContent(props: RunCardProps) {
-    const {place, date, status, image, bgColor} = props; //props를 받아와서 구조 파괴
+    const {onClick, place, date, status, image, bgColor} = props; //props를 받아와서 구조 파괴
 
     return (
-        <div className="relative flex flex-col items-center bg-white rounded-xl">
+        <div className="relative flex flex-col items-center bg-white rounded-xl" onClick={onClick}>
             {/* 원형 배경 이미지 */}
             <div
                 className={`relative w-32 h-32 rounded-full overflow-hidden flex items-center justify-center`}
