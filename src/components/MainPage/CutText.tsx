@@ -5,6 +5,7 @@ interface EllipsisTextProps {
     maxLength: number; // 최대 글자 수
 }
 
+//maxLength 글자만큼 
 const CutText: React.FC<EllipsisTextProps> = ({ text, maxLength }) => {
     const truncatedText = text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 

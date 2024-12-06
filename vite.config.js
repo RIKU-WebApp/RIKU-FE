@@ -5,7 +5,7 @@ import svgr from 'vite-plugin-svgr';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [svgr(),react()],
+  plugins: [react(), svgr()],
   css: {
     postcss: './postcss.config.js', // PostCSS 설정 파일 경로 지정
   },
