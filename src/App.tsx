@@ -1,10 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import logo from './logo.svg';
 import './App.css';
 
 import LoginPage from './components/Login/LoginPage';
-
 import StudentidInput from './components/createAccount/StudentidInput';
 import PasswordInput from './components/createAccount/PasswordInput';
 import NameInput from './components/createAccount/NameInput';
@@ -17,34 +15,32 @@ import FlashRunList from './components/FlashRun/FlashRunList';
 import FlashRunAdmin from './components/FlashRun/FlashRunAdmin';
 import MemberList from './components/FlashRun/MemberList';
 import FlashRunMake from './components/FlashRun/FlashRunMake';
+import FlashRunDetail from './components/FlashRun/FlashRunDetail';
 
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
 
-
-//최상단 컴포넌트
 function App() {
-
   return (
     <Provider store={store}>
       <Router>
         <div className="max-w-{375px}">
-          {/* 라우터 설정 */}
           <Routes>
-            <Route path="/" element={<LoginPage />} /> {/* 초기 화면 설정 */}
+            <Route path="/" element={<LoginPage />} />
             <Route path="/login-page" element={<LoginPage />} />
             <Route path="/student-id" element={<StudentidInput />} />
-            <Route path="/password-input" element={<PasswordInput/>} /> 
-            <Route path='/name-input' element={<NameInput/>} />
-            <Route path='/school-info' element={<SchoolInputInfo/>} />
-            <Route path='/telNum-input' element={<TelNumberInput/>} />
-            <Route path='/schedule-page' element={<SchedulePage/>} />
-            <Route path='/my-page' element={<MyPage/>} />
+            <Route path="/password-input" element={<PasswordInput />} /> 
+            <Route path='/name-input' element={<NameInput />} />
+            <Route path='/school-info' element={<SchoolInputInfo />} />
+            <Route path='/telNum-input' element={<TelNumberInput />} />
+            <Route path='/schedule-page' element={<SchedulePage />} />
+            <Route path='/my-page' element={<MyPage />} />
             <Route path="/main" element={<Main />} />
-            <Route path="/flash-run" element={<FlashRunList/>} />
-            <Route path="/flash-run/admin" element={<FlashRunAdmin />} />
+            <Route path="/run" element={<FlashRunList />} />
+            <Route path="/run/post/:postId" element={<FlashRunDetail />} />
             <Route path="/flash-run/user" element={<FlashRunMake />} />
-            <Route path='/flash-run/test' element={<MemberList name={'허나원'} number={1}/>}/>
+            <Route path='/flash-run/test' element={<MemberList name={'허나원'} number={1} />} />
+            
           </Routes>
         </div>
       </Router>

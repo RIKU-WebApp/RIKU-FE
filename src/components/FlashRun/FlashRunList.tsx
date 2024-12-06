@@ -272,6 +272,7 @@
               time={event.time} // 시간 전달
               imageUrl={event.imageUrl} // 이미지 URL 전달
               status={event.status} // 상태 전달
+              onClick={() => navigate(`/run/post/${event.id}`)}
             />
           ))}
         </div>

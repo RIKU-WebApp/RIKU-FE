@@ -9,7 +9,7 @@ const Main: React.FC = () => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate('/flash-run/user');
+    navigate('/run');
   };
 
   return (
@@ -30,7 +30,7 @@ const Main: React.FC = () => {
           />
           <ContentList
             name="번개런"
-            path="/flash-run"
+            path="/run"
             onClick={handleCardClick}
             run_name="일감호"
             run_date="11/10 일요일"
