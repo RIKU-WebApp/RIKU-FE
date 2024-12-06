@@ -120,7 +120,7 @@ function SchedulePage() {
   }, [isFloatingButtonOpen]); //isFloatingButtonOpen state값이 바뀔 때마다 적용
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-white px-6 py-10">
+    <div className="min-h-screen flex flex-col items-center bg-white px-6 py-10 pb-16">
       {/* 캘린더 상단의 화살표로 월을 조절하는 부분 */}
       <div className="flex flex-col items-center justify-center space-y-0 mb-4">
         <span className="text-xs font-light text-black">{pointDate.getFullYear()}</span>
@@ -214,7 +214,7 @@ function SchedulePage() {
       {/* 플로팅 버튼 */}
       <button
         onClick={toggleFloatingButton}
-        className={`fixed bottom-10 right-10 w-16 h-16 rounded-full bg-kuDarkGreen text-white flex items-center justify-center shadow-lg hover:bg-kuDarkGreen-dark focus:outline-none z-50 transition-transform duration-300 ${isFloatingButtonOpen ? 'rotate-45' : 'rotate-0'}`}
+        className={`fixed bottom-20 right-4 w-16 h-16 rounded-full bg-kuDarkGreen text-white flex items-center justify-center shadow-lg hover:bg-kuDarkGreen-dark focus:outline-none z-50 transition-transform duration-300 ${isFloatingButtonOpen ? 'rotate-45' : 'rotate-0'}`}
       >
         <img
           src={plusBtn}
@@ -226,7 +226,7 @@ function SchedulePage() {
       {/* 플로팅 버튼이 열렸을 때 나타나는 옵션들 */}
       {isFloatingButtonOpen && (
         <div onClick={() => setIsFloatingButtonOpen(false)} className="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-500 ease-in-out flex justify-end items-end p-8 z-40">
-          <div onClick={(e) => e.stopPropagation()} className="fixed bottom-28 right-10 flex flex-col space-y-4 pointer-events-auto">
+          <div onClick={(e) => e.stopPropagation()} className="fixed bottom-40 right-10 flex flex-col space-y-4 pointer-events-auto">
             {/* 첫 번째 버튼 */}
             <button
               className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl bg-white text-black font-semibold shadow-lg py-2 px-4 hover:bg-gray-100 transition-all duration-300 ease-out transform ${

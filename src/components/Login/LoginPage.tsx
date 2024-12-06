@@ -29,7 +29,7 @@ function LoginPage() {
       console.error('응답 오류: ', error);
     }
 
-    navigate('/main'); //버튼 클릭 시 '/schedule-page'로 이동
+    navigate('/tab/main'); //버튼 클릭 시 '/tab'으로 이동
   }
   
   //Tailwind를 사용하여 스타일링 진행
