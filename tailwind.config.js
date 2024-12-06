@@ -7,6 +7,7 @@ module.exports = {
   ],
   theme: {
     extend: {
+      
       colors: { // 커스텀 색상 설정
         kuDarkGreen: '#366943',
         kuCoolGray: '#B2B3B4',

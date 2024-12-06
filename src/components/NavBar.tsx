@@ -3,13 +3,19 @@ import calicon from '../assets/navi-icon/calender-icon.svg';
 import homeicon from '../assets/navi-icon/home-icon.svg';
 import myicon from '../assets/navi-icon/my-icon.svg';
 import rankicon from '../assets/navi-icon/ranking-icon.svg';
+import { useNavigate } from 'react-router-dom';
 
 const NavBar: React.FC = () => {
+    const navigate = useNavigate()
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const toggleButtonAndOverlay = () => {
         setIsOpen(!isOpen);
     };
+
+    const onClickFlashRunMake = () => {
+        navigate('/flash-run/user')
+    }
 
     return (
         <div className="relative w-full max-w-[375px] mx-auto">
@@ -60,7 +66,8 @@ const NavBar: React.FC = () => {
                         <li className="px-5 py-3 text-center text-base border-b border-gray-200 cursor-pointer hover:bg-gray-100">
                             정규런 만들기
                         </li>
-                        <li className="px-5 py-3 text-center text-base border-b border-gray-200 cursor-pointer hover:bg-gray-100">
+                        <li className="px-5 py-3 text-center text-base border-b border-gray-200 cursor-pointer hover:bg-gray-100"
+                        onClick={onClickFlashRunMake}>
                             번개런 만들기
                         </li>
                         <li className="px-5 py-3 text-center text-base border-b border-gray-200 cursor-pointer hover:bg-gray-100">

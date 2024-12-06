@@ -16,9 +16,11 @@ import Main from './components/MainPage/Main';
 import FlashRunList from './components/FlashRun/FlashRunList';
 import FlashRunAdmin from './components/FlashRun/FlashRunAdmin';
 import MemberList from './components/FlashRun/MemberList';
+import FlashRunMake from './components/FlashRun/FlashRunMake';
 
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
+
 
 //최상단 컴포넌트
 function App() {
@@ -26,7 +28,7 @@ function App() {
   return (
     <Provider store={store}>
       <Router>
-        <div className="App">
+        <div className="max-w-{375px}">
           {/* 라우터 설정 */}
           <Routes>
             <Route path="/" element={<LoginPage />} /> {/* 초기 화면 설정 */}
@@ -41,6 +43,7 @@ function App() {
             <Route path="/main" element={<Main />} />
             <Route path="/flash-run" element={<FlashRunList/>} />
             <Route path="/flash-run/admin" element={<FlashRunAdmin />} />
+            <Route path="/flash-run/user" element={<FlashRunMake />} />
             <Route path='/flash-run/test' element={<MemberList name={'허나원'} number={1}/>}/>
           </Routes>
         </div>

@@ -52,7 +52,7 @@ const FlashRunAdmin: React.FC = () => {
     const handleTabChange = (tab: '소개' | '명단') => setActiveTab(tab);
 
     return (
-        <div className="flex flex-col items-center text-center px-5">
+        <div className="flex flex-col items-center text-center px-5 justify-center">
             <div>
                 <img src={FlashRunBackimg} alt="flashrunimg" className="w-[373px]" />
             </div>
