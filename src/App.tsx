@@ -12,8 +12,6 @@ import SchedulePage from './components/Main/SchedulePage';
 import MyPage from './components/Main/MyPage';
 import Main from './components/MainPage/Main';
 import FlashRunList from './components/FlashRun/FlashRunList';
-import FlashRunAdmin from './components/FlashRun/FlashRunAdmin';
-import MemberList from './components/FlashRun/MemberList';
 import FlashRunMake from './components/FlashRun/FlashRunMake';
 import FlashRunDetail from './components/FlashRun/FlashRunDetail';
 
@@ -39,7 +37,7 @@ function App() {
             <Route path="/run" element={<FlashRunList />} />
             <Route path="/run/post/:postId" element={<FlashRunDetail />} />
             <Route path="/flash-run/user" element={<FlashRunMake />} />
-            <Route path='/flash-run/test' element={<MemberList name={'허나원'} number={1} />} />
+            
             
           </Routes>
         </div>
