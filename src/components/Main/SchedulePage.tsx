@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import plusBtn from '../../assets/plus_Icon.svg'; //라이쿠 로고 불러오기
+import customAxios from '../../apis/customAxios'; //커스텀 axios 호출
 
 import { 
     format, 
@@ -12,11 +13,8 @@ import {
     startOfWeek, 
     endOfWeek, 
     addDays,
-    getYear,
-    getMonth
+    parseISO,
 } from 'date-fns';
-
-import axios from 'axios'; //axios(서버와의 통신을 위한 라이브러리) import!
 
 //한 달 달력에 들어갈 내용(날짜(Date))들의 배열을 만든다.
 function makeCalendarDays(pointDate: Date) {
@@ -41,17 +39,82 @@ function makeCalendarDays(pointDate: Date) {
 function SchedulePage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [pointDate, setPointDate] = useState(new Date());
+  const [monthlyPlan, setMonthlyPlan] = useState<{date: string; eventCount: number}[]>([]);
+  const [selectedDateEvent, setSelectedDateEvent] = useState<{title: string, time: string, location: string}[]>([]);
 
-  //서버로부터 일정 정보를 받아올 것임 (그리고 그것을 state로 관리할 것임 / 현재는 하드코딩 해놓음)
-  let [event, setEvent] = useState([
-    {"type": "[정규런]", "place": "뚝섬 유원지", "time": "19:00", "gathering_Place": "자양역 물품보관함"}, 
-    {"type": "[행사]", "place": "라이쿠 여름방학 깜짝 회식", "time": "20:30", "gathering_Place": "홍콩 포차"},
-    {"type": "[번개런]", "place": "올림픽공원", "time": "21:30", "gathering_Place": "올림픽공원 평화의 문"}
-    ]
-  );
+  //캘린더 월별 조회 메소드
+  async function fetchMonthlyData() {
+    const formattedPointDate = format(pointDate, 'yyyy-MM-dd'); //pointDate(기준이 되는 날짜) 포맷팅
+    const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+
+    //보낼 데이터
+    const data = {
+      "date" : formattedPointDate
+    }
+
+    const url = '/calendar/monthly';
+
+    try {
+      const response = await customAxios.post(
+        url, //요청 url
+        data, //요청 데이터
+        {
+          headers: {
+            Authorization: accessToken //accessToken을 헤더로 추가해서 요청 보냄
+          }
+        }
+      );
+      setMonthlyPlan(response.data.result); //불러온 data의 result 값으로 monthlyPlan 값 저장
+      console.log('응답 성공:', response.data);
+    } catch (error) {
+      alert('서버 요청 중 오류 발생!');
+      console.error('요청 실패: ', error);
+    }
+  }
+
+  //캘린더 일별 조회 메소드
+  async function fetchSelectedDateEventData() {
+    const formattedSelectedDate = format(selectedDate, 'yyyy-MM-dd'); // selectedDate(선택된 날짜) 포맷팅
+    const accessToken = JSON.parse(localStorage.getItem('accessToken') || '') //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+
+    //보낼 데이터
+    const data = {
+      "date" : formattedSelectedDate
+    }
+
+    const url = '/calendar/daily';
+
+    try {
+      const response = await customAxios.post(
+        url, //요청 url
+        data, //요청 데이터
+        {
+          headers: {
+            Authorization: accessToken //accessToken을 헤더로 추가해서 요청 보냄
+          }
+        }
+      );
+      setSelectedDateEvent(response.data.result); //불러온 data의 result 값으로 selectedDateEvent 값 저장
+      console.log('응답 성공: ', response.data);
+    } catch (error) {
+      alert('서버 요청 중 오류 발생!');
+      console.error('요청 실패: ', error);
+    }
+  }
+
+  //pointDate 값이 바뀔 때마다 월별 일정을 불러 와야 한다 (fetchMonthlyData 호출)
+  useEffect(()=> {
+    fetchMonthlyData();
+  }, [pointDate]);
+
+  //selectedDate 값이 바뀔 때마다 일별 일정을 불러 와야 한다 (fetchSelectedDateEventData 호출)
+  useEffect(() => {
+    fetchSelectedDateEventData();
+  }, [selectedDate]);
+  
 
   //marker 색깔을 state로 관리할 것이다
-  let [markerColor, setMarkerColor] = useState(['bg-blue-500', 'bg-orange-600', 'bg-purple-400']);
+  let [markerColor, setMarkerColor] = useState(['bg-blue-500', 'bg-orange-600', 'bg-purple-400', 'bg-green-300', 'bg-gray-400']);
   const [isFloatingButtonOpen, setIsFloatingButtonOpen] = useState(false);
 
   //각 버튼의 개별 상태를 관리하여 순차적 pop-up 효과를 구현
@@ -157,6 +220,11 @@ function SchedulePage() {
         <div key={index} className="grid grid-cols-7 mb-2 text-center w-full max-w-sm">
           {week.map((day, subIndex) => {
             let isSelected = format(day, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
+
+            let planCounts = monthlyPlan?.find((item: { date: string; eventCount: number }) => 
+              item.date === format(day, 'yyyy-MM-dd')
+            )?.eventCount || 0;
+
             let isCurrentMonth = day.getMonth() === pointDate.getMonth();
             let style = isSelected
               ? 'bg-kuDarkGreen text-white'
@@ -174,8 +242,19 @@ function SchedulePage() {
                   {/* marker를 날짜 아래에 배치하여 하나의 요소처럼 보이게 함 */}
                   {isCurrentMonth ? (
                     <div className={'flex flex-col items-center justify-center'}>
-                      <div className={`w-1.5 h-1.5 mt-2 rounded-full ${isSelected ? 'outline outline-1 outline-white bg-orange-400' : 'bg-orange-400'}`} />
-                      <span className={`font-bold text-xs mt-2 ${isSelected ? 'text-white' : 'text-gray-500'}`}>+2</span>
+                      {
+                        planCounts > 0 ? (
+                          <>
+                          <div className={`w-1.5 h-1.5 mt-2 rounded-full ${isSelected ? 'outline outline-1 outline-white bg-orange-400' : 'bg-orange-400'}`} />
+                          <span className={`font-bold text-xs mt-2 ${isSelected ? 'text-white' : 'text-gray-500'}`}>+{planCounts}</span>
+                          </>
+                        ) : (
+                          <>
+                          <div className={`w-1.5 h-1.5 mt-2 rounded-full bg-transparent`} />
+                          <span className={'font-bold text-xs mt-2 text-transparent'}>0</span>
+                          </>
+                        )
+                      }
                     </div>
                     
                   ) : ( 
@@ -199,16 +278,21 @@ function SchedulePage() {
       <div className="w-full max-w-sm mt-6 flex flex-col items-start">
         <span className="text-xl font-bold mb-4">{selectedDate.getMonth() + 1}월 {selectedDate.getDate()}일</span>
         {
-          event.map((event, index) => (
-            //일정을 표현하는 카드 섹션
-            <div key={index} className="w-full max-w-sm bg-white border border-gray-300 rounded-lg p-2 shadow-sm mb-4 flex flex-row items-center">
-              <div className={`w-2 h-2 ml-2 ${markerColor[index]} rounded-full`}/>
-              <div className="pl-4 flex flex-col items-start">
-                <p className="text-gray-800 font-medium">{event.type} {event.place}</p>
-                <p className="text-gray-500 text-sm">{event.time} {event.gathering_Place}</p>
+          selectedDateEvent && selectedDateEvent.length !== 0 ? (
+            selectedDateEvent.map((event, index) => (
+              //일정을 표현하는 카드 섹션
+              <div key={index} className="w-full max-w-sm bg-white border border-gray-300 rounded-lg p-2 shadow-sm mb-4 flex flex-row items-center">
+                <div className={`w-2 h-2 ml-2 ${markerColor[index]} rounded-full`}/>
+                <div className="pl-4 flex flex-col items-start">
+                  <p className="text-gray-800 font-medium">{event.title}</p>
+                  <p className="text-gray-500 text-sm">{format(parseISO(event.time), 'HH:mm')} {event.location}</p>
+                </div>
               </div>
-            </div>
-          ))
+            ))
+          ) : (
+            //없다고 적어놔야 한다
+            <span className="text-xl font-bold mb-4">일정이 없습니다.</span>
+          )
         }
       </div>
       {/* 플로팅 버튼 */}
