@@ -26,6 +26,7 @@ interface FlashRunAdminData {
   userName: string;
   code?: string;
   postId?: string; // 게시글 ID 추가
+  postimgurl:string
 }
 
 const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
@@ -37,6 +38,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
   content,
   userName,
   postId,
+  postimgurl
 }) => {
   const [activeTab, setActiveTab] = useState<"소개" | "명단">("소개");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,11 +57,11 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
           {},
           {
             headers: {
-              Authorization: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6IlJPTEVfTUVNQkVSIiwiZXhwIjoxNzM4NjE0ODc0fQ.Rky7Mr2aywLO98GOLCAl-oNL4nRHOMdrA41DR3fpcMg", // 적절한 토큰으로 교체
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6IlJPTEVfTUVNQkVSIiwiZXhwIjoxNzM4NjE0ODc0fQ.Rky7Mr2aywLO98GOLCAl-oNL4nRHOMdrA41DR3fpcMg`, // 적절한 토큰으로 교체
             },
           }
         );
-
+        console.log(response.data)
         if (response.data.isSuccess) {
           const generatedCode = response.data.result.code;
           setCode(generatedCode);
@@ -92,7 +94,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
   return (
     <div className="flex flex-col items-center text-center px-5 justify-center">
       <div>
-        <img src={FlashRunBackimg} alt="flashrunimg" className="w-[373px]" />
+        <img src={postimgurl} alt="flashrunimg" className="w-[373px]" />
       </div>
       <div className="flex flex-col items-center mt-2.5">
         <img src={FlashRunlogo} alt="flashrunlogo" />

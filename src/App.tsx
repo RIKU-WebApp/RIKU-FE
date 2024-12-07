@@ -14,7 +14,7 @@ import Main from './components/MainPage/Main';
 import FlashRunList from './components/FlashRun/FlashRunList';
 import FlashRunMake from './components/FlashRun/FlashRunMake';
 import FlashRunDetail from './components/FlashRun/FlashRunDetail';
-import FlashRunUser from './components/FlashRun/FlashRunUser'
+
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
 
@@ -37,7 +37,7 @@ function App() {
             <Route path="/run" element={<FlashRunList />} />
             <Route path="/run/post/:postId" element={<FlashRunDetail />} />
             <Route path="/flash-run/user" element={<FlashRunMake />} />
-            <Route path='/test' element={<FlashRunUser />}/>
+            
             
           </Routes>
         </div>
