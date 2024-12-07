@@ -33,7 +33,7 @@ const Main: React.FC = () => {
             path="/run"
             onClick={handleCardClick}
             run_name="일감호"
-            run_date="11/10 일요일"
+            run_date="11/10"
           />
           <ContentList
             name="훈련"

@@ -33,7 +33,7 @@ const ContentList: React.FC<ContentListProps> = ({ name, path, run_name, run_dat
                 <img
                     src={RunCircle}
                     alt="runcircle"
-                    className="absolute w-[160px] h-[160px] left-0"
+                    className="absolute w-[160px] h-[160px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                 />
                 <img
                     src={RunInProgress}
