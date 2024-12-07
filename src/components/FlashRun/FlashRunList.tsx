@@ -166,7 +166,7 @@
           const response = await customAxios.get(`/run/flash`, {
             headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6IlJPTEVfTUVNQkVSIiwiZXhwIjoxNzM4NjE0ODc0fQ.Rky7Mr2aywLO98GOLCAl-oNL4nRHOMdrA41DR3fpcMg` },
           });
-  
+          console.log(response.data)
           // API 응답이 성공적인 경우
           if (response.data.isSuccess) {
             // 상태 매핑 객체 정의

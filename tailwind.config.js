@@ -25,6 +25,9 @@ module.exports = {
         kuWhite: '#FFFFFF',
         kuOrange: '#DEA93D',
       },
+      clipPath: {
+        triangle: "polygon(50% 0%, 0% 100%, 100% 100%)",
+      },
       
     },
   },

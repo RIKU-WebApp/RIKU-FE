@@ -4,3 +4,6 @@ export interface User {
     profileImage?: string | null; // null도 허용
     isPresent: boolean;
 }
+
+
+  

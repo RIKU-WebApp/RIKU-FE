@@ -71,21 +71,22 @@ import React from "react";
 
 interface AttendanceListProps {
   users: {
-    id: number;
-    name: string | undefined; // name이 undefined일 수 있으므로 타입 정의
+    userId: number;
+    userName: string | undefined; // name이 undefined일 수 있으므로 타입 정의
     profileImage?: string | null;
-    isPresent: boolean;
+    status: string;
   }[];
 }
 
 const AttendanceList: React.FC<AttendanceListProps> = ({ users }) => {
+  console.log(users)
   return (
     <div className="flex flex-col gap-2.5 p-5">
       {users.map((user, index) => (
     <div
-        key={user.id || `user-${index}`} // user.id가 없으면 index를 사용해 고유한 key 생성
+        key={user.userId || `user-${index}`} // user.id가 없으면 index를 사용해 고유한 key 생성
         className={`flex items-center gap-2.5 w-[335px] h-[57px] px-4 py-2.5 rounded-lg text-base font-medium ${
-        user.isPresent ? "bg-[#F0F4DD]" : "bg-[#ECEBE4]"
+        user.status === "ATTENDED" ? "bg-[#F0F4DD]" : "bg-[#ECEBE4]"
         }`}
     >
         {/* 순서 표시 */}
@@ -97,19 +98,19 @@ const AttendanceList: React.FC<AttendanceListProps> = ({ users }) => {
         {user.profileImage ? (
             <img
             src={user.profileImage}
-            alt={`${user.name || "Unknown"} profile`}
+            alt={`${user.userName || "Unknown"} profile`}
             className="w-full h-full object-cover"
             />
         ) : (
             <div className="bg-gray-600 w-full h-full flex justify-center items-center rounded-full">
-            {user.name?.charAt(0) || "?"}
+            {user.userName?.charAt(0) || "?"}
             </div>
         )}
         </div>
         {/* 이름 */}
-        <div className="flex-1 ml-2 text-left">{user.name || "이름 없음"}</div>
+        <div className="flex-1 ml-2 text-left">{user.userName || "이름 없음"}</div>
         {/* 상태 아이콘 */}
-        {user.isPresent && (
+        {user.status && (
         <div className="flex justify-center items-center">
             <svg
             xmlns="http://www.w3.org/2000/svg"

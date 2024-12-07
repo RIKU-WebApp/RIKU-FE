@@ -158,11 +158,12 @@ function FlashRunMake() {
           },
         }
       );
-  
+      
+      console.log(response.data)
       // 성공 처리
       if (response.data.isSuccess) {
         alert("번개런이 성공적으로 생성되었습니다!");
-        navigate("/flash-run");
+        navigate("/run");
       } else {
         alert(`요청 실패: ${response.data.responseMessage}`);
       }

@@ -1,3 +1,5 @@
+//서버통신 페이지
+
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import customAxios from "../../apis/customAxios";
@@ -18,6 +20,7 @@ interface DetailData {
   userName: string;
   participantsNum: number;
   participants: Participant[];
+  
 }
 
 const FlashRunDetail: React.FC = () => {
@@ -35,7 +38,7 @@ const FlashRunDetail: React.FC = () => {
             Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6IlJPTEVfTUVNQkVSIiwiZXhwIjoxNzM4NjE0ODc0fQ.Rky7Mr2aywLO98GOLCAl-oNL4nRHOMdrA41DR3fpcMg`, // .env에 저장된 토큰 사용
           },
         });
-
+        console.log(response.data)
         if (response.data.isSuccess) {
           const result = response.data.result;
           setDetailData({
@@ -50,6 +53,7 @@ const FlashRunDetail: React.FC = () => {
             userName: result.userName,
             participantsNum: result.participants.length,
             participants: result.participants,
+            
           });
         } else {
           console.error("데이터를 불러오지 못했습니다:", response.data.responseMessage);
@@ -74,7 +78,7 @@ const FlashRunDetail: React.FC = () => {
     return <div>데이터가 없습니다.</div>;
   }
 
-  return <FlashRunAdmin {...detailData} />;
+  return <FlashRunAdmin {...detailData} postId={postId} />;
 };
 
 export default FlashRunDetail;

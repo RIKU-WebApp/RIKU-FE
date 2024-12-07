@@ -1,0 +1,175 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 전체를 가운데 정렬 */
+    text-align: center;
+    margin: 0;
+    padding: 0 20px; /* 좌우 여백 */
+}
+
+.title-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* title-container 내부를 중앙 정렬 */
+    margin-top: 10px;
+}
+
+.flashrun-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.info-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* 아이콘과 텍스트 부분 왼쪽 정렬 */
+    width: 100%;
+    max-width: 360px; /* 적절한 너비 조절 */
+    margin-top: 20px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    margin: 5px 0; /* 각 항목 간격 조절 */
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px; /* 아이콘과 텍스트 간격 */
+}
+
+
+.pacer {
+    display: flex;
+    justify-content: center; /* 수평 중앙 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
+    text-align: center;
+    width: 327px;
+    height: 56px;
+    background-color: #F0F4DD;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 400px;
+    margin-top: 20px;
+}
+
+.detail {
+    margin: 20px;
+    width: 327px;
+    border-radius: 12px;
+    border: 1px #ECEBE4 solid;
+}
+
+.pacer-name{
+    margin: 20px;
+    text-align: left;
+}
+
+.detail-content {
+    color: #686F75;
+    margin: 20px;
+    text-align: justify;
+}
+
+.start-button {
+    display: flex;
+    justify-content: center; /* 수평 중앙 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
+    text-align: center;
+    font-family: 'Inter';
+    width: 327px;
+    height: 52px;
+    color: white;
+    background-color: #366943;
+    border-radius: 12px;
+    font-size: 20px;
+    font-weight: 700px;
+    margin-top: 80px;
+    margin-bottom: 10px;
+}
+
+/* 모달 오버레이 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 배경 어두움 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+/* 모달 창 */
+.modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 280px;
+    text-align: center;
+    position: relative;
+}
+
+/* 닫기 버튼 */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* 밑줄만 보이는 코드 입력 필드 */
+.code-input {
+    width: 100%;
+    padding: 10px 0;
+    border: none;
+    border-bottom: 1px solid #ccc; /* 밑줄 스타일 */
+    text-align: center;
+    font-size: 18px;
+    outline: none; /* 클릭 시 기본 테두리 제거 */
+}
+
+/* 모달의 시작하기 버튼 스타일 */
+.modal-start-button {
+    width: 100%;
+    padding: 15px 0;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    background-color: #E0E0E0; /* 비활성화 상태의 회색 */
+    color: #757575;
+    cursor: not-allowed;
+    margin-top: 20px;
+}
+
+/* 활성화된 모달 시작하기 버튼 */
+.modal-start-button.active {
+    background-color: #366943; /* 활성화된 녹색 */
+    color: white;
+    cursor: pointer;
+}
+
+.modal-button-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cancel-button {
+    background-color: #E0E0E0;
+    color: #757575;
+    cursor: pointer;
+}
+
+.cancel-button:hover {
+    background-color: #D6D6D6;
+}
