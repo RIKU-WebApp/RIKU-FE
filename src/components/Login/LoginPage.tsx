@@ -3,6 +3,8 @@ import riku_logo from '../../assets/riku_logo.png'; //라이쿠 로고 불러오
 import { Link, useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
 import customAxios from '../../apis/customAxios'; //커스텀 axios 호출
 
+import axios from 'axios'
+
 //로그인 페이지 
 function LoginPage() {
 
@@ -14,6 +16,12 @@ function LoginPage() {
   //로그인 버튼을 눌렀을 때 수행해야 할 로직을 담은 함수 (추후 로그인 API 연동 예정)
   async function handleLoginClick()
   {
+    //ID와 패스워드 필드를 모두 채우지 않았다면.. 그냥 return
+    if(id.length === 0 || password.length === 0)
+    {
+      alert('아이디와 비밀번호를 모두 입력해 주세요!');
+      return; 
+    }
 
     //post 요청 보낼 data 생성
     const data = {
@@ -24,12 +32,29 @@ function LoginPage() {
     const url = '/users/login';
     try {
       const response = await customAxios.post(url, data);
-      console.log(response.data);
+      if(response.data.isSuccess === true)
+      {
+        console.log(response.data.result.jwtInfo.accessToken);
+        alert(`로그인에 성공했습니다! 회원의 학번: ${response.data.result.studentId}`);
+        localStorage.setItem('accessToken', JSON.stringify(response.data.result.jwtInfo.accessToken));
+        navigate('/tab/main'); //버튼 클릭 시 '/tab'으로 이동
+      } else {
+        alert(`로그인 실패, 사유: ${response.data.responseMessage}`);
+      }
     } catch(error) {
-      console.error('응답 오류: ', error);
+      // AxiosError 타입으로 확인
+      if (axios.isAxiosError(error)) {
+        if (error.code === 'ERR_BAD_REQUEST') {
+          alert('ERR_BAD_REQUEST 발생: 잘못된 요청입니다.');
+        } else if (error.response?.status === 400) {
+          alert('400 Bad Request: 잘못된 요청입니다.');
+        } else {
+          alert('기타 Axios 오류! 다시 시도해 주십시오');
+        }
+      } else {
+        alert('예상치 못한 오류 발생! 다시 시도해 주십시오');
+      }
     }
-
-    navigate('/tab/main'); //버튼 클릭 시 '/tab'으로 이동
   }
   
   //Tailwind를 사용하여 스타일링 진행
