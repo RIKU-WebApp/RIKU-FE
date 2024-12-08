@@ -1,19 +1,24 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import logo from './logo.svg';
+
 import './App.css';
+import SchedulePage from './components/Main/SchedulePage';
+import MyPage from './components/Main/MyPage';
+import FlashRunMake from './components/FlashRun/FlashRunMake';
+import FlashRunDetail from './components/FlashRun/FlashRunDetail';
 
 import LoginPage from './components/Login/LoginPage';
+
 import StudentidInput from './components/createAccount/StudentidInput';
 import PasswordInput from './components/createAccount/PasswordInput';
 import NameInput from './components/createAccount/NameInput';
 import SchoolInputInfo from './components/createAccount/SchoolInfoInput';
 import TelNumberInput from './components/createAccount/TelNumberInput';
-import SchedulePage from './components/Main/SchedulePage';
-import MyPage from './components/Main/MyPage';
-import Main from './components/MainPage/Main';
 import FlashRunList from './components/FlashRun/FlashRunList';
-import FlashRunMake from './components/FlashRun/FlashRunMake';
-import FlashRunDetail from './components/FlashRun/FlashRunDetail';
+import FlashRunAdmin from './components/FlashRun/FlashRunAdmin';
+import MemberList from './components/FlashRun/MemberList';
+import TabNavigationUI from './components/TabNavigationUI';
 
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
@@ -33,11 +38,10 @@ function App() {
             <Route path='/telNum-input' element={<TelNumberInput />} />
             <Route path='/schedule-page' element={<SchedulePage />} />
             <Route path='/my-page' element={<MyPage />} />
-            <Route path="/main" element={<Main />} />
             <Route path="/run" element={<FlashRunList />} />
             <Route path="/run/post/:postId" element={<FlashRunDetail />} />
             <Route path="/flash-run/user" element={<FlashRunMake />} />
-            
+            <Route path='/tab/*' element={<TabNavigationUI/>} />
             
           </Routes>
         </div>

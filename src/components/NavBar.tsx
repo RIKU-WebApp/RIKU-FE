@@ -1,86 +1,74 @@
-import React, { useState } from 'react';
-import calicon from '../assets/navi-icon/calender-icon.svg';
-import homeicon from '../assets/navi-icon/home-icon.svg';
-import myicon from '../assets/navi-icon/my-icon.svg';
-import rankicon from '../assets/navi-icon/ranking-icon.svg';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
+
+//Icon들 import
+import MainIcon from '../assets/navi-icon/main-icon.svg?react';
+import CalendarIcon from '../assets/navi-icon/calendar-icon.svg?react';
+import RankingIcon from '../assets/navi-icon/ranking-icon.svg?react';
+import MyPageIcon from '../assets/navi-icon/mypage-icon.svg?react';
 
 const NavBar: React.FC = () => {
-    const navigate = useNavigate()
-    const [isOpen, setIsOpen] = useState<boolean>(false);
 
-    const toggleButtonAndOverlay = () => {
-        setIsOpen(!isOpen);
-    };
+  const navigate = useNavigate(); //네비게이팅을 위해 useNavigate() 훅 사용
+  const [selectedTab, setSelectedTab] = useState<string>("main"); //초기에는 main
 
-    const onClickFlashRunMake = () => {
-        navigate('/flash-run/user')
-    }
+  //각 네비게이션 아이템에 클릭 이벤트 추가
+  function handleNavigation(path: string, tabName: string) {
+    setSelectedTab(tabName); //넘어온 tabName을 바탕으로 selectedTab state 세팅!
+    navigate(path); //지정한 경로로 이동
+  }
 
-    return (
-        <div className="relative w-full max-w-[375px] mx-auto">
-            {/* 네비게이션 바 */}
-            <nav className="flex justify-around items-center w-full h-16 border-t-[1.5px] border-gray-300 fixed bottom-0 left-1/2 -translate-x-1/2 bg-white z-[1000] px-4">
-                <div className="text-center space-y-1">
-                    <img src={homeicon} alt="home" />
-                    <div className="text-[9px]">홈</div>
-                </div>
-                <div className="text-center space-y-1">
-                    <img src={calicon} alt="calender" />
-                    <div className="text-[9px]">일정</div>
-                </div>
-                <div className="text-center space-y-1">
-                    <img src={rankicon} alt="ranking" />
-                    <div className="text-[9px]">순위</div>
-                </div>
-                <div className="text-center space-y-1">
-                    <img src={myicon} alt="mypage" />
-                    <div className="text-[9px]">마이페이지</div>
-                </div>
-            </nav>
+  //아이콘을 선택 상태에 따라 동적으로 색깔 적용
+  const getIconColor = (tabName: string) =>
+    selectedTab === tabName ? "text-green-500" : "text-gray-400";
 
-            {/* 오버레이 */}
-            {isOpen && (
-                <div
-                    className="fixed inset-0 bg-black bg-opacity-60 z-[1050]"
-                    onClick={toggleButtonAndOverlay}
-                ></div>
-            )}
+  //텍스트를 선택 상태에 따라 동적으로 색깔 적용
+  const getTextColor = (tabName: string) =>
+    selectedTab === tabName ? "font-bold text-green-500" : "text-gray-400";
 
-            {/* 플로팅 버튼 */}
-            <div className="fixed bottom-[80px] left-[calc(50%+100px)]">
-                <button
-                    className={`w-[60px] h-[60px] bg-green-500 text-white text-[36px] flex justify-center items-center rounded-full shadow-lg z-[1100] transition-transform ${
-                        isOpen ? 'rotate-45' : 'rotate-0'
-                    }`}
-                    onClick={toggleButtonAndOverlay}
-                >
-                    +
-                </button>
-            </div>
 
-            {/* 메뉴 */}
-            {isOpen && (
-                <div className="fixed bottom-[150px] left-[calc(50%+27px)] z-[1100] flex flex-col items-center">
-                    <ul className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
-                        <li className="px-5 py-3 text-center text-base border-b border-gray-200 cursor-pointer hover:bg-gray-100">
-                            정규런 만들기
-                        </li>
-                        <li className="px-5 py-3 text-center text-base border-b border-gray-200 cursor-pointer hover:bg-gray-100"
-                        onClick={onClickFlashRunMake}>
-                            번개런 만들기
-                        </li>
-                        <li className="px-5 py-3 text-center text-base border-b border-gray-200 cursor-pointer hover:bg-gray-100">
-                            훈련 만들기
-                        </li>
-                        <li className="px-5 py-3 text-center text-base cursor-pointer hover:bg-gray-100">
-                            행사 만들기
-                        </li>
-                    </ul>
-                </div>
-            )}
+  return (
+    <div className="w-full">
+      {/* 네비게이션 바 */}
+      <nav className="fixed bottom-0 left-0 right-0 flex justify-between items-center w-full h-16 border-t-[1.5px] border-gray-300 bg-white z-[1000] pl-8 pr-8 pb-1">
+        {/* 홈 아이콘 */}
+        <div
+          className="flex flex-col items-center cursor-pointer"
+          onClick={() => handleNavigation("/tab/main", "main")}
+        >
+          <MainIcon className={`w-6 h-6 ${getIconColor("main")}`}/>
+          <div className={`text-xs ${getTextColor("main")}`}>홈</div>
         </div>
-    );
+        {/* 일정 아이콘 */}
+        <div
+          className="flex flex-col items-center cursor-pointer"
+          onClick={() => handleNavigation("/tab/schedule-page", "schedule-page")}
+        >
+          <CalendarIcon className={`w-6 h-6 ${getIconColor("schedule-page")}`}/>
+          <div className={`text-xs ${getTextColor("schedule-page")}`}>일정</div>
+        </div>
+        {/* 순위 아이콘 */}
+        <div
+          className="flex flex-col items-center cursor-pointer"
+          onClick={() => handleNavigation("/tab/ranking-page", "ranking-page")}
+        >
+          <RankingIcon className={`w-6 h-6 ${getIconColor("ranking-page")}`}/>
+          <div className={`text-xs ${getTextColor("ranking-page")}`}>순위</div>
+        </div>
+        {/* 마이페이지 아이콘 */}
+        <div
+          className="flex flex-col items-center cursor-pointer"
+          onClick={() => handleNavigation("/tab/my-page", "my-page")}
+        >
+          <MyPageIcon className={`w-6 h-6 ${getIconColor("my-page")}`}/>
+          <div className={`text-xs ${getTextColor("my-page")}`}>마이페이지</div>
+        </div>
+      </nav>
+    </div>
+  );
 };
 
 export default NavBar;
+
+
+

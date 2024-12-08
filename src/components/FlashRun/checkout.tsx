@@ -1,3 +1,5 @@
+//초기 번개런 상세페이지 코드
+
 import React, { useState } from "react";
 import FlashRunBackimg from '../../assets/FlashRunDetail/flashrunimage.jpeg';
 import FlashRunlogo from '../../assets/FlashRunDetail/flashrunlogo.svg';
