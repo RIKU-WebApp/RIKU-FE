@@ -38,7 +38,7 @@ function App() {
             <Route path="/run/post/:postId" element={<FlashRunDetail />} />
             <Route path="/run/make" element={<FlashRunMake />} />
             <Route path='/tab/*' element={<TabNavigationUI/>} />
-            <Route path='/tab/main' element={<Main_change/>}/>
+            <Route path='/main' element={<Main_change/>}/>
             
           </Routes>
         </div>
