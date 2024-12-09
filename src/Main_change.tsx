@@ -7,6 +7,12 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import plusBtn from './assets/plus_Icon.svg'; //라이쿠 로고 불러오기
 import customAxios from './apis/customAxios';
+import defaultTrainimg from './assets/basicImg.png'; // 게시물 디폴트 이미지
+import RunprogCircle from './assets/basicImg.png';
+import RunInProgress from './assets/Run-img/run-InProgress.svg';
+import runcircleargent from './assets/Run-img/runcircle-argent.svg';
+import runcircleclosed from './assets/Run-img/runcircle-closed.svg'
+import runclosedstatus from './assets/Run-img/run-closed.svg'
 import { el } from 'date-fns/locale';
 interface MainData {
   id?: number;
@@ -18,11 +24,14 @@ interface MainData {
   imageUrl?: string; // 이벤트 이미지 URL
   isoDate?: string; // ISO 형식의 원본 날짜
   runtype?: string //러닝 개최 방식
+  imgurl?:string
   onClick?: () => void; // 클릭 이벤트 핸들러 (선택 사항)
 }
 interface EventData {
   location?: string; // 이벤트 위치
   date?: string;     // 표시할 날짜 문자열
+  postimgurl?:string // 포스트 이미지
+  poststatus?:string // 포스트 상태
 }
 
 interface MainData {
@@ -108,6 +117,7 @@ const Main_change: React.FC<MainData> = () => {
             regularRun: {
               location: "See you",
               date: "next time",
+              
             },
             flashRun: {
               location: result[0]?.location || "번개런이 없네요",
@@ -118,16 +128,20 @@ const Main_change: React.FC<MainData> = () => {
                 const weekday = dateObj.toLocaleDateString("ko-KR", { weekday: "short" }); // 요일
                 return `${month}/${day} ${weekday}`;
               })() || "...",
+              postimgurl:result[0].postImgaeUrl,
+              poststatus:result[0].postStatus,
             },
             training: {
-              location: "주말훈련",
-              date: "11/15",
+              location: "See you",
+              date: "next time",
             },
             event: {
-              location: "행사X",
-              date: "...",
+              location: "See you",
+              date: "next time",
             },
-          });
+          }
+          
+        );
         } else {
           console.error("데이터를 불러오지 못했습니다.", response.data.responseMessage);
         }
@@ -155,25 +169,39 @@ const Main_change: React.FC<MainData> = () => {
             path="/run"
             location={maindata?.regularRun?.location}
             run_date={maindata?.regularRun?.date}
+            imgurl={defaultTrainimg}
+            circleimg={runcircleclosed}
+            statusimg={runclosedstatus}
+            poststatus='CLOSED'
           />
           <ContentList
             eventName="번개런"
             path="/run"
             onClick={handleCardClick}
+            imgurl={maindata?.flashRun?.postimgurl || defaultTrainimg}
             location={maindata?.flashRun?.location}
             run_date={maindata?.flashRun?.date}
+            poststatus={maindata?.flashRun?.poststatus}
           />
           <ContentList
             eventName="훈련"
             path="/training"
             location={maindata?.training?.location}
             run_date={maindata?.training?.date}
+            imgurl={defaultTrainimg}
+            circleimg={runcircleclosed}
+            statusimg={runclosedstatus}
+            poststatus=""
           />
           <ContentList
             eventName="행사"
             path="/event"
             location={maindata?.event?.location}
             run_date={maindata?.event?.date}
+            imgurl={defaultTrainimg}
+            circleimg={runcircleclosed}
+            statusimg={runclosedstatus}
+            poststatus=""
           />
         </div>
       </div>

@@ -64,6 +64,7 @@ function TelNumberInput() {
     dispatch(setTelNum(telNum)); //redux 저장소에 저장
     
     signUpRequest(); //회원가입 수행
+    
   };
 
   return (
