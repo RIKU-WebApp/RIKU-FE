@@ -191,7 +191,7 @@ const Main_change: React.FC<MainData> = () => {
             imgurl={defaultTrainimg}
             circleimg={runcircleclosed}
             statusimg={runclosedstatus}
-            poststatus=""
+            poststatus='CLOSED'
           />
           <ContentList
             eventName="행사"
@@ -201,7 +201,7 @@ const Main_change: React.FC<MainData> = () => {
             imgurl={defaultTrainimg}
             circleimg={runcircleclosed}
             statusimg={runclosedstatus}
-            poststatus=""
+            poststatus='CLOSED'
           />
         </div>
       </div>

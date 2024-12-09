@@ -28,6 +28,28 @@ const ContentList: React.FC<ContentListProps> = ({ imgurl, location, path, event
         navigate(path);
     };
 
+    const getCircleSrc = (status: string) => {
+        if (status === 'NOW') {
+          return RunprogCircle;
+        } else if (status === 'CLOSED') {
+          return runcircleclosed;
+        } else if (status === 'CLOSING') {
+          return runcircleargent;
+        }
+        
+      };
+
+      const getstatusbox = (status: string) => {
+        if (status === 'NOW') {
+          return RunInProgress;
+        } else if (status === 'CLOSED') {
+          return runclosedstatus;
+        } else if (status === 'CLOSING') {
+          return runargetstatus;
+        }
+        
+      };
+
     return (
         <div className="mt-2.5 flex flex-col items-center justify-center">
             <div className="w-full text-left text-xl font-bold mb-1 ml-6">
@@ -40,23 +62,12 @@ const ContentList: React.FC<ContentListProps> = ({ imgurl, location, path, event
                     className="brightness-[0.7]"
                 />
                 <img
-                    src={
-                        poststatus === 'NOW'
-                            ? RunprogCircle
-                            : poststatus === 'CLOSED'
-                            ? runcircleclosed
-                            : poststatus === 'CLOSING'
-                            ? runcircleargent
-                            : ""
-                    }
+                    src={getCircleSrc(poststatus)}
                     alt="runcircle"
                     className="absolute w-[160px] h-[160px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                 />
                 <img
-                    src={poststatus === 'NOW'
-                        ? RunInProgress
-                        : runargetstatus
-                    }
+                    src={getstatusbox(poststatus)}
                     alt="statusbox"
                     className="absolute left-[28%] top-[55%]"
                 />
