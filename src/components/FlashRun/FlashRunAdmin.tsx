@@ -1,6 +1,4 @@
-import axios from "axios";
 import React, { useState } from "react";
-import FlashRunBackimg from "../../assets/FlashRunDetail/flashrunimage.jpeg";
 import FlashRunlogo from "../../assets/FlashRunDetail/flashrunlogo.svg";
 import people from "../../assets/FlashRunDetail/people.svg";
 import place from "../../assets/FlashRunDetail/place.svg";
@@ -8,6 +6,7 @@ import time from "../../assets/FlashRunDetail/time.svg";
 import TabButton from "./TapButton";
 import AttendanceList from "./AttendanceList";
 import customAxios from "../../apis/customAxios";
+import flashrunimage from "../../assets/Run-img/flashrunimage.jpg"; // 번개런 기본이미지
 
 interface Participant {
   id: number;
@@ -47,17 +46,19 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
   const [isInputDisabled, setIsInputDisabled] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [error, setError] = useState<string | null>(null); // 에러 메시지
+  const [currentParticipants, setCurrentParticipants] = useState<Participant[]>(participants);
 
   const handleStartClick = async () => {
     if (!code) {
       try {
         // 출석 코드 생성 API 호출
+        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
         const response = await customAxios.post(
           `/run/post/${postId}/code`,
           {},
           {
             headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6IlJPTEVfTUVNQkVSIiwiZXhwIjoxNzM4NjE0ODc0fQ.Rky7Mr2aywLO98GOLCAl-oNL4nRHOMdrA41DR3fpcMg`, // 적절한 토큰으로 교체
+              Authorization: `${token}`, // 적절한 토큰으로 교체
             },
           }
         );
@@ -89,12 +90,32 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
 
   const handleCloseModal = () => setIsModalOpen(false);
 
-  const handleTabChange = (tab: "소개" | "명단") => setActiveTab(tab);
-
+  const handleTabChange = async (tab: "소개" | "명단") => { //명단 탭누를때 마다 명단 사람들의 상태 최신화
+    setActiveTab(tab);
+    if (tab === "명단") {
+      try {
+        const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+        const response = await customAxios.get(`/run/post/${postId}`, {
+          headers: {
+            Authorization: `${token}`,
+          },
+        });
+        if (response.data.isSuccess) {
+          console.log(response.data)
+          setCurrentParticipants(response.data.result.participants); // 최신 참가자 목록 설정
+        } else {
+          setError(response.data.responseMessage);
+        }
+      } catch (error: any) {
+        setError("참가자 목록을 가져오는 데 실패했습니다.");
+      }
+    }
+  };
+  
   return (
     <div className="flex flex-col items-center text-center px-5 justify-center">
       <div>
-        <img src={postimgurl} alt="flashrunimg" className="w-[373px]" />
+        <img src={postimgurl || flashrunimage} alt="flashrunimg" className="w-[373px] rounded-b-xl mb-2" />
       </div>
       <div className="flex flex-col items-center mt-2.5">
         <img src={FlashRunlogo} alt="flashrunlogo" />
@@ -132,12 +153,11 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
             </div>
           </div>
           <div className="mt-5 w-[327px] border border-[#ECEBE4] rounded-lg">
-            <div className="text-left p-5">{userName}</div>
             <div className="text-[#686F75] p-5 text-justify">{content}</div>
           </div>
         </>
       )}
-      {activeTab === "명단" && <AttendanceList users={participants} />}
+      {activeTab === "명단" && <AttendanceList users={currentParticipants} />}
       <button
         className={`flex justify-center items-center w-[327px] h-14 rounded-lg text-lg font-bold mt-20 mb-2 ${
           isFinished

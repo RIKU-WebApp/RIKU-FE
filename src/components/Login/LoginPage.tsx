@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import riku_logo from '../../assets/riku_logo.png'; //라이쿠 로고 불러오기
 import { Link, useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
 import customAxios from '../../apis/customAxios'; //커스텀 axios 호출
-
 import axios from 'axios'
+import { useMyContext } from '../Myprovider';
+
 
 //로그인 페이지 
-function LoginPage() {
+function LoginPage() { 
 
   const navigate = useNavigate(); //useNavigate 훅을 사용해 navigate 함수 생성
 
@@ -37,6 +38,7 @@ function LoginPage() {
         console.log(response.data.result.jwtInfo.accessToken);
         alert(`로그인에 성공했습니다! 회원의 학번: ${response.data.result.studentId}`);
         localStorage.setItem('accessToken', JSON.stringify(response.data.result.jwtInfo.accessToken));
+        localStorage.setItem('MyId', JSON.stringify(response.data.result.userId));
         navigate('/tab/main'); //버튼 클릭 시 '/tab'으로 이동
       } else {
         alert(`로그인 실패, 사유: ${response.data.responseMessage}`);

@@ -3,11 +3,8 @@ import RikuMainPhoto from '../../assets/Main-img/RikuMainPhoto.svg';
 import NavBar from '../NavBar';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import {useEffect, useState} from 'react'
-
 import GridContent from './GridContent';
-
 import plusBtn from '../../assets/plus_Icon.svg'; //라이쿠 로고 불러오기
 import basicImg from '../../assets/basicImg.png'; //행사 기본 이미지
 
@@ -32,8 +29,11 @@ const Main: React.FC = () => {
 
     //그리드 레이아웃에 있는 동그라미 버튼(GridContent)를 눌렀을 시의 동작 수행
     const handleCardClick = () => {
-        navigate('/flash-run');
+        navigate('/run');
     };
+    const handleRunMake = () => {
+        navigate('/run/make')
+    }
 
     //플로팅 버튼을 눌렀을 때.. 동작하는 floatingButton
     const toggleFloatingButton = () => {
@@ -109,6 +109,7 @@ const Main: React.FC = () => {
                 className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl bg-white text-black font-semibold shadow-lg py-2 px-4 hover:bg-gray-100 transition-all duration-300 ease-out transform ${
                 showFirstButton ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
                 }`}
+                onClick={handleRunMake}
             >
                 번개런 일정 추가하기
             </button>

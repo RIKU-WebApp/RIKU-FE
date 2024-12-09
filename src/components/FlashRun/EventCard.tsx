@@ -32,13 +32,13 @@ const EventCard: React.FC<EventCardProps> = ({
   };
 
   // 디버깅용 로그 추가
-  console.log("EventCard status:", status);
-  if (!statusImages[status]) {
-    console.error(`Invalid status: '${status}'`);
-    console.warn(
-      "유효하지 않은 status 값입니다. 'closed'로 기본값을 사용합니다."
-    );
-  }
+  // console.log("EventCard status:", status);
+  // if (!statusImages[status]) {
+  //   console.error(`Invalid status: '${status}'`);
+  //   console.warn(
+  //     "유효하지 않은 status 값입니다. 'closed'로 기본값을 사용합니다."
+  //   );
+  // }
 
   return (
     <div

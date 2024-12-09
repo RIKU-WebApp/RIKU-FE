@@ -30,18 +30,18 @@ const FlashRunDetail: React.FC = () => {
   const navigate = useNavigate(); // 페이지 이동 훅
   const [detailData, setDetailData] = useState<DetailData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  const myId = JSON.parse(localStorage.getItem('MyId') || 'null');
   // 서버에서 데이터를 가져오는 함수
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-        
+        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
         const response = await customAxios.get(`/run/post/${postId}`, {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfTUVNQkVSIiwiZXhwIjoxNzM4NzYxMzIzfQ.aZ-afJGbcQn4yZoQPIfnjIH_JVdvRxNZAyc4wvCvJ4M`, // .env에 저장된 토큰 사용
+            Authorization: `${token}`,
           },
         });
-        
+        console.log(myId)
         if (response.data.isSuccess) {
           const result = response.data.result;
           setDetailData({
@@ -83,7 +83,7 @@ const FlashRunDetail: React.FC = () => {
   if (!detailData) {
     return <div>데이터가 없습니다.</div>;
   }
-  if(detailData.adminId == 3) // 김경민 id 임시데이터 추후에 로그인하고 난 뒤의 userId로 바꿔야함
+  if(detailData.adminId == myId) // 내 userId와 게시글 만든 사람의 Id 비교후 렌더링
     return <FlashRunAdmin {...detailData} postId={postId} />;
   else
     return <FlashRunUser {...detailData} postId={postId}/>

@@ -34,7 +34,7 @@ function TelNumberInput() {
       "major": signupState.departmentName,
       "phone": signupState.telNum
     }
-
+    
     console.log('구성된 데이터: ', data);
 
     //해당 구역에 axios 요청을 진행할 것임(서버에 입력된 회원 정보를 저장해야 함)

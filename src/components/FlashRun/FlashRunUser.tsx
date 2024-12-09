@@ -1,12 +1,14 @@
-import React, { useState } from "react";
-import FlashRunBackimg from "../../assets/FlashRunDetail/flashrunimage.jpeg";
+import React, { useState, useEffect } from "react";
 import FlashRunlogo from "../../assets/FlashRunDetail/flashrunlogo.svg";
 import people from "../../assets/FlashRunDetail/people.svg";
 import place from "../../assets/FlashRunDetail/place.svg";
 import time from "../../assets/FlashRunDetail/time.svg";
+import backiconWhite from "../../assets/back-icon-white.svg"
 import TabButton from "./TapButton";
 import AttendanceList from "./AttendanceList";
 import customAxios from "../../apis/customAxios";
+import flashrunimage from "../../assets/Run-img/flashrunimage.jpg"; // 번개런 기본이미지
+import { Link, useNavigate } from "react-router-dom";
 
 interface Participant {
   id: number;
@@ -26,6 +28,7 @@ interface FlashRunUserData {
   code?: string;
   postId?: string; // 게시글 ID
   userStatus?: string; // 유저의 현재 상태 (참여, 출석 등)
+  postimgurl?: string;
 }
 
 const FlashRunUser: React.FC<FlashRunUserData> = ({
@@ -37,20 +40,48 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
   content,
   userName,
   postId,
+  postimgurl,
 }) => {
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<"소개" | "명단">("소개");
-  const [buttonText, setButtonText] = useState("참여하기");
+  const [buttonText, setButtonText] = useState(() => {
+    // 로컬 스토리지에서 buttonText 초기값 가져옴
+    return (
+      localStorage.getItem(`buttonText-${postId}`) ||
+      (localStorage.getItem(`userStatus-${postId}`) === "ATTENDED"
+        ? "출석완료"
+        : "참여하기")
+    );
+  });
   const [code, setCode] = useState(""); // 출석 코드
+  const [currentParticipants, setCurrentParticipants] = useState<Participant[]>(participants);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null); // 에러 메시지
-  const [userStatus, setUserStatus] = useState(""); // 기본 상태 PENDING
+  const [userStatus, setUserStatus] = useState(() => {
+    // 로컬 스토리지에서 userStatus 초기값 가져옴
+    return localStorage.getItem(`userStatus-${postId}`) || "";
+  });
+
+  // buttonText 변경 시 로컬 스토리지에 저장
+  useEffect(() => {
+    if (buttonText) {
+      localStorage.setItem(`buttonText-${postId}`, buttonText);
+    }
+  }, [buttonText, postId]);
+
+  // userStatus 변경 시 로컬 스토리지에 저장
+  useEffect(() => {
+    if (userStatus) {
+      localStorage.setItem(`userStatus-${postId}`, userStatus);
+    }
+  }, [userStatus, postId]);
 
   const handleStartClick = async () => {
     try {
-      
+      const token = JSON.parse(localStorage.getItem("accessToken") || "null");
       const response = await customAxios.post(`/run/post/${postId}/join`, {}, {
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6IlJPTEVfTUVNQkVSIiwiZXhwIjoxNzM4NjE0ODc0fQ.Rky7Mr2aywLO98GOLCAl-oNL4nRHOMdrA41DR3fpcMg`, // 적절한 토큰으로 교체
+          Authorization: `${token}`, // 적절한 토큰으로 교체
         },
       });
 
@@ -77,36 +108,62 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
     }
 
     try {
-      const UNTAE_TOKEN = process.env.UNTAE_TOKEN
+      const token = JSON.parse(localStorage.getItem("accessToken") || "null");
       const response = await customAxios.post(
         `/run/post/${postId}/attend`,
         { code },
         {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6IlJPTEVfTUVNQkVSIiwiZXhwIjoxNzM4NjE0ODc0fQ.Rky7Mr2aywLO98GOLCAl-oNL4nRHOMdrA41DR3fpcMg`
+            Authorization: `${token}`,
           },
         }
       );
 
       if (response.data.isSuccess) {
         setUserStatus(response.data.result.status); // 출석 상태로 업데이트
-        setButtonText("마감됨");
+        setButtonText("출석완료"); // 버튼 텍스트를 출석완료로 설정
         setError(null);
         setIsModalOpen(false); // 모달 닫기
       } else {
         setError(response.data.responseMessage);
       }
     } catch (error: any) {
-      setError("출석에 실패했습니다.");
+      setError("출석 코드를 다시 확인해주세요.");
     }
   };
 
-  const handleTabChange = (tab: "소개" | "명단") => setActiveTab(tab);
+  const handleTabChange = async (tab: "소개" | "명단") => { //명단 탭누를때 마다 명단 사람들의 상태 최신화
+    setActiveTab(tab);
+    if (tab === "명단") {
+      try {
+        const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+        const response = await customAxios.get(`/run/post/${postId}`, {
+          headers: {
+            Authorization: `${token}`,
+          },
+        });
+        if (response.data.isSuccess) {
+          console.log(response.data)
+          setCurrentParticipants(response.data.result.participants); // 최신 참가자 목록 설정
+        } else {
+          setError(response.data.responseMessage);
+        }
+      } catch (error: any) {
+        setError("참가자 목록을 가져오는 데 실패했습니다.");
+      }
+    }
+  };
 
   return (
     <div className="flex flex-col items-center text-center px-5 justify-center">
       <div>
-        <img src={FlashRunBackimg} alt="flashrunimg" className="w-[373px]" />
+        <img src={postimgurl || flashrunimage} alt="flashrunimg" className="w-[373px] mb-2 rounded-b-xl" />
+        <img
+          src={backiconWhite}
+          alt="back-icon"
+          className="absolute top-2 left-2 w-6 h-6 cursor-pointer z-10"
+          
+        />
       </div>
       <div className="flex flex-col items-center mt-2.5">
         <img src={FlashRunlogo} alt="flashrunlogo" />
@@ -144,19 +201,23 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
             </div>
           </div>
           <div className="mt-5 w-[327px] border border-[#ECEBE4] rounded-lg">
-            <div className="text-left p-5">{userName}</div>
             <div className="text-[#686F75] p-5 text-justify">{content}</div>
           </div>
         </>
       )}
-      {activeTab === "명단" && <AttendanceList users={participants} />}
+      {activeTab === "명단" && <AttendanceList users={currentParticipants} />}
       <button
-        className={`flex justify-center items-center w-[327px] h-14 rounded-lg text-lg font-bold mt-20 mb-2 ${
-          userStatus === "ATTENDED"
-            ? "bg-[#ECEBE4] text-[#757575] cursor-not-allowed"
-            : "bg-[#366943] text-white"
-        }`}
-        onClick={userStatus === "PENDING" ? handleStartClick : handleOpenAttendanceModal}
+        className={`flex justify-center items-center w-[327px] h-14 rounded-lg text-lg font-bold mt-20 mb-2 ${userStatus === "ATTENDED"
+          ? "bg-[#ECEBE4] text-[#757575] cursor-not-allowed"
+          : userStatus === "PENDING"
+            ? "bg-kuWarmGray text-white" // PENDING 상태일 때
+            : "bg-kuDarkGreen text-white" // 기본 상태 (참여하기)
+          }`}
+        onClick={
+          userStatus !== "PENDING"
+            ? handleStartClick
+            : handleOpenAttendanceModal
+        }
         disabled={userStatus === "ATTENDED"}
       >
         {buttonText}

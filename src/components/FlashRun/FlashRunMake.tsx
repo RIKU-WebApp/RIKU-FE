@@ -136,7 +136,7 @@ function FlashRunMake() {
       // 날짜 및 시간 포맷팅
       const isoDate = dateTime.date.toISOString().split("T")[0];
       const eventDateTime = `${isoDate}T${dateTime.time}`;
-      
+      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
       // FormData 생성
       const formData = new FormData();
       formData.append("title", title);
@@ -153,7 +153,8 @@ function FlashRunMake() {
         formData,
         {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6IlJPTEVfTUVNQkVSIiwiZXhwIjoxNzM4NjE0ODc0fQ.Rky7Mr2aywLO98GOLCAl-oNL4nRHOMdrA41DR3fpcMg`, // 적절한 토큰으로 교체
+            
+            Authorization: `${token}`, // 적절한 토큰으로 교체
             "Content-Type": "multipart/form-data",
           },
         }
