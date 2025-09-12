@@ -83,7 +83,7 @@ function AdminPage() {
     );
     updatedRoleChangedMembers.push(changedMember);
 
-    //상태 업데이트~
+    //상태 업데이트
     setEditedMembers(updatedMembers);
     setRoleChangedMembers(updatedRoleChangedMembers);
   }
@@ -201,9 +201,11 @@ function AdminPage() {
         <span className="text-2xl font-bold">회원 정보 관리</span>
       </div>
       <div className="flex items-center ml-4 mbs-4">
+        {/* 유의사항 및 총 인원 표시 */}
         <span className="text-sm font-bold">
           참고 사항: 표의 제목을 누르실 경우, 각 항목에 대해 정렬하여 조회하실 수 있습니다
         </span>
+        <span className="text-sm font-bold">총 인원: {members.length}명</span>
       </div>
       <div className="overflow-x-auto">
         <table className="table-auto w-[1220px] text-left border-collapse">
