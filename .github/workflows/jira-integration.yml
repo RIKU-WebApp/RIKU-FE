@@ -1,0 +1,57 @@
+name: Jira Integration (PR → Done, with safeguards)
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main, dev]
+
+jobs:
+  jira-update:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: PR 제목에서 이슈 키 추출
+        id: extract
+        run: |
+          ISSUE=$(echo "${{ github.event.pull_request.title }}" | grep -oE 'RIKU-[0-9]+' || true)
+          echo "issue=$ISSUE" >> $GITHUB_OUTPUT
+          echo "추출된 이슈: $ISSUE"
+
+      - name: Jira 이슈 상태 확인
+        id: status
+        if: steps.extract.outputs.issue != ''
+        run: |
+          sudo apt-get update && sudo apt-get install -y jq
+          RESPONSE=$(curl -s -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${{ steps.extract.outputs.issue }}?fields=status")
+
+          STATUS=$(echo $RESPONSE | jq -r '.fields.status.name')
+          echo "현재 상태: $STATUS"
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
+
+      - name: Jira transition 목록 조회
+        id: transitions
+        if: steps.status.outputs.status != 'Done' && steps.status.outputs.status != '완료'
+        run: |
+          RESPONSE=$(curl -s -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${{ steps.extract.outputs.issue }}/transitions")
+
+          echo "전체 응답: $RESPONSE"
+
+          # '완료' 또는 'Done' 이라는 이름 가진 transition의 ID 추출
+          ID=$(echo $RESPONSE | jq -r '.transitions[] | select(.name=="완료" or .name=="Done") | .id')
+
+          echo "done_id=$ID" >> $GITHUB_OUTPUT
+          echo "추출된 완료 전환 ID: $ID"
+
+      - name: Jira 이슈 상태 전환 (완료)
+        if: steps.transitions.outputs.done_id != '' && steps.status.outputs.status != 'Done' && steps.status.outputs.status != '완료'
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
+            --data "{\"transition\":{\"id\":\"${{ steps.transitions.outputs.done_id }}\"}}" \
+            "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${{ steps.extract.outputs.issue }}/transitions"
