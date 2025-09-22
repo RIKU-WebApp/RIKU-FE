@@ -132,13 +132,13 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
       }));
 
       //  출석 상태 먼저 반영
-      await customAxios.patch(
-        `/run/flash/post/${postId}/manual-attendance`,
-        attendanceData,
-        {
-          headers: { Authorization: `${token}` },
-        }
-      );
+      // await customAxios.patch(
+      //   `/run/flash/post/${postId}/manual-attendance`,
+      //   attendanceData,
+      //   {
+      //     headers: { Authorization: `${token}` },
+      //   }
+      // );
 
       //  출석 종료 처리
       const response = await customAxios.patch(
