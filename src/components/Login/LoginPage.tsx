@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import riku_logo from '../../assets/riku_logo_loginPage.png'; //라이쿠 로고 불러오기
 import { Link, useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
-import customAxios from '../../apis/customAxios'; //커스텀 axios 호출
+import customAxios from '@shared/apis/customAxios'; //커스텀 axios 호출
 import axios from 'axios';
 
 //ID와 비밀번호 찾기 버튼을 눌렀을 경우의 이벤트 처리

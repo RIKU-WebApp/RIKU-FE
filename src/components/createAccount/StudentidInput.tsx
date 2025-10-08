@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { setStudentID } from '../../redux/slices/signupSlice'; //Action Creator를 import 해온다!
 
 import axios from 'axios'; //axios(서버와의 통신을 위한 라이브러리) import!
-import customAxios from '../../apis/customAxios';
+import customAxios from '@shared/apis/customAxios';
 
 //학번의 유효성을 검사하는 메소드 validateStudentID
 // function validateStudentID(id: string) {

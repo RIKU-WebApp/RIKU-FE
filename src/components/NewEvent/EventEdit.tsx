@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import customAxios from '../../apis/customAxios';
-import BackIcon from '../../assets/BackBtn.svg';
+import customAxios from '@shared/apis/customAxios';
+import BackIcon from '@assets/BackBtn.svg';
 import { DateInput } from '../common/DateInput';
 import { TimePickerBottomSheet } from '../common/TimePickerBottomSheet';
 import imageCompression from 'browser-image-compression';

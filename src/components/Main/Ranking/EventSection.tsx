@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { SimpleUserInfo } from '../../../types/RankingPageTypes';
-import customAxios from '../../../apis/customAxios';
-import defaultProfileImg from '../../../assets/default_profile.png';
-import eventStar from '../../../assets/RankingPage/eventStar.png';
+import customAxios from '@shared/apis/customAxios';
+import defaultProfileImg from '@assets/default_profile.png';
+import eventStar from '@assets/RankingPage/eventStar.png';
 import EventSectionTopBanner from './EventSectionTopBanner';
 
-import star1 from '../../../assets/RankingPage/star1.png';
-import star2 from '../../../assets/RankingPage/star2.png';
+import star1 from '@assets/RankingPage/star1.png';
+import star2 from '@assets/RankingPage/star2.png';
 
 export default function EventSection({ onShowDetailModal }: { onShowDetailModal: () => void }) {
   const [eventTop20, setEventTop20] = useState<SimpleUserInfo[]>([]);

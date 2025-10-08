@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import FlashRunlogo from '../../assets/FlashRunDetail/flashrunlogo.svg';
-import people from '../../assets/FlashRunDetail/people.svg';
-import place from '../../assets/FlashRunDetail/place.svg';
-import time from '../../assets/FlashRunDetail/time.svg';
+import FlashRunlogo from '@assets/FlashRunDetail/flashrunlogo.svg';
+import people from '@assets/FlashRunDetail/people.svg';
+import place from '@assets/FlashRunDetail/place.svg';
+import time from '@assets/FlashRunDetail/time.svg';
 import TabButton from './TapButton';
 
-import customAxios from '../../apis/customAxios';
-import flashrunimage from '../../assets/Run-img/flashrunimage.jpg'; // 번개런 기본이미지
-import { Link, useNavigate } from 'react-router-dom';
-import BackBtnimg from '../../assets/BackBtn.svg';
-import pacermark from '../../assets/pacer-mark.svg';
+import customAxios from '@shared/apis/customAxios';
+import flashrunimage from '@assets/Run-img/flashrunimage.jpg'; // 번개런 기본이미지
+import { useNavigate } from 'react-router-dom';
+import BackBtnimg from '@assets/BackBtn.svg';
+import pacermark from '@assets/pacer-mark.svg';
 import CommentSection from '../common/CommentSection';
 import EditableAttendanceList from './EditableAttendanceList';
 

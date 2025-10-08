@@ -9,8 +9,8 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
-import customAxios from '../../apis/customAxios';
-import BacbBtnimg from '../../assets/BackBtn.svg';
+import customAxios from '@shared/apis/customAxios';
+import BacbBtnimg from '@assets/BackBtn.svg';
 import ListEventCard from './ListEventCard';
 import TodayRun from './TodayRun';
 import PastRuns from './PastRuns';

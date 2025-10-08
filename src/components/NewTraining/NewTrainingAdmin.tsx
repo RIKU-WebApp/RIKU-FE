@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import customAxios from '../../apis/customAxios';
+import customAxios from '@shared/apis/customAxios';
 
 import people from '../../assets/FlashRunDetail/people.svg';
-import place from '../../assets/FlashRunDetail/place.svg';
-import time from '../../assets/FlashRunDetail/time.svg';
-import BackBtnimg from '../../assets/BackBtn.svg';
-import pacermark from '../../assets/pacer-mark.svg';
+import place from '@assets/FlashRunDetail/place.svg';
+import time from '@assets/FlashRunDetail/time.svg';
+import BackBtnimg from '@assets/BackBtn.svg';
+import pacermark from '@assets/pacer-mark.svg';
 import flashrunimage from '../../assets/Run-img/flashrunimage.jpg';
 
 import TabButton from './TapButton';

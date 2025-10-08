@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
-import customAxios from '../../apis/customAxios';
+import customAxios from '@shared/apis/customAxios';
 import ActionBar from '../../components/ActionBar';
-import defaultProfileImg from '../../assets/default_profile.png';
+import defaultProfileImg from '@assets/default_profile.png';
 
 interface points {
   date: string;

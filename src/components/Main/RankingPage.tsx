@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
-import duganadi_Img from '../../assets/RankingPage/dueganadi.png'; //이미지 불러오기
-import defaultProfileImg from '../../assets/default_profile.png'; //기본 프로필 이미지 불러오기
-import rikuHorn_left from '../../assets/RankingPage/rikuHorn_left.svg';
-import rikuHorn_right from '../../assets/RankingPage/rikuHorn_right.svg';
-import rightArrow_Icon from '../../assets/right_arrow.svg'; //라이쿠 로고 불러오기
-import customAxios from '../../apis/customAxios';
+import { useState, useEffect } from 'react';
+import defaultProfileImg from '@assets/default_profile.png'; //기본 프로필 이미지 불러오기
+import rikuHorn_left from '@assets/RankingPage/rikuHorn_left.svg';
+import rikuHorn_right from '@assets/RankingPage/rikuHorn_right.svg';
+import customAxios from '@shared/apis/customAxios';
 
 //랭킹 페이지에서 보여줄 간단한 회원 정보에 관한 SimpleUserInfo interface
 interface SimpleUserInfo {

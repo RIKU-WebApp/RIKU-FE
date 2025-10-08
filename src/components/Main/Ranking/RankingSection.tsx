@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import defaultProfileImg from '../../../assets/default_profile.png';
-import rikuHorn_left from '../../../assets/RankingPage/rikuHorn_left.svg';
-import rikuHorn_right from '../../../assets/RankingPage/rikuHorn_right.svg';
+import defaultProfileImg from '@assets/default_profile.png';
+import rikuHorn_left from '@assets/RankingPage/rikuHorn_left.svg';
+import rikuHorn_right from '@assets/RankingPage/rikuHorn_right.svg';
 import { SimpleUserInfo } from '../../../types/RankingPageTypes';
-import customAxios from '../../../apis/customAxios';
+import customAxios from '@shared/apis/customAxios';
 
 // 토글에서 "순위" 탭이 선택된 경우, 보여줄 RankingSection
 export default function RankingSection() {

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import customAxios from '../../apis/customAxios';
-import CommentIcon from '../../assets/CommentIcon.svg';
-import CommentInputOn from '../../assets/comment_input_on.svg';
-import CommentInputOff from '../../assets/comment_input_off.svg';
+import customAxios from '@shared/apis/customAxios';
+import CommentIcon from '@assets/CommentIcon.svg';
+import CommentInputOn from '@assets/comment_input_on.svg';
+import CommentInputOff from '@assets/comment_input_off.svg';
 
 // 대댓글(Reply) 인터페이스
 interface Reply {

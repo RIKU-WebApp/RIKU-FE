@@ -1,7 +1,7 @@
 import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
-import customAxios from '../../apis/customAxios';
-import peopleimg from '../../assets/people_darkgreen.svg';
+import customAxios from '@shared/apis/customAxios';
+import peopleimg from '@assets/people_darkgreen.svg';
 
 interface User {
   userId: number;

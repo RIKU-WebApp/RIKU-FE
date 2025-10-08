@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'; //react-router-dom 라이브러�
 import { useSelector } from 'react-redux'; //상태값을 가져오기 위해 useSelector 사용
 import { RootState } from '../../redux/store';
 
-import customAxios from '../../apis/customAxios'; //커스텀 axios 컴포넌트 가져오기
+import customAxios from '@shared/apis/customAxios'; //커스텀 axios 컴포넌트 가져오기
 
 //전화번호 입력하는 화면인 TelNumberInput
 function TelNumberInput() {
