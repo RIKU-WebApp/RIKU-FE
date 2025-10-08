@@ -1,19 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { UNSAFE_ErrorResponseImpl, useNavigate } from "react-router-dom"; //react-router-dom 라이브러리를 사용 (useNavigation 사용할 예정)
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; //react-router-dom 라이브러리를 사용 (useNavigation 사용할 예정)
 
-import { useDispatch, useSelector } from "react-redux"; //상태값을 가져오기 위해 useSelector 사용
-import { setTelNum } from "../../redux/slices/signupSlice"; //Action Creator를 import 해온다!
-import { RootState } from "../../redux/store";
+import { useSelector } from 'react-redux'; //상태값을 가져오기 위해 useSelector 사용
+import { RootState } from '../../redux/store';
 
-import customAxios from "../../apis/customAxios"; //커스텀 axios 컴포넌트 가져오기
+import customAxios from '../../apis/customAxios'; //커스텀 axios 컴포넌트 가져오기
 
 //전화번호 입력하는 화면인 TelNumberInput
 function TelNumberInput() {
   const navigate = useNavigate(); //제출 후에 다음 화면으로 넘어가기 위해 useNavigate() hook 활용!
 
-  const [telNum, setTelNumInput] = useState<string>(""); //전화번호를 저장하는 state
+  const [telNum, setTelNumInput] = useState<string>(''); //전화번호를 저장하는 state
 
-  const dispatch = useDispatch(); //redux 사용을 위해 useDispatch 활용
   const signupState = useSelector((state: RootState) => state.signup); //상태값 가져오기
 
   //'비밀번호' 입력 란의 입력 값이 바뀔 때마다 취하는 액션을 정의한 handleChangeInPassword 메소드
@@ -31,15 +29,15 @@ function TelNumberInput() {
       name: signupState.name,
       college: signupState.collegeName,
       major: signupState.departmentName,
-      phone: phone === "" ? null : phone, // 전화번호(phone) 값이 비어있는 경우엔 null을 반환
+      phone: phone === '' ? null : phone, // 전화번호(phone) 값이 비어있는 경우엔 null을 반환
     };
 
     //해당 구역에 axios 요청을 진행할 것임(서버에 입력된 회원 정보를 저장해야 함)
     try {
-      const response = await customAxios.post("/user/signup", data);
+      const response = await customAxios.post('/user/signup', data);
       if (response.data.isSuccess === true) {
-        alert("정상적으로 회원 가입이 완료되었습니다");
-        navigate("/"); //'/next-step'라는 값을 가진 컴포넌트로 이동한다 (navigating)
+        alert('정상적으로 회원 가입이 완료되었습니다');
+        navigate('/'); //'/next-step'라는 값을 가진 컴포넌트로 이동한다 (navigating)
       } else if (response.data.isSuccess === false) {
         alert(response.data.responseMessage);
       }
@@ -52,10 +50,10 @@ function TelNumberInput() {
     e.preventDefault();
 
     //전화번호 입력 후 '다음' 버튼을 입력했을 경우(해당 경우에 대해서는 axios 요청을 진행해야 함)
-    if (telNum === "") {
-      alert("전화번호가 입력되지 않았습니다. 그대로 진행합니다");
+    if (telNum === '') {
+      alert('전화번호가 입력되지 않았습니다. 그대로 진행합니다');
     } else {
-      alert("전화번호가 입력되었습니다. 이대로 진행합니다");
+      alert('전화번호가 입력되었습니다. 이대로 진행합니다');
     }
 
     signUpRequest(telNum); //회원가입 수행

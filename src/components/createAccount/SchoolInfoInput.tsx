@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; //react-router-dom 라이브러리를 사용 (useNavigation 사용할 예정)
 
-import { useDispatch } from 'react-redux'; 
-import { setCollegeName, setDepartmentName } from '../../redux/slices/signupSlice' //Action Creator를 import 해온다!
+import { useDispatch } from 'react-redux';
+import { setCollegeName, setDepartmentName } from '../../redux/slices/signupSlice'; //Action Creator를 import 해온다!
 
 //학교 이름을 입력하는 화면인 SchoolInputInfo
 function SchoolInputInfo() {
   const navigate = useNavigate(); //제출 후에 다음 화면으로 넘어가기 위해 useNavigate() hook 활용!
 
   const dispatch = useDispatch(); //redux 사용을 위해 dispatch
-  
-  const [collegeName, setCollegeNameInput] = useState<string>(""); //단과대 이름
-  const [departmentName, setDepartmentNameInput] = useState<string>("") //학과(학부) 이름
+
+  const [collegeName, setCollegeNameInput] = useState<string>(''); //단과대 이름
+  const [departmentName, setDepartmentNameInput] = useState<string>(''); //학과(학부) 이름
   const [gotoNextScreenValid, setGotoNextScreenValid] = useState(false); //다음 화면으로 넘어가도 되는지 체크하는 valid값
 
   const handleChangeCollegeName = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -25,7 +25,6 @@ function SchoolInputInfo() {
     setDepartmentNameInput(input);
   };
 
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -35,19 +34,18 @@ function SchoolInputInfo() {
     //redux 저장소에 입력 정보들 저장
     dispatch(setCollegeName(collegeName));
     dispatch(setDepartmentName(departmentName));
-    
-    navigate('/telNum-input')
+
+    navigate('/telNum-input');
   };
 
   //다음 화면으로 넘어갈 수 있는 valid값은 useState를 통해 관리한다(collegeName, departmentName 값이 변할 때에만 동작하도록 설계)
   useEffect(() => {
-    if(collegeName !== "" && departmentName !== "")
-    {
-        setGotoNextScreenValid(true);
+    if (collegeName !== '' && departmentName !== '') {
+      setGotoNextScreenValid(true);
     } else {
-        setGotoNextScreenValid(false);
+      setGotoNextScreenValid(false);
     }
-  }, [collegeName, departmentName])
+  }, [collegeName, departmentName]);
 
   return (
     <div className="min-h-screen flex flex-col justify-between items-center bg-whiteSmoke px-6 py-10">
@@ -59,15 +57,15 @@ function SchoolInputInfo() {
         <span className="text-gray-400 text-sm">4/5</span>
       </div>
 
-      
-  
       {/* Main Form */}
       <form onSubmit={handleSubmit} className="w-full max-w-sm mt-16">
         {/* '아이디를 입력해 주세요' 텍스트 */}
         <div className="w-full max-w-sm">
-          <h1 className="text-left font-bold text-2xl text-black mb-12">학교 정보를 입력해 주세요.</h1>
+          <h1 className="text-left font-bold text-2xl text-black mb-12">
+            학교 정보를 입력해 주세요.
+          </h1>
         </div>
-  
+
         {/* 단과대 입력 필드(드롭다운 형식) */}
         <div className="mb-6">
           <select
@@ -90,25 +88,22 @@ function SchoolInputInfo() {
             <option value="사범대학">사범대학</option>
             <option value="언어교육원">언어교육원</option>
             <option value="대학원">대학원</option>
-        </select>
-        {collegeName !== '' ? (
+          </select>
+          {collegeName !== '' ? (
             <input
-            type="text"
-            value={departmentName}
-            onChange={handleChangeDepartmentName}
-            placeholder="학과(학부)를 입력해주세요"
-            className={`w-full px-4 py-2 border 'border-gray-300' rounded-md focus:outline-none mt-4`}
-          />
-        ) : (
-            null
-        )}
-
+              type="text"
+              value={departmentName}
+              onChange={handleChangeDepartmentName}
+              placeholder="학과(학부)를 입력해주세요"
+              className={`w-full px-4 py-2 border 'border-gray-300' rounded-md focus:outline-none mt-4`}
+            />
+          ) : null}
         </div>
 
         {/* 다음 버튼 */}
         <button
           type="submit"
-          className={`w-full py-3 mt-72 rounded-md ${(collegeName !== '' && departmentName !== '') ? 'bg-kuDarkGreen text-kuWhite hover: hover:bg-kuGreen' : ' text-gray-500 bg-gray-100'} transition-colors`}
+          className={`w-full py-3 mt-72 rounded-md ${collegeName !== '' && departmentName !== '' ? 'bg-kuDarkGreen text-kuWhite hover: hover:bg-kuGreen' : ' text-gray-500 bg-gray-100'} transition-colors`}
           disabled={!gotoNextScreenValid}
         >
           다음
@@ -119,7 +114,6 @@ function SchoolInputInfo() {
       <div className="mb-4"></div>
     </div>
   );
-  
 }
 
 export default SchoolInputInfo;

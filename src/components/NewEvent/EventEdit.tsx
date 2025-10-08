@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import customAxios from '../../apis/customAxios';
-import BackIcon from "../../assets/BackBtn.svg";
-import { DateInput } from "../common/DateInput";
-import { TimePickerBottomSheet } from "../common/TimePickerBottomSheet";
-import imageCompression from "browser-image-compression";
-
+import BackIcon from '../../assets/BackBtn.svg';
+import { DateInput } from '../common/DateInput';
+import { TimePickerBottomSheet } from '../common/TimePickerBottomSheet';
+import imageCompression from 'browser-image-compression';
 
 interface Pacer {
   id: number;
@@ -30,31 +29,29 @@ function EventEdit() {
   const navigate = useNavigate();
   const { postId } = useParams(); // URL에서 eventId를 가져옴
 
-  const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState('');
+  const [location, setLocation] = useState('');
+  const [content, setContent] = useState('');
   const [dateTime, setDateTime] = useState<{ date: Date | null; time: string }>({
     date: null,
-    time: "00:00",
+    time: '00:00',
   });
   const [pacerGroups, setPacerGroups] = useState<PacerGroup[]>([]);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [bottomSheetType, setBottomSheetType] = useState<'distance' | 'pace' | null>(null);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-  const [selectedDistance, setSelectedDistance] = useState<string>("5");
-  const [selectedMinutes, setSelectedMinutes] = useState<string>("5");
-  const [selectedSeconds, setSelectedSeconds] = useState<string>("30");
+  const [selectedDistance, setSelectedDistance] = useState<string>('5');
+  const [selectedMinutes, setSelectedMinutes] = useState<string>('5');
+  const [selectedSeconds, setSelectedSeconds] = useState<string>('30');
   const [pacers, setPacers] = useState<Pacer[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [postImagePreview, setPostImagePreview] = useState<string | null>(null);
   const [postImage, setPostImage] = useState<File | null>(null);
 
-
   const [attachmentPreviews, setAttachmentPreviews] = useState<string[]>([]);
   const [originalAttachmentUrls, setOriginalAttachmentUrls] = useState<string[]>([]); // 기존 URL
   const [newAttachmentFiles, setNewAttachmentFiles] = useState<File[]>([]); // 새로 업로드된 파일
-
 
   const fetchImageAsFile = async (url: string, index: number): Promise<File> => {
     const response = await fetch(url);
@@ -62,8 +59,6 @@ function EventEdit() {
     const ext = url.split('.').pop()?.split('?')[0] || 'jpg';
     return new File([blob], `existing_${index}.${ext}`, { type: blob.type });
   };
-
-
 
   // 행사 데이터를 수정 시 로딩
   useEffect(() => {
@@ -89,13 +84,10 @@ function EventEdit() {
           setAttachmentPreviews(eventData.attachmentUrls || []);
           setAttachments([]); // File은 새로 업로드할 때만 추가
 
-
-
-
-          console.log(eventData)
+          console.log(eventData);
         }
       } catch (error) {
-        console.error("행사 데이터 로드 중 오류 발생:", error);
+        console.error('행사 데이터 로드 중 오류 발생:', error);
       }
     };
     fetchEventData();
@@ -105,12 +97,12 @@ function EventEdit() {
 
   const handleSubmit = async () => {
     if (!title && !location && !content && !dateTime.date && !postImage) {
-      alert("수정할 내용을 하나 이상 입력해주세요.");
+      alert('수정할 내용을 하나 이상 입력해주세요.');
       return;
     }
 
     try {
-      const [hours, minutes] = dateTime.time.split(":").map(Number);
+      const [hours, minutes] = dateTime.time.split(':').map(Number);
       const selected = dateTime.date!;
 
       const kstDate = new Date(
@@ -122,69 +114,65 @@ function EventEdit() {
         0
       );
 
-
       const utcDate = new Date(kstDate.getTime() - 9 * 60 * 60 * 1000);
 
-
-      const pad = (n: number) => n.toString().padStart(2, "0");
+      const pad = (n: number) => n.toString().padStart(2, '0');
       const eventDateTime = `${utcDate.getFullYear()}-${pad(utcDate.getMonth() + 1)}-${pad(utcDate.getDate())}T${pad(utcDate.getHours())}:${pad(utcDate.getMinutes())}:${pad(utcDate.getSeconds())}`;
 
       const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
       const formData = new FormData();
 
       // 변경된 필드만 추가
-      if (title) formData.append("title", title);
-      if (location) formData.append("location", location);
-      if (content) formData.append("content", content);
-      if (eventDateTime) formData.append("date", eventDateTime);
-      if (postImage) formData.append("postImage", postImage);
+      if (title) formData.append('title', title);
+      if (location) formData.append('location', location);
+      if (content) formData.append('content', content);
+      if (eventDateTime) formData.append('date', eventDateTime);
+      if (postImage) formData.append('postImage', postImage);
 
       let fileIndex = 0;
       for (const preview of attachmentPreviews) {
-        if (preview.startsWith("http")) {
+        if (preview.startsWith('http')) {
           // 기존 이미지 → fetch해서 file 변환
           const res = await fetch(preview);
           const blob = await res.blob();
-          const file = new File([blob], `original_attachment_${Date.now()}.jpg`, { type: blob.type });
-          formData.append("attachments", file);
-        } else if (preview.startsWith("data:")) {
+          const file = new File([blob], `original_attachment_${Date.now()}.jpg`, {
+            type: blob.type,
+          });
+          formData.append('attachments', file);
+        } else if (preview.startsWith('data:')) {
           // 새로 추가한 이미지 → 파일로 전송
           const file = newAttachmentFiles[fileIndex];
           if (file) {
-            formData.append("attachments", file);
+            formData.append('attachments', file);
             fileIndex++;
           }
         }
       }
 
-
-
       const response = await customAxios.patch(`/run/event/post/${postId}`, formData, {
         headers: {
           Authorization: `${token}`,
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       });
 
       if (response.data.isSuccess) {
-        alert("행사가 성공적으로 수정되었습니다!");
+        alert('행사가 성공적으로 수정되었습니다!');
         navigate(`/event/${postId}`, { replace: true });
       } else {
         alert(`요청 실패: ${response.data.responseMessage}`);
       }
     } catch (error) {
-      console.error("행사 수정 중 오류:", error);
-      alert("행사 수정 중 문제가 발생했습니다.");
+      console.error('행사 수정 중 오류:', error);
+      alert('행사 수정 중 문제가 발생했습니다.');
     }
   };
-
 
   const handleRemoveAttachment = (index: number) => {
     const toRemove = attachmentPreviews[index];
     setAttachmentPreviews((prev) => prev.filter((_, i) => i !== index));
 
-
-    if (toRemove.startsWith("http")) {
+    if (toRemove.startsWith('http')) {
       // 기존 URL 삭제
       setOriginalAttachmentUrls((prev) => prev.filter((url) => url !== toRemove));
     } else {
@@ -193,10 +181,8 @@ function EventEdit() {
         const fileIndex = index - originalAttachmentUrls.length;
         return prev.filter((_, i) => i !== fileIndex);
       });
-
     }
   };
-
 
   const handleAttachmentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
@@ -207,8 +193,8 @@ function EventEdit() {
     const currentTotal = originalAttachmentUrls.length + newAttachmentFiles.length;
 
     if (currentTotal + selectedArray.length > 6) {
-      alert("최대 6장까지만 업로드할 수 있습니다.");
-      e.target.value = "";
+      alert('최대 6장까지만 업로드할 수 있습니다.');
+      e.target.value = '';
       return;
     }
 
@@ -229,16 +215,12 @@ function EventEdit() {
         setNewAttachmentFiles((prev) => [...prev, compressedFile]);
       }
     } catch (error) {
-      console.error("첨부 이미지 압축 실패:", error);
-      alert("첨부 이미지 압축 중 오류가 발생했습니다.");
+      console.error('첨부 이미지 압축 실패:', error);
+      alert('첨부 이미지 압축 중 오류가 발생했습니다.');
     }
 
-    e.target.value = "";
+    e.target.value = '';
   };
-
-
-
-
 
   const handlePostImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -257,14 +239,12 @@ function EventEdit() {
       reader.onloadend = () => setPostImagePreview(reader.result as string);
       reader.readAsDataURL(compressedFile);
     } catch (error) {
-      console.error("대표 이미지 압축 실패:", error);
-      alert("대표 이미지 압축 중 오류가 발생했습니다.");
+      console.error('대표 이미지 압축 실패:', error);
+      alert('대표 이미지 압축 중 오류가 발생했습니다.');
     }
 
-    event.target.value = ""; // input 초기화
+    event.target.value = ''; // input 초기화
   };
-
-
 
   return (
     <div className="flex flex-col items-center min-h-screen">
@@ -295,8 +275,14 @@ function EventEdit() {
           onChange={(e) => setLocation(e.target.value)}
         />
 
-        <DateInput selectedDate={dateTime.date} onChange={(date) => setDateTime({ ...dateTime, date })} />
-        <TimePickerBottomSheet time={dateTime.time} onChange={(time) => setDateTime({ ...dateTime, time })} />
+        <DateInput
+          selectedDate={dateTime.date}
+          onChange={(date) => setDateTime({ ...dateTime, date })}
+        />
+        <TimePickerBottomSheet
+          time={dateTime.time}
+          onChange={(time) => setDateTime({ ...dateTime, time })}
+        />
 
         <div className="mb-2 mt-4">세부사항</div>
         <textarea
@@ -313,12 +299,31 @@ function EventEdit() {
           {postImagePreview ? (
             <div className="relative w-[104px] h-[104px]">
               <img src={postImagePreview} className="w-full h-full object-cover rounded-md" />
-              <button onClick={() => { setPostImage(null); setPostImagePreview(null); }} className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">✕</button>
+              <button
+                onClick={() => {
+                  setPostImage(null);
+                  setPostImagePreview(null);
+                }}
+                className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+              >
+                ✕
+              </button>
             </div>
           ) : (
-            <label htmlFor="postImageUpload" className="w-[104px] h-[104px] border border-dashed border-gray-400 flex items-center justify-center text-gray-500 cursor-pointer rounded-md">+</label>
+            <label
+              htmlFor="postImageUpload"
+              className="w-[104px] h-[104px] border border-dashed border-gray-400 flex items-center justify-center text-gray-500 cursor-pointer rounded-md"
+            >
+              +
+            </label>
           )}
-          <input type="file" id="postImageUpload" accept="image/*" onChange={(e) => handlePostImageUpload(e)} className="hidden" />
+          <input
+            type="file"
+            id="postImageUpload"
+            accept="image/*"
+            onChange={(e) => handlePostImageUpload(e)}
+            className="hidden"
+          />
         </div>
 
         {/* 첨부 이미지 업로드 */}
@@ -328,17 +333,39 @@ function EventEdit() {
             {attachmentPreviews.map((img, index) => (
               <div key={index} className="relative w-[104px] h-[104px]">
                 <img src={img} className="w-full h-full object-cover rounded-md" />
-                <button onClick={() => handleRemoveAttachment(index)} className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">✕</button>
+                <button
+                  onClick={() => handleRemoveAttachment(index)}
+                  className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                >
+                  ✕
+                </button>
               </div>
             ))}
             {attachmentPreviews.length < 6 && (
-              <label htmlFor="attachmentUpload" className="w-[104px] h-[104px] border border-dashed border-gray-400 flex items-center justify-center text-gray-500 cursor-pointer rounded-md">+</label>
+              <label
+                htmlFor="attachmentUpload"
+                className="w-[104px] h-[104px] border border-dashed border-gray-400 flex items-center justify-center text-gray-500 cursor-pointer rounded-md"
+              >
+                +
+              </label>
             )}
           </div>
-          <input type="file" id="attachmentUpload" multiple accept="image/*" onChange={handleAttachmentUpload} className="hidden" />
+          <input
+            type="file"
+            id="attachmentUpload"
+            multiple
+            accept="image/*"
+            onChange={handleAttachmentUpload}
+            className="hidden"
+          />
         </div>
 
-        <button onClick={handleSubmit} className="w-full bg-[#366943] text-white py-3 rounded-lg mt-4">수정하기</button>
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-[#366943] text-white py-3 rounded-lg mt-4"
+        >
+          수정하기
+        </button>
       </div>
     </div>
   );

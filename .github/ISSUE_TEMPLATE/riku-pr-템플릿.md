@@ -1,9 +1,9 @@
 ---
 name: RIKU PR 템플릿
 about: PR 이력 관리를 일관된 형식으로 하기 위한 템플릿입니다.
-title: "[RIKU-이슈번호] PR 제목"
-labels: ""
-assignees: ""
+title: '[RIKU-이슈번호] PR 제목'
+labels: ''
+assignees: ''
 ---
 
 ## #️⃣연관된 이슈 (없으면 비워두세요) -> 어떤 이슈를 해결한 건지 연관되는 이슈 번호 작성

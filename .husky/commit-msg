@@ -1,0 +1,21 @@
+commit_msg_file=$1
+commit_msg=$(cat "$commit_msg_file")
+
+# 정규식 패턴 (메시지 최대 90자 허용)
+pattern='^\[RIKU-[0-9]+\]\s(feat|fix|chore|docs|style|refactor|perf|test):\s.{1,90}$'
+
+if ! echo "$commit_msg" | grep -Eq "$pattern"; then
+  echo "올바르지 않은 커밋 메시지 형식입니다."
+  echo "반드시 다음과 같은 형식을 지켜야 합니다:"
+  echo "   [RIKU-이슈번호] type: 설명"
+  echo ""
+  echo "예시:"
+  echo "   [RIKU-118] feat: 회원가입 API 연동"
+  echo "   [RIKU-201] fix: 로그인 버그 수정"
+  echo ""
+  echo "허용되는 type:"
+  echo "   feat | fix | chore | docs | style | refactor | perf | test"
+  echo ""
+  echo "설명 부분은 최소 1자 이상, 최대 90자까지 가능합니다."
+  exit 1
+fi

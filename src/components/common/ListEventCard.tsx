@@ -1,15 +1,15 @@
-import React from "react";
-import NOWimg from "../../assets/Main-img/NewOpenStatus.svg";
-import CLODESDimg from "../../assets/Main-img/NewClosedStatus.svg";
-import CANCELEDimg from "../../assets/Main-img/NewCanceledStatus.svg";
-import peopleimg from "../../assets/people_darkgreen.svg";
-import defaultimg from "../../assets/CardDefaultImg.svg";
+import React from 'react';
+import NOWimg from '../../assets/Main-img/NewOpenStatus.svg';
+import CLODESDimg from '../../assets/Main-img/NewClosedStatus.svg';
+import CANCELEDimg from '../../assets/Main-img/NewCanceledStatus.svg';
+import peopleimg from '../../assets/people_darkgreen.svg';
+import defaultimg from '../../assets/CardDefaultImg.svg';
 
 interface EventCardProps {
   location: string;
   postimg?: string;
   runDate: string; // 전체 ISO 날짜 문자열 (예: 2025-03-27T15:00:00)
-  runState: "NOW" | "CANCELED" | "CLOSED";
+  runState: 'NOW' | 'CANCELED' | 'CLOSED';
   date: string; // 가공된 날짜 문자열 (예: 2025.03.27)
   time: string; // 가공된 시간 문자열 (예: 15:00)
   participants: string;
@@ -19,7 +19,6 @@ interface EventCardProps {
 const ListEventCard: React.FC<EventCardProps> = ({
   location,
   postimg,
-  runDate,
   runState,
   date,
   time,
@@ -29,17 +28,16 @@ const ListEventCard: React.FC<EventCardProps> = ({
   // 상태에 따라 뱃지 이미지 선택
   const getStatusImage = () => {
     switch (runState) {
-      case "NOW":
+      case 'NOW':
         return NOWimg;
-      case "CANCELED":
+      case 'CANCELED':
         return CANCELEDimg;
-      case "CLOSED":
+      case 'CLOSED':
         return CLODESDimg;
       default:
         return NOWimg;
     }
   };
-
 
   return (
     <div
@@ -47,10 +45,7 @@ const ListEventCard: React.FC<EventCardProps> = ({
       onClick={onClick}
     >
       {/* 상태 뱃지 */}
-      <img
-        src={getStatusImage()}
-        className="w-[50px] h-[20px] absolute top-[16px] left-[14px]"
-      />
+      <img src={getStatusImage()} className="w-[50px] h-[20px] absolute top-[16px] left-[14px]" />
 
       {/* 날짜 및 시간 */}
       <div className="absolute top-[44px] left-[16px] text-[14px] text-black/60">
@@ -71,12 +66,9 @@ const ListEventCard: React.FC<EventCardProps> = ({
       {/* 러닝 이미지 */}
       <div className="absolute top-[106px] left-[16px] justify-center">
         <div className="w-[303px] h-[200px] overflow-hidden">
-          <img className="w-full h-full object-cover rounded-[8px]"
-            src={
-              postimg
-                ? postimg
-                : defaultimg
-            }
+          <img
+            className="w-full h-full object-cover rounded-[8px]"
+            src={postimg ? postimg : defaultimg}
           />
         </div>
       </div>
@@ -85,4 +77,3 @@ const ListEventCard: React.FC<EventCardProps> = ({
 };
 
 export default ListEventCard;
-

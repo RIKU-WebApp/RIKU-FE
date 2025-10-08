@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
-import eventTypo from "../../../assets/RankingPage/eventTypo.png";
-import arrow from "../../../assets/RankingPage/arrow.png";
+import eventTypo from '../../../assets/RankingPage/eventTypo.png';
+import arrow from '../../../assets/RankingPage/arrow.png';
 
 // 이벤트 랭킹 페이지 맨 상단에 위치한 EventSectionTopBanner
 const EventSectionTopBanner = ({ onShowDetailModal }: { onShowDetailModal: () => void }) => {

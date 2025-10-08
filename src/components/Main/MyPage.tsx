@@ -1,21 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Link 컴포넌트 import
-import profile_Img from "../../assets/default_profile.png"; //이미지 불러오기
-import rightArrow_Icon from "../../assets/right_arrow.svg"; //라이쿠 로고 불러오기
-import customAxios from "../../apis/customAxios";
+import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
+import profile_Img from '../../assets/default_profile.png'; //이미지 불러오기
+import rightArrow_Icon from '../../assets/right_arrow.svg'; //라이쿠 로고 불러오기
+import customAxios from '../../apis/customAxios';
 
 import {
   format,
-  addMonths,
-  subMonths,
   startOfMonth,
   endOfMonth,
   startOfWeek,
   endOfWeek,
   addDays,
   getMonth,
-  parseISO,
-} from "date-fns";
+} from 'date-fns';
 
 // 재사용 가능한 버튼 컴포넌트
 function renderButton(text: string, iconSrc: string, onClick: () => void) {
@@ -28,16 +25,16 @@ function renderButton(text: string, iconSrc: string, onClick: () => void) {
 }
 
 function getUserRole(role: string) {
-  if (role === "NEW_MEMBER") {
-    return "신입부원";
-  } else if (role === "MEMBER") {
-    return "일반부원";
-  } else if (role === "ADMIN") {
-    return "운영진";
-  } else if (role === "PACER") {
-    return "페이서";
+  if (role === 'NEW_MEMBER') {
+    return '신입부원';
+  } else if (role === 'MEMBER') {
+    return '일반부원';
+  } else if (role === 'ADMIN') {
+    return '운영진';
+  } else if (role === 'PACER') {
+    return '페이서';
   } else {
-    return "살려주세요";
+    return '살려주세요';
   }
 }
 
@@ -48,7 +45,7 @@ function makeCalendarDays(pointDate: Date) {
   const startDate = startOfWeek(monthStart); //현재 달의 시작 날짜가 포함된 주의 시작 날짜(그니까, 전 달의 날짜가 나올수도 있음!)
   const endDate = endOfWeek(monthEnd); //현재 달의 마지막 날짜가 포함된 주의 끝 날짜(그니까, 다음 달의 날짜가 나올수도 있음!)
 
-  let calendarDays = [];
+  const calendarDays = [];
   let start = startDate;
 
   while (start <= endDate) {
@@ -78,10 +75,10 @@ function MyPage() {
 
   //마이페이지에 표시할 유저의 정보를 저장하는 state(서버에서 받아와서 해당 정보를 업데이트할 예정)
   const [userInfo, setUserInfo] = useState<UserInfo>({
-    studentId: "",
-    userName: "",
-    userProfileImgUrl: "",
-    userRole: "",
+    studentId: '',
+    userName: '',
+    userProfileImgUrl: '',
+    userRole: '',
     points: 0,
     participationCount: 0,
     profileAttendanceDates: [],
@@ -90,9 +87,9 @@ function MyPage() {
   const [attendChecked, setAttendChecked] = useState(false);
 
   //오늘 날짜 기준으로 한달 치 날짜 만들기 (추후, "출석체크" 캘린더에서 사용할 예정)
-  const [pointDate, setPointDate] = useState(new Date());
+  const pointDate = useMemo(() => new Date(), []);
   const calendarDaysList = makeCalendarDays(pointDate);
-  let weeks: Date[][] = [];
+  const weeks: Date[][] = [];
   let week: Date[] = [];
   calendarDaysList.forEach((day) => {
     if (week.length < 7) {
@@ -106,8 +103,8 @@ function MyPage() {
 
   //유저 정보를 가져오는 메소드 fetchUserInfo
   async function fetchUserInfo() {
-    const accessToken = JSON.parse(localStorage.getItem("accessToken") || ""); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
-    const todayDate = format(new Date(), "yyyy-MM-dd");
+    const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+    const todayDate = format(new Date(), 'yyyy-MM-dd');
     const url = `/user/profile?date=${todayDate}`;
 
     try {
@@ -121,8 +118,8 @@ function MyPage() {
       );
 
       if (response.data.isSuccess === true) {
-        let formattedUserRole = getUserRole(response.data.result.userRole);
-        let data = {
+        const formattedUserRole = getUserRole(response.data.result.userRole);
+        const data = {
           studentId: response.data.result.studentId,
           userName: response.data.result.userName,
           userProfileImgUrl: response.data.result.userProfileImgUrl,
@@ -133,40 +130,35 @@ function MyPage() {
         };
         setUserInfo(data);
         setIsUserInfoLoaded(true); //데이터 로딩 완료 되었다는 표시
-        console.log(response.data)
+        console.log(response.data);
       } else if (response.data.isSuccess === false) {
         alert(`서버에서 제대로 유저 정보를 불러오지 못했습니다: ${response.data.responseMessage}`);
       }
     } catch (error) {
-      alert("서버 요청 중 오류 발생!");
-      console.error("요청 실패: ", error);
+      alert('서버 요청 중 오류 발생!');
+      console.error('요청 실패: ', error);
     }
-  }
-
-  // 버튼 클릭 시 수행할 함수
-  function handleNoticeClick() {
-    alert("열심히 기능 준비중입니다!");
   }
 
   //'프로필 수정' 버튼 눌렀을 때 수행할 함수
   function handleProfileFixBtnClick() {
-    navigate("/profilefix-page");
+    navigate('/profilefix-page');
   }
 
   //'활동 내역' 영역 눌렀을 시, '활동 상세 내역' 페이지로 가게 만드는 함수
   function handleParticipationCountClick() {
-    navigate("/activity-detail");
+    navigate('/activity-detail');
   }
 
   //'운영진 페이지' 버튼 클릭시 수행할 함수
   function handleToAdminPageClick() {
-    if (userInfo.userRole === "운영진") {
+    if (userInfo.userRole === '운영진') {
       //회원 정보가 운영진(ADMIN)일 경우
-      alert("운영진으로 확인되셨습니다. 운영진 페이지로 이동합니다");
-      navigate("/admin");
+      alert('운영진으로 확인되셨습니다. 운영진 페이지로 이동합니다');
+      navigate('/admin');
     } //운영진 페이지에 접근 권한이 없는 사람이라면
     else {
-      alert("회원님은 운영진이 아니므로 해당 페이지에 접근 권한이 없으십니다!");
+      alert('회원님은 운영진이 아니므로 해당 페이지에 접근 권한이 없으십니다!');
     }
   }
 
@@ -177,11 +169,11 @@ function MyPage() {
 
   //"출석하기" 버튼 클릭 시 이벤트 수행
   async function handleAttendCheckBtn() {
-    const accessToken = JSON.parse(localStorage.getItem("accessToken") || ""); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+    const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
     const url = `/user/attend`;
 
     try {
-      const response = await customAxios.post(
+      await customAxios.post(
         url, //요청 url
         {},
         {
@@ -190,25 +182,25 @@ function MyPage() {
           },
         }
       );
-      alert("출석이 완료됨!"); //"출석이 완료되었습니다"가 출력될 것
+      alert('출석이 완료됨!'); //"출석이 완료되었습니다"가 출력될 것
       setAttendChecked(true); //'출석됨'으로 표시
       await fetchUserInfo(); //여기에서 유저 정보를 갱신하는 함수(fetchUserInfo)를 call해야 캘린더에 반영된다
     } catch (error) {
-      alert("출석 요청 중 오류 발생!");
-      console.error("요청 실패: ", error);
+      alert('출석 요청 중 오류 발생!');
+      console.error('요청 실패: ', error);
     }
   }
 
   //"로그아웃" 버튼 클릭 시 이벤트 수행
   function handleLogout() {
     //1. 토큰 삭제
-    localStorage.removeItem("accessToken");
+    localStorage.removeItem('accessToken');
 
     //2. alert창 띄우기 (정상적으로 로그아웃 완료)
-    alert("정상적으로 로그아웃 되었습니다.");
+    alert('정상적으로 로그아웃 되었습니다.');
 
     //3. 로그인 페이지로 이동
-    navigate("/");
+    navigate('/');
   }
 
   //첫 렌더링 시에만 유저 정보 불러오기
@@ -220,8 +212,8 @@ function MyPage() {
   useEffect(() => {
     if (userInfo.profileAttendanceDates.length > 0) {
       //profileAttendanceDates가 비어있지 않은 경우에만 수행
-      const formattedDate = format(new Date(), "yyyy-MM-dd"); // 오늘 날짜를 formattedDate로 포맷팅
-      let isTodayAttended = userInfo.profileAttendanceDates.includes(formattedDate);
+      const formattedDate = format(new Date(), 'yyyy-MM-dd'); // 오늘 날짜를 formattedDate로 포맷팅
+      const isTodayAttended = userInfo.profileAttendanceDates.includes(formattedDate);
       if (isTodayAttended) {
         // 오늘 날짜가 출석되어 있다면
         setAttendChecked(true); // 출석 더 이상 못하게 한다
@@ -297,11 +289,11 @@ function MyPage() {
               className="relative grid grid-cols-7 mt-4 mb-4 text-center w-full max-w-sm"
             >
               {week.map((day, subIndex) => {
-                const formattedDate = format(day, "yyyy-MM-dd");
-                let markerOn = userInfo.profileAttendanceDates.includes(formattedDate);
-                let isToday = format(pointDate, "yyyy-MM-dd") === formattedDate; //오늘 날짜인지 아닌지 체크
-                let isCurrentMonth = getMonth(pointDate) === getMonth(day);
-                let style = isCurrentMonth ? "text-black" : "text-gray-400";
+                const formattedDate = format(day, 'yyyy-MM-dd');
+                const markerOn = userInfo.profileAttendanceDates.includes(formattedDate);
+                const isToday = format(pointDate, 'yyyy-MM-dd') === formattedDate; //오늘 날짜인지 아닌지 체크
+                const isCurrentMonth = getMonth(pointDate) === getMonth(day);
+                const style = isCurrentMonth ? 'text-black' : 'text-gray-400';
 
                 return (
                   <div key={subIndex} className="flex flex-col items-center justify-center">
@@ -335,14 +327,15 @@ function MyPage() {
 
         {/* 출석하기 버튼 */}
         <button
-          className={`w-full mt-4 mb-2 py-3 ${!isAttendCheckBtnValid()
-              ? "bg-kuDarkGreen hover:bg-kuGreen text-white"
-              : "bg-kuLightGray text-gray-900 cursor-not-allowed"
-            } font-bold rounded-md transition-colors`}
+          className={`w-full mt-4 mb-2 py-3 ${
+            !isAttendCheckBtnValid()
+              ? 'bg-kuDarkGreen hover:bg-kuGreen text-white'
+              : 'bg-kuLightGray text-gray-900 cursor-not-allowed'
+          } font-bold rounded-md transition-colors`}
           onClick={handleAttendCheckBtn}
           disabled={isAttendCheckBtnValid()}
         >
-          {attendChecked ? "출석 완료" : "출석하기"}
+          {attendChecked ? '출석 완료' : '출석하기'}
         </button>
       </div>
 
@@ -363,10 +356,10 @@ function MyPage() {
 
       {/* '운영진 페이지' 버튼 */}
       <div className="w-full max-w-sm mt-4">
-        {renderButton("운영진 페이지", rightArrow_Icon, handleToAdminPageClick)}
+        {renderButton('운영진 페이지', rightArrow_Icon, handleToAdminPageClick)}
       </div>
       <div className="w-full max-w-sm mt-4">
-        {renderButton("기록증 만들기", rightArrow_Icon, () => navigate("/Record"))}
+        {renderButton('기록증 만들기', rightArrow_Icon, () => navigate('/Record'))}
       </div>
 
       <div className="flex w-full max-w-sm mt-8 mb-8 justify-center">

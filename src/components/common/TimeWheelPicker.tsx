@@ -6,7 +6,6 @@ interface TimeWheelPickerProps {
   onSelect: (index: number) => void;
 }
 
-
 const TimeWheelPicker: React.FC<TimeWheelPickerProps> = ({ items, selected, onSelect }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemHeight = 56;
@@ -67,7 +66,6 @@ const TimeWheelPicker: React.FC<TimeWheelPickerProps> = ({ items, selected, onSe
           </div>
         ))}
       </div>
-
     </div>
   );
 };

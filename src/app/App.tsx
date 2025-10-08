@@ -1,43 +1,43 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import SchedulePage from "../components/Main/SchedulePage";
-import MyPage from "../components/Main/MyPage";
-import FlashRunMake from "../components/FlashRun/FlashRunMake";
-import FlashRunDetail from "../components/FlashRun/FlashRunDetail";
-import LoginPage from "../components/Login/LoginPage";
-import StudentidInput from "../components/createAccount/StudentidInput";
-import PasswordInput from "../components/createAccount/PasswordInput";
-import NameInput from "../components/createAccount/NameInput";
-import SchoolInputInfo from "../components/createAccount/SchoolInfoInput";
-import TelNumberInput from "../components/createAccount/TelNumberInput";
-import TabNavigationUI from "../components/TabNavigationUI";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import SchedulePage from '../components/Main/SchedulePage';
+import MyPage from '../components/Main/MyPage';
+import FlashRunMake from '../components/FlashRun/FlashRunMake';
+import FlashRunDetail from '../components/FlashRun/FlashRunDetail';
+import LoginPage from '../components/Login/LoginPage';
+import StudentidInput from '../components/createAccount/StudentidInput';
+import PasswordInput from '../components/createAccount/PasswordInput';
+import NameInput from '../components/createAccount/NameInput';
+import SchoolInputInfo from '../components/createAccount/SchoolInfoInput';
+import TelNumberInput from '../components/createAccount/TelNumberInput';
+import TabNavigationUI from '../components/TabNavigationUI';
 
-import NewMain from "../components/MainPage/NewMain";
-import AdminPage from "../components/AdminPage/AdminPage";
+import NewMain from '../components/MainPage/NewMain';
+import AdminPage from '../components/AdminPage/AdminPage';
 
-import { Provider } from "react-redux";
-import { store } from "../redux/store";
+import { Provider } from 'react-redux';
+import { store } from '../redux/store';
 
-import ProtectedRoute from "../components/ProtectedRoute";
+import ProtectedRoute from '../components/ProtectedRoute';
 
-import NewRegularRunMake from "../components/NewRegularRun/NewRegularRunMake";
-import EventMake from "../components/NewEvent/EventMake";
-import TrainingMake from "../components/NewTraining/TrainingMake";
+import NewRegularRunMake from '../components/NewRegularRun/NewRegularRunMake';
+import EventMake from '../components/NewEvent/EventMake';
+import TrainingMake from '../components/NewTraining/TrainingMake';
 
-import NewRegularRunDetail from "../components/NewRegularRun/NewRegularRunDetail";
-import NewTrainingDetail from "../components/NewTraining/NewTrainingDetail";
-import NewEventDetail from "../components/NewEvent/NewEventDetail";
+import NewRegularRunDetail from '../components/NewRegularRun/NewRegularRunDetail';
+import NewTrainingDetail from '../components/NewTraining/NewTrainingDetail';
+import NewEventDetail from '../components/NewEvent/NewEventDetail';
 
-import NewRegularRunEdit from "../components/NewRegularRun/NewRegularRunEdit";
-import NewTrainingEdit from "../components/NewTraining/NewTrainingEdit";
-import FlashRunEdit from "../components/FlashRun/FlashRunEdit";
-import EventEdit from "../components/NewEvent/EventEdit";
+import NewRegularRunEdit from '../components/NewRegularRun/NewRegularRunEdit';
+import NewTrainingEdit from '../components/NewTraining/NewTrainingEdit';
+import FlashRunEdit from '../components/FlashRun/FlashRunEdit';
+import EventEdit from '../components/NewEvent/EventEdit';
 
-import ProfileFixPage from "../components/Main/ProfileFixPage";
-import ActivityDetailPage from "../components/Main/ActivityDetailPage";
-import OnbordingPage from "../OnBoradingPage";
-import RunList from "../components/common/RunList";
+import ProfileFixPage from '../components/Main/ProfileFixPage';
+import ActivityDetailPage from '../components/Main/ActivityDetailPage';
+import OnbordingPage from '../OnBoradingPage';
+import RunList from '../components/common/RunList';
 
-import RecordPage from "../components/RecordPage";
+import RecordPage from '../components/RecordPage';
 
 function App() {
   return (

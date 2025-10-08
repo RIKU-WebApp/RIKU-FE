@@ -8,7 +8,7 @@ interface SignupState {
   name: string;
   collegeName: string;
   departmentName: string;
-  telNum: string|null;
+  telNum: string | null;
 }
 
 const initialState: SignupState = {
@@ -39,19 +39,13 @@ const signupSlice = createSlice({
     setDepartmentName: (state, action: PayloadAction<string>) => {
       state.departmentName = action.payload;
     },
-    setTelNum: (state, action: PayloadAction<string|null>) => {
+    setTelNum: (state, action: PayloadAction<string | null>) => {
       state.telNum = action.payload;
     },
   },
 });
 
-export const {
-  setStudentID,
-  setPassword,
-  setName,
-  setCollegeName,
-  setDepartmentName,
-  setTelNum,
-} = signupSlice.actions;
+export const { setStudentID, setPassword, setName, setCollegeName, setDepartmentName, setTelNum } =
+  signupSlice.actions;
 
 export default signupSlice.reducer;

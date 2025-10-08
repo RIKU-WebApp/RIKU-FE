@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom"; // Link 컴포넌트 import
-import customAxios from "../../apis/customAxios";
-import ActionBar from "../../components/ActionBar";
-import defaultProfileImg from "../../assets/default_profile.png";
-
-
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
+import customAxios from '../../apis/customAxios';
+import ActionBar from '../../components/ActionBar';
+import defaultProfileImg from '../../assets/default_profile.png';
 
 interface points {
   date: string;
@@ -26,35 +24,35 @@ interface userData {
 
 //활동 내역의 종류에 따라 마커 컬러를 return하는 메소드
 function setMarkerColor(type: string) {
-  if (type === "정규런") {
+  if (type === '정규런') {
     //정규런이면..
-    return "bg-kuDarkGreen";
-  } else if (type === "훈련") {
+    return 'bg-kuDarkGreen';
+  } else if (type === '훈련') {
     //훈련이면..
-    return "bg-kuYellow";
-  } else if (type === "행사") {
+    return 'bg-kuYellow';
+  } else if (type === '행사') {
     //행사이면..
-    return "bg-kuBrown";
-  } else if (type === "번개런") {
+    return 'bg-kuBrown';
+  } else if (type === '번개런') {
     //번개런이면..
-    return "bg-kuGreen";
+    return 'bg-kuGreen';
   } else {
-    return "bg-kuCoolGray";
+    return 'bg-kuCoolGray';
   }
 }
 
 //들어오는 정보에 따라 적당한 역할 문자열을 반환해 주는 getUserRole
 function getUserRole(role: string | undefined) {
-  if (role === "NEW_MEMBER") {
-    return "신입부원";
-  } else if (role === "MEMBER") {
-    return "일반부원";
-  } else if (role === "ADMIN") {
-    return "운영진";
-  } else if (role === "INACTIVE") {
-    return "비활성화 사용자";
+  if (role === 'NEW_MEMBER') {
+    return '신입부원';
+  } else if (role === 'MEMBER') {
+    return '일반부원';
+  } else if (role === 'ADMIN') {
+    return '운영진';
+  } else if (role === 'INACTIVE') {
+    return '비활성화 사용자';
   } else {
-    return "살려주세요";
+    return '살려주세요';
   }
 }
 
@@ -67,18 +65,18 @@ function ActivityDetailPage() {
   //유저 세부 정보를 불러오는 fetchUserDetailedProfile()
   async function fetchUserDetailedProfile() {
     try {
-      const url = "/user/profile/participations"; //"마이페이지 활동내역 조회" api의 url로 설정
-      const accessToken = JSON.parse(localStorage.getItem("accessToken") || ""); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+      const url = '/user/profile/participations'; //"마이페이지 활동내역 조회" api의 url로 설정
+      const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
       const response = await customAxios.get(url, {
         headers: {
           Authorization: accessToken,
         },
       });
       setUserData(response.data.result); //불러온 값(response.data.result)으로 userData를 세팅!
-      console.log(response.data.result)
+      console.log(response.data.result);
     } catch (error) {
-      console.error("프로필 불러오기 실패:", error);
-      alert("프로필 불러오기 실패!");
+      console.error('프로필 불러오기 실패:', error);
+      alert('프로필 불러오기 실패!');
     }
   }
 
@@ -91,11 +89,10 @@ function ActivityDetailPage() {
     const utcDate = new Date(utcDateString);
     const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000); // KST = UTC + 9시간
     const year = kstDate.getFullYear();
-    const month = String(kstDate.getMonth() + 1).padStart(2, "0");
-    const day = String(kstDate.getDate()).padStart(2, "0");
+    const month = String(kstDate.getMonth() + 1).padStart(2, '0');
+    const day = String(kstDate.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
-  
 
   return (
     <>
@@ -149,7 +146,7 @@ function ActivityDetailPage() {
                   {/* 좌측 정보 영역 */}
                   <div className="flex flex-col justify-center gap-1 px-4 py-3 bg-white w-4/5">
                     <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <span>{toKST_YMD(participationDetail.date)}</span>
+                      <span>{toKST_YMD(participationDetail.date)}</span>
                       <span
                         className={`${setMarkerColor(
                           participationDetail.tag
@@ -160,7 +157,7 @@ function ActivityDetailPage() {
                     </div>
                     <div className="text-m font-medium text-gray-800">
                       [
-                      {participationDetail.tag === "출석" //tag가 "출석"인 경우에는 type만 띄워준다
+                      {participationDetail.tag === '출석' //tag가 "출석"인 경우에는 type만 띄워준다
                         ? participationDetail.type
                         : (participationDetail.tag, participationDetail.type)}
                       ] {participationDetail.postTitle} {/*postTitle(게시글 제목 등)을 띄워준다*/}

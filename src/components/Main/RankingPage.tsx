@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Link 컴포넌트 import
-import duganadi_Img from "../../assets/RankingPage/dueganadi.png"; //이미지 불러오기
-import defaultProfileImg from "../../assets/default_profile.png"; //기본 프로필 이미지 불러오기
-import rikuHorn_left from "../../assets/RankingPage/rikuHorn_left.svg";
-import rikuHorn_right from "../../assets/RankingPage/rikuHorn_right.svg";
-import rightArrow_Icon from "../../assets/right_arrow.svg"; //라이쿠 로고 불러오기
-import customAxios from "../../apis/customAxios";
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
+import duganadi_Img from '../../assets/RankingPage/dueganadi.png'; //이미지 불러오기
+import defaultProfileImg from '../../assets/default_profile.png'; //기본 프로필 이미지 불러오기
+import rikuHorn_left from '../../assets/RankingPage/rikuHorn_left.svg';
+import rikuHorn_right from '../../assets/RankingPage/rikuHorn_right.svg';
+import rightArrow_Icon from '../../assets/right_arrow.svg'; //라이쿠 로고 불러오기
+import customAxios from '../../apis/customAxios';
 
 //랭킹 페이지에서 보여줄 간단한 회원 정보에 관한 SimpleUserInfo interface
 interface SimpleUserInfo {
@@ -24,8 +24,8 @@ function RankingPage() {
 
   //자신의 정보 myInfo (안 불러져왔을 경우 표시할 placeholder 격의 데이터 하나 넣어놓을 것임)
   const [myInfo, setMyInfo] = useState<SimpleUserInfo>({
-    userName: "정보없음",
-    userProfileImg: "https://via.placeholder.com/48",
+    userName: '정보없음',
+    userProfileImg: 'https://via.placeholder.com/48',
     totalPoints: 111,
     userId: 1,
   });
@@ -43,9 +43,9 @@ function RankingPage() {
 
   //초기에 랭킹 정보를 가져와야 한다. 해당 기능을 수행하는 메소드 fetchRankingInfo()
   async function fetchRankingInfo() {
-    const accessToken = JSON.parse(localStorage.getItem("accessToken") || ""); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+    const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
 
-    const url = "/ranking";
+    const url = '/ranking';
 
     try {
       setIsLoading(true); // 현재 데이터 로딩 중임을 표시
@@ -63,7 +63,7 @@ function RankingPage() {
       let idx: number = 1;
 
       //상위 10명의 정보를 넣어둘 배열 top20 (response.data.result의 "top20"에서 정보를 가져온다)
-      let top20: SimpleUserInfo[] = response.data.result.top20?.map((user: SimpleUserInfo) => ({
+      const top20: SimpleUserInfo[] = response.data.result.top20?.map((user: SimpleUserInfo) => ({
         userId: idx++,
         userName: user.userName,
         userProfileImg: user.userProfileImg || null,
@@ -78,16 +78,16 @@ function RankingPage() {
         }
       }
 
-      let my: SimpleUserInfo = response.data.result.userPoints; //사용자 정보를 불러와서 저장
-      let myRank: number = response.data.result.userRanking; //사용자 랭킹 정보를 불러와서 저장
+      const my: SimpleUserInfo = response.data.result.userPoints; //사용자 정보를 불러와서 저장
+      const myRank: number = response.data.result.userRanking; //사용자 랭킹 정보를 불러와서 저장
 
       //불러온 정보들 바탕으로 set
       setTop20_Info(top20);
       setMyInfo(my);
       setMyRankingInfo(myRank);
     } catch (error) {
-      alert("서버 요청 중 오류 발생!");
-      setError("요청 실패: " + error);
+      alert('서버 요청 중 오류 발생!');
+      setError('요청 실패: ' + error);
     } finally {
       setIsLoading(false); // 데이터 로딩 완료 표시
     }
@@ -267,7 +267,7 @@ function RankingPage() {
           onClick={toggleViewCount}
         >
           <span className="text-black text-base font-normal">
-            {viewCount === 10 ? "전체보기" : "간략히 보기"}
+            {viewCount === 10 ? '전체보기' : '간략히 보기'}
           </span>
         </div>
       </div>

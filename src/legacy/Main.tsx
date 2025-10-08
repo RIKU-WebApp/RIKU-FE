@@ -8,11 +8,10 @@
 // import plusBtn from '../../assets/plus_Icon.svg'; //라이쿠 로고 불러오기
 // import basicImg from '../../assets/basicImg.png'; //행사 기본 이미지
 
-
 // const Main: React.FC = () => {
 
 //     const [isFloatingButtonOpen, setIsFloatingButtonOpen] = useState(false);
-    
+
 //     const runData = [
 //         { name: '정규런', date: '7/24 목요일', place: '노들섬', status: '마감 임박', image: basicImg, bgColor: 'bg-yellow-400' },
 //         { name: '번개런', date: '7/24 목요일', place: '일감호', status: '모집중', image: basicImg, bgColor: 'bg-green-400' },
@@ -62,7 +61,6 @@
 //     }
 //     }, [isFloatingButtonOpen]); //isFloatingButtonOpen state값이 바뀔 때마다 적용
 
-
 //     return (
 //     <div className="min-h-screen flex flex-col items-center h-full">
 //         {/* Top Logo Section */}
@@ -99,7 +97,7 @@
 //             className={`w-8 h-8 transition-transform duration-300 ${isFloatingButtonOpen ? 'rotate-20' : 'rotate-0'}`}
 //         />
 //         </button>
-        
+
 //         {/* 플로팅 버튼이 열렸을 때 나타나는 옵션들 */}
 //         {isFloatingButtonOpen && (
 //         <div onClick={() => setIsFloatingButtonOpen(false)} className="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-500 ease-in-out flex justify-end items-end p-8 z-40">

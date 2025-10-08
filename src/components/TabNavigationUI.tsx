@@ -1,11 +1,11 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import NavBar from "./NavBar";
-import MyPage from "./Main/MyPage";
-import SchedulePage from "./Main/SchedulePage";
-import RankingPage from "./Main/RankingPage";
-import NewMain from "./MainPage/NewMain";
-import ActionBar from "../components/ActionBar";
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import NavBar from './NavBar';
+import MyPage from './Main/MyPage';
+import SchedulePage from './Main/SchedulePage';
+import RankingPage from './Main/RankingPage';
+import NewMain from './MainPage/NewMain';
+import ActionBar from '../components/ActionBar';
 
 //하단의 탭을 이용해서 오고가는 TabNavigationUI
 function TabNavigationUI() {

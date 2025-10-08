@@ -3,23 +3,29 @@
 @tailwind components;
 @tailwind utilities;
 
-
 :root {
   color-scheme: light; /* 브라우저 다크모드 비활성 */
 }
 
 /* 이미지, SVG, 동영상, 캔버스 등 자동 색 반전 막기 */
-img, svg, canvas, video {
+img,
+svg,
+canvas,
+video {
   filter: none !important;
   mix-blend-mode: normal;
 }
 
 @media (prefers-color-scheme: dark) {
-  html, body {
+  html,
+  body {
     background: #ffffff;
     color: #111111;
   }
-  img, video, canvas, picture {
+  img,
+  video,
+  canvas,
+  picture {
     filter: none !important; /* 이미지 색 반전 방지 */
     mix-blend-mode: normal;
   }
@@ -27,30 +33,32 @@ img, svg, canvas, video {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
-    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 .danjoBoldRegular {
   text-align: center;
-  font-family: "DanjoBoldRegular";
+  font-family: 'DanjoBoldRegular';
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 @font-face {
-  font-family: "Apple SD Gothic Neo";
+  font-family: 'Apple SD Gothic Neo';
   font-weight: 100;
   font-style: normal;
   font-display: swap;
-  src: url("https://cdn.jsdelivr.net/gh/fonts-archive/AppleSDGothicNeo/AppleSDGothicNeo-Thin.woff2")
-      format("woff2"),
-    url("https://cdn.jsdelivr.net/gh/fonts-archive/AppleSDGothicNeo/AppleSDGothicNeo-Thin.ttf")
-      format("truetype");
+  src:
+    url('https://cdn.jsdelivr.net/gh/fonts-archive/AppleSDGothicNeo/AppleSDGothicNeo-Thin.woff2')
+      format('woff2'),
+    url('https://cdn.jsdelivr.net/gh/fonts-archive/AppleSDGothicNeo/AppleSDGothicNeo-Thin.ttf')
+      format('truetype');
 }
 
 /* 페이퍼로지 폰트 */
@@ -109,4 +117,6 @@ code {
   font-weight: 900;
 }
 
-html { -webkit-text-size-adjust: 100%; } /* 안드로이드 자동 글자확대 방지 */
+html {
+  -webkit-text-size-adjust: 100%;
+} /* 안드로이드 자동 글자확대 방지 */

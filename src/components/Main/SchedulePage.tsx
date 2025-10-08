@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import plusBtn from "../../assets/plus_Icon.svg"; //라이쿠 로고 불러오기
-import customAxios from "../../apis/customAxios"; //커스텀 axios 호출
+import plusBtn from '../../assets/plus_Icon.svg'; //라이쿠 로고 불러오기
+import customAxios from '../../apis/customAxios'; //커스텀 axios 호출
 
 import {
   format,
@@ -17,7 +17,7 @@ import {
   addYears,
   subYears,
   addHours,
-} from "date-fns";
+} from 'date-fns';
 
 //한 달 달력에 들어갈 내용(날짜(Date))들의 배열을 만든다.
 function makeCalendarDays(pointDate: Date) {
@@ -26,7 +26,7 @@ function makeCalendarDays(pointDate: Date) {
   const startDate = startOfWeek(monthStart); //현재 달의 시작 날짜가 포함된 주의 시작 날짜(그니까, 전 달의 날짜가 나올수도 있음!)
   const endDate = endOfWeek(monthEnd); //현재 달의 마지막 날짜가 포함된 주의 끝 날짜(그니까, 다음 달의 날짜가 나올수도 있음!)
 
-  let calendarDays = [];
+  const calendarDays = [];
   let start = startDate;
 
   while (start <= endDate) {
@@ -40,18 +40,18 @@ function makeCalendarDays(pointDate: Date) {
 
 //"일별 캘린더 조회"시에 이벤트의 마커 컬러를 return하는 메소드
 function setMarkerColor(postType: string) {
-  if (postType === "REGULAR") {
+  if (postType === 'REGULAR') {
     //정규런이면..
-    return "bg-kuDarkGreen";
-  } else if (postType === "TRAINING") {
+    return 'bg-kuDarkGreen';
+  } else if (postType === 'TRAINING') {
     //훈련이면..
-    return "bg-kuYellow";
-  } else if (postType === "EVENT") {
+    return 'bg-kuYellow';
+  } else if (postType === 'EVENT') {
     //행사이면..
-    return "bg-kuBrown";
-  } else if (postType === "FLASH") {
+    return 'bg-kuBrown';
+  } else if (postType === 'FLASH') {
     //번개런이면..
-    return "bg-kuGreen";
+    return 'bg-kuGreen';
   }
 }
 
@@ -63,11 +63,9 @@ function SchedulePage() {
   const [selectedDateInModal, setSelectedDateInModal] = useState(new Date());
   const [monthlyPlan, setMonthlyPlan] = useState<{ date: string; eventCount: number }[]>([]);
   const [selectedDateEvent, setSelectedDateEvent] = useState<
-
     { postId: number; postType: string; title: string; date: string; location: string }[]
-
   >([]);
-  const [userRole, setUserRole] = useState("");
+  const [userRole, setUserRole] = useState('');
 
   const navigate = useNavigate();
 
@@ -83,24 +81,21 @@ function SchedulePage() {
         if (response.data.isSuccess) {
           const result = response.data.result;
           setUserRole(result.userRole || null);
-          console.log("userRole성공")
-
+          console.log('userRole성공');
         } else {
-          console.error("데이터를 불러오지 못했습니다.", response.data.responseMessage);
+          console.error('데이터를 불러오지 못했습니다.', response.data.responseMessage);
         }
       } catch (error) {
-        console.error("API 요청 오류", error);
+        console.error('API 요청 오류', error);
       }
     };
     fetchMain();
-  }, [])
-
-
+  }, []);
 
   //캘린더 월별 조회 메소드
   async function fetchMonthlyData() {
-    const formattedPointDate = format(pointDate, "yyyy-MM-dd"); //pointDate(기준이 되는 날짜) 포맷팅
-    const accessToken = JSON.parse(localStorage.getItem("accessToken") || ""); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+    const formattedPointDate = format(pointDate, 'yyyy-MM-dd'); //pointDate(기준이 되는 날짜) 포맷팅
+    const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
 
     //url에 날짜를 'yyyy-MM-dd' 형식으로 담아서 보내야 함
     const url = `/calendar/monthly?date=${formattedPointDate}`;
@@ -115,30 +110,29 @@ function SchedulePage() {
         }
       );
       setMonthlyPlan(response.data.result.schedules); //불러온 data의 result 값으로 monthlyPlan 값 저장
-
     } catch (error) {
-      alert("서버 요청 중 오류 발생!");
-      console.error("요청 실패: ", error);
+      alert('서버 요청 중 오류 발생!');
+      console.error('요청 실패: ', error);
     }
   }
 
   const handleflashRunMake = () => {
-    navigate("/make/flash");
+    navigate('/make/flash');
   };
   const handleRegularRunMake = () => {
-    navigate("/make/regular");
+    navigate('/make/regular');
   };
   const handleEventMake = () => {
-    navigate("/make/event");
+    navigate('/make/event');
   };
   const handleTrainingtMake = () => {
-    navigate("/make/training");
+    navigate('/make/training');
   };
 
   //캘린더 일별 조회 메소드
   async function fetchSelectedDateEventData() {
-    const formattedSelectedDate = format(selectedDate, "yyyy-MM-dd"); // selectedDate(선택된 날짜) 포맷팅
-    const accessToken = JSON.parse(localStorage.getItem("accessToken") || ""); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+    const formattedSelectedDate = format(selectedDate, 'yyyy-MM-dd'); // selectedDate(선택된 날짜) 포맷팅
+    const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
 
     //url에 날짜를 'yyyy-MM-dd' 형식으로 담아서 보내야 함
     const url = `/calendar/daily?date=${formattedSelectedDate}`;
@@ -154,8 +148,8 @@ function SchedulePage() {
       );
       setSelectedDateEvent(response.data.result); //불러온 data의 result 값으로 selectedDateEvent 값 저장
     } catch (error) {
-      alert("서버 요청 중 오류 발생!");
-      console.error("요청 실패: ", error);
+      alert('서버 요청 중 오류 발생!');
+      console.error('요청 실패: ', error);
     }
   }
 
@@ -179,9 +173,9 @@ function SchedulePage() {
   const [showFourthButton, setShowFourthButton] = useState(false);
 
   const calendarDaysList = makeCalendarDays(pointDate);
-  let weeks: Date[][] = [];
+  const weeks: Date[][] = [];
   let week: Date[] = [];
-  let dayOfTheWeek = ["일", "월", "화", "수", "목", "금", "토"];
+  const dayOfTheWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
   calendarDaysList.forEach((day) => {
     if (week.length < 7) {
@@ -213,7 +207,7 @@ function SchedulePage() {
 
   //모달창에서 월을 선택했을 때 동작하는 액션 (아래와 같이 값을 바꾸는 것이 권장됨(-> state는 불변성을 보장해 줘야 하고, 그를 위해 바꾸는 것은 set 함수를 써서 바꾸는 것이 필요...))
   const selectMonthInModal = (month: number) => {
-    let newDate = new Date(selectedDateInModal); //복사
+    const newDate = new Date(selectedDateInModal); //복사
     newDate.setMonth(month - 1); //0부터 시작하니까 -1
     if (pointDateInModal.getFullYear() !== selectedDateInModal.getFullYear()) {
       //모달 내에서 현재 선택된 날짜(selectedDateInModal)가 pointDateInModal과 다른 경우
@@ -348,20 +342,20 @@ function SchedulePage() {
       {weeks.map((week, index) => (
         <div key={index} className="grid grid-cols-7 mb-2 text-center w-full max-w-sm">
           {week.map((day, subIndex) => {
-            let isSelected = format(day, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd");
+            const isSelected = format(day, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
 
-            let planCounts =
+            const planCounts =
               monthlyPlan?.find(
                 (item: { date: string; eventCount: number }) =>
-                  item.date === format(day, "yyyy-MM-dd")
+                  item.date === format(day, 'yyyy-MM-dd')
               )?.eventCount || 0;
 
-            let isCurrentMonth = day.getMonth() === pointDate.getMonth();
-            let style = isSelected
-              ? "bg-kuDarkGreen text-white"
+            const isCurrentMonth = day.getMonth() === pointDate.getMonth();
+            const style = isSelected
+              ? 'bg-kuDarkGreen text-white'
               : isCurrentMonth
-                ? "text-black"
-                : "text-gray-400";
+                ? 'text-black'
+                : 'text-gray-400';
 
             return (
               <div key={subIndex} className="flex flex-col items-center">
@@ -372,14 +366,13 @@ function SchedulePage() {
                   <span className="text-base font-normal">{day.getDate()}</span>
                   {/* marker를 날짜 아래에 배치하여 하나의 요소처럼 보이게 함 */}
                   {isCurrentMonth ? (
-                    <div className={"flex flex-col items-center justify-center"}>
+                    <div className={'flex flex-col items-center justify-center'}>
                       {planCounts > 0 ? (
                         <div className="flex items-center justify-center gap-0.5">
-
                           <span
-                            className={`font-bold text-xs mt-2 ${isSelected ? "text-kuWhite" : "text-kuDarkGray"
-                              }`}
-
+                            className={`font-bold text-xs mt-2 ${
+                              isSelected ? 'text-kuWhite' : 'text-kuDarkGray'
+                            }`}
                           >
                             +{planCounts}
                           </span>
@@ -387,14 +380,14 @@ function SchedulePage() {
                       ) : (
                         <div className="flex items-center justify-center gap-1">
                           <div className={`w-1.5 h-1.5 mt-2 rounded-full bg-transparent`} />
-                          <span className={"font-bold text-xs mt-2 text-transparent"}>0</span>
+                          <span className={'font-bold text-xs mt-2 text-transparent'}>0</span>
                         </div>
                       )}
                     </div>
                   ) : (
                     <div className="flex items-center justify-center gap-1">
                       <div className={`w-1.5 h-1.5 mt-2 rounded-full bg-transparent`} />
-                      <span className={"font-bold text-xs mt-2 text-transparent"}>0</span>
+                      <span className={'font-bold text-xs mt-2 text-transparent'}>0</span>
                     </div>
                   )}
                 </button>
@@ -423,7 +416,7 @@ function SchedulePage() {
               <div className="pl-4 flex flex-col items-start">
                 <p className="text-gray-800 font-medium">{event.title}</p>
                 <p className="text-gray-500 text-sm">
-                  {format(addHours(parseISO(event.date), 9), "HH:mm")} {event.location}
+                  {format(addHours(parseISO(event.date), 9), 'HH:mm')} {event.location}
                 </p>
               </div>
             </div>
@@ -433,7 +426,6 @@ function SchedulePage() {
           <span className="text-xl font-bold mb-4">일정이 없습니다.</span>
         )}
       </div>
-      
 
       {/* 연/월을 선택하는 모달창이 열렸을 때 나타나는 옵션들 */}
       {isModalOpen && (
@@ -501,9 +493,10 @@ function SchedulePage() {
                     key={month}
                     onClick={() => selectMonthInModal(month)}
                     className={`py-2 px-6 rounded-md text-sm font-semibold transition
-                      ${isSelected
-                        ? "bg-kuDarkGreen text-white"
-                        : "bg-whiteSmoke hover:bg-kuDarkGreen hover:text-white text-kuDarkGray"
+                      ${
+                        isSelected
+                          ? 'bg-kuDarkGreen text-white'
+                          : 'bg-whiteSmoke hover:bg-kuDarkGreen hover:text-white text-kuDarkGray'
                       }
                     `}
                   >
@@ -530,13 +523,13 @@ function SchedulePage() {
     w-16 h-16 rounded-full bg-kuDarkGreen text-white
     flex items-center justify-center shadow-lg hover:bg-kuDarkGreen-dark
     focus:outline-none z-50 transition-transform duration-300
-    ${isFloatingButtonOpen ? "rotate-45" : "rotate-0"}`}
+    ${isFloatingButtonOpen ? 'rotate-45' : 'rotate-0'}`}
       >
         <img
           src={plusBtn}
           alt="플로팅 버튼 아이콘"
           className={`w-8 h-8 transition-transform duration-300 
-      ${isFloatingButtonOpen ? "rotate-20" : "rotate-0"}`}
+      ${isFloatingButtonOpen ? 'rotate-20' : 'rotate-0'}`}
         />
       </button>
 
@@ -560,7 +553,7 @@ function SchedulePage() {
             {/* 번개런 일정 추가하기 */}
             <button
               className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl font-semibold shadow-lg py-2 px-4 transition-all duration-300 ease-out transform 
-          ${showFirstButton ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}
+          ${showFirstButton ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}
           bg-white text-black hover:bg-gray-100`}
               onClick={handleflashRunMake}
             >
@@ -570,14 +563,16 @@ function SchedulePage() {
             {/* 정규런 일정 추가하기 */}
             <button
               className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl font-semibold shadow-lg py-2 px-4 transition-all duration-300 ease-out transform 
-          ${showSecondButton ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}
-          ${userRole === "ADMIN" || userRole === "PACER"
-                  ? "bg-white text-black hover:bg-gray-100"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+          ${showSecondButton ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}
+          ${
+            userRole === 'ADMIN' || userRole === 'PACER'
+              ? 'bg-white text-black hover:bg-gray-100'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
               onClick={
-                userRole === "ADMIN" || userRole === "PACER"
+                userRole === 'ADMIN' || userRole === 'PACER'
                   ? handleRegularRunMake
-                  : () => alert("관리자만 사용할 수 있는 기능입니다.")
+                  : () => alert('관리자만 사용할 수 있는 기능입니다.')
               }
             >
               정규런 일정 추가하기
@@ -586,14 +581,16 @@ function SchedulePage() {
             {/* 훈련 일정 추가하기 */}
             <button
               className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl font-semibold shadow-lg py-2 px-4 transition-all duration-300 ease-out transform 
-          ${showThirdButton ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}
-          ${userRole === "ADMIN" || userRole === "PACER"
-                  ? "bg-white text-black hover:bg-gray-100"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+          ${showThirdButton ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}
+          ${
+            userRole === 'ADMIN' || userRole === 'PACER'
+              ? 'bg-white text-black hover:bg-gray-100'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
               onClick={
-                userRole === "ADMIN" || userRole === "PACER"
+                userRole === 'ADMIN' || userRole === 'PACER'
                   ? handleTrainingtMake
-                  : () => alert("관리자만 사용할 수 있는 기능입니다.")
+                  : () => alert('관리자만 사용할 수 있는 기능입니다.')
               }
             >
               훈련 일정 추가하기
@@ -602,14 +599,16 @@ function SchedulePage() {
             {/* 행사 일정 추가하기 */}
             <button
               className={`w-auto h-auto rounded-tl-xl rounded-tr-xl rounded-bl-xl font-semibold shadow-lg py-2 px-4 transition-all duration-300 ease-out transform 
-          ${showFourthButton ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}
-          ${userRole === "ADMIN"
-                  ? "bg-white text-black hover:bg-gray-100"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+          ${showFourthButton ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}
+          ${
+            userRole === 'ADMIN'
+              ? 'bg-white text-black hover:bg-gray-100'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
               onClick={
-                userRole === "ADMIN"
+                userRole === 'ADMIN'
                   ? handleEventMake
-                  : () => alert("관리자만 사용할 수 있는 기능입니다.")
+                  : () => alert('관리자만 사용할 수 있는 기능입니다.')
               }
             >
               행사 일정 추가하기
@@ -617,7 +616,6 @@ function SchedulePage() {
           </div>
         </div>
       )}
-
     </div>
   );
 }
