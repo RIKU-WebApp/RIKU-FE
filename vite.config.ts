@@ -9,6 +9,7 @@ export default defineConfig({
   resolve: {
     // alias 설정 (경로 별칭 설정)
     alias: {
+      '@': path.resolve(__dirname, './src'),
       '@app': path.resolve(__dirname, './src/app'),
       '@pages': path.resolve(__dirname, './src/pages'),
       '@features': path.resolve(__dirname, './src/features'),

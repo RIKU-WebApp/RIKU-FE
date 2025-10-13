@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import riku_logo from '../../assets/riku_logo_loginPage.png'; //라이쿠 로고 불러오기
+import riku_logo from '@assets/riku_logo_loginPage.png'; //라이쿠 로고 불러오기
 import { Link, useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
 import customAxios from '@shared/apis/customAxios'; //커스텀 axios 호출
 import axios from 'axios';
@@ -160,7 +160,7 @@ function LoginPage() {
         {/* 회원가입 / ID/PW 찾기 */}
         <div className="flex flex-col items-center mt-4 text-sm text-gray-500 space-y-1">
           <div className="flex space-x-4">
-            <Link to="/student-id" className="hover:text-gray-700">
+            <Link to="/create-account" className="hover:text-gray-700">
               회원가입하기
             </Link>
             <span>|</span>
