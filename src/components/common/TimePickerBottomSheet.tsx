@@ -1,30 +1,27 @@
-import React, { useState, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import TimeWheelPicker from "./TimeWheelPicker";
-import TimeIcon from "../../assets/time_icon.svg";
+import React, { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import TimeWheelPicker from './TimeWheelPicker';
+import TimeIcon from '../../assets/time_icon.svg';
 
 interface TimePickerBottomSheetProps {
   time: string;
   onChange: (time: string) => void;
 }
 
-export const TimePickerBottomSheet: React.FC<TimePickerBottomSheetProps> = ({
-  time,
-  onChange,
-}) => {
-  const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
-  const minutes = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, "0"));
+export const TimePickerBottomSheet: React.FC<TimePickerBottomSheetProps> = ({ time, onChange }) => {
+  const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
+  const minutes = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, '0'));
 
-  const [hour, setHour] = useState("00");
-  const [minute, setMinute] = useState("00");
+  const [hour, setHour] = useState('00');
+  const [minute, setMinute] = useState('00');
   const [isOpen, setIsOpen] = useState(false);
 
   // 🧠 바텀시트 열릴 때마다 time 값을 기준으로 상태 세팅
   useEffect(() => {
     if (isOpen && time) {
-      const [h, m] = time.split(":");
-      setHour(h.padStart(2, "0"));
-      setMinute(m.padStart(2, "0"));
+      const [h, m] = time.split(':');
+      setHour(h.padStart(2, '0'));
+      setMinute(m.padStart(2, '0'));
     }
   }, [isOpen, time]);
 
@@ -36,16 +33,15 @@ export const TimePickerBottomSheet: React.FC<TimePickerBottomSheetProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     }
-  
+
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     };
   }, [isOpen]);
-  
 
   return (
     <>
@@ -56,7 +52,7 @@ export const TimePickerBottomSheet: React.FC<TimePickerBottomSheetProps> = ({
           onClick={() => setIsOpen(true)}
           className="ml-[24.4px] border-b border-gray-300 rounded px-4 py-1 text-[16px] w-full text-gray-600 cursor-pointer"
         >
-          {time || "시간을 선택하세요"}
+          {time || '시간을 선택하세요'}
         </div>
       </div>
 
@@ -69,10 +65,10 @@ export const TimePickerBottomSheet: React.FC<TimePickerBottomSheetProps> = ({
             exit={{ opacity: 0 }}
           >
             <motion.div
-              initial={{ y: "100%" }}
+              initial={{ y: '100%' }}
               animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "tween", duration: 0.3 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'tween', duration: 0.3 }}
               className="w-full max-w-[430px] bg-white rounded-t-2xl px-4 pt-10 pb-4 mx-auto"
             >
               {/* <div className="text-lg font-semibold text-center mb-4">시간 선택</div> */}

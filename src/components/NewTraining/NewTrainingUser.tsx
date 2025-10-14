@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
-import people from "../../assets/FlashRunDetail/people.svg";
-import place from "../../assets/FlashRunDetail/place.svg";
-import time from "../../assets/FlashRunDetail/time.svg";
-import TabButton from "./TapButton";
-import AttendanceList from "./AttendanceList";
-import customAxios from "../../apis/customAxios";
-import flashrunimage from "../../assets/Run-img/flashrunimage.jpg";
-import { useNavigate } from "react-router-dom";
-import BackBtnimg from "../../assets/BackBtn.svg";
-import pacermark from "../../assets/pacer-mark.svg";
-import CommentSection from "../common/CommentSection";
-import PacerCard from "./PacerCard";
-import questionmarkOn from "../../assets/questionmark_on.svg";
-import questionmarkOff from "../../assets/questionmark_off.svg";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
-import checkedicon from "../../assets/checkedicon.svg"
-import "swiper/css";
-import "swiper/css/pagination";
-import { motion } from "framer-motion";
-import TabNavigationUI_detail from "../TabNavigationUI_detail";
+import people from '../../assets/FlashRunDetail/people.svg';
+import place from '../../assets/FlashRunDetail/place.svg';
+import time from '../../assets/FlashRunDetail/time.svg';
+import TabButton from './TapButton';
+import AttendanceList from './AttendanceList';
+import customAxios from '@shared/apis/customAxios';
+import flashrunimage from '../../assets/Run-img/flashrunimage.jpg';
+import { useNavigate } from 'react-router-dom';
+import BackBtnimg from '../../assets/BackBtn.svg';
+import pacermark from '../../assets/pacer-mark.svg';
+import CommentSection from '../common/CommentSection';
+import PacerCard from './PacerCard';
+import questionmarkOn from '../../assets/questionmark_on.svg';
+import questionmarkOff from '../../assets/questionmark_off.svg';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper/modules';
+import checkedicon from '../../assets/checkedicon.svg';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import { motion } from 'framer-motion';
+import TabNavigationUI_detail from '../TabNavigationUI_detail';
 
 interface Participant {
   id: number;
@@ -44,15 +44,15 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
   const navigate = useNavigate();
   const handleBack = () => navigate(-1);
 
-  const [activeTab, setActiveTab] = useState<"소개" | "명단">("소개");
-  const [code, setCode] = useState("");
+  const [activeTab, setActiveTab] = useState<'소개' | '명단'>('소개');
+  const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
-  const [date, setDate] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState('');
+  const [location, setLocation] = useState('');
+  const [date, setDate] = useState('');
+  const [content, setContent] = useState('');
   const [postImageUrl, setPostImageUrl] = useState<string | null>(null);
 
   const [participants, setParticipants] = useState<Participant[]>([]);
@@ -65,14 +65,13 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
     userRole: string;
   }>({
     userId: 0,
-    userName: "",
-    userProfileImg: "",
-    userRole: "",
+    userName: '',
+    userProfileImg: '',
+    userRole: '',
   });
 
-
   const [attachmentUrls, setAttachmentUrls] = useState<string[]>([]);
-  const [trainingtype, setTrainingtype] = useState("");
+  const [trainingtype, setTrainingtype] = useState('');
 
   const [isHovered, setIsHovered] = useState(false);
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
@@ -80,28 +79,24 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
   const [refreshComments, setRefreshComments] = useState(false);
 
   const [groupList, setGroupList] = useState<{ group: string; pace: string }[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<string>("");
+  const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedAttendance, setEditedAttendance] = useState<{ [userId: number]: boolean }>({});
   const [groupedParticipants, setGroupedParticipants] = useState<any[]>([]);
-  const [postCreatorName, setPostCreatorName] = useState("");
+  const [postCreatorName, setPostCreatorName] = useState('');
 
-  const [userStatus, setUserStatus] = useState("");
-  const [buttonText, setButtonText] = useState("참여하기");
+  const [userStatus, setUserStatus] = useState('');
+  const [buttonText, setButtonText] = useState('참여하기');
 
-  const [postStatus, setPostStatus] = useState("")
+  const [postStatus, setPostStatus] = useState('');
 
   const [refreshKey, setRefreshKey] = useState(0);
 
-
-
-
-
   const toggleAttendance = (userId: number, originalStatus: string) => {
     setEditedAttendance((prev) => {
-      const current = userId in prev ? prev[userId] : originalStatus === "ATTENDED";
+      const current = userId in prev ? prev[userId] : originalStatus === 'ATTENDED';
       return {
         ...prev,
         [userId]: !current,
@@ -109,53 +104,47 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
     });
   };
 
-
   const saveAttendanceChanges = async () => {
-    const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
     const payload = Object.entries(editedAttendance).map(([userId, isAttend]) => ({
       userId: Number(userId),
       isAttend,
     }));
     try {
       const base = `/run/training/post/${postId}`;
-      const endpoint = postStatus === "CLOSED" ? `${base}/fix-attendance` : `${base}/manual-attendance`;
+      const endpoint =
+        postStatus === 'CLOSED' ? `${base}/fix-attendance` : `${base}/manual-attendance`;
       await customAxios.patch(endpoint, payload, { headers: { Authorization: `${token}` } });
-      alert("출석 정보가 저장되었습니다.");
+      alert('출석 정보가 저장되었습니다.');
       setIsEditMode(false);
       setEditedAttendance({});
       await fetchParticipantsInfo(); // ✅ 저장 후 재조회
     } catch {
-      alert("저장에 실패했습니다.");
+      alert('저장에 실패했습니다.');
     }
   };
 
-
   useEffect(() => {
-    if (activeTab === "명단") {
+    if (activeTab === '명단') {
       fetchParticipantsInfo();
     }
   }, [activeTab]);
-
-
-
-
-
-
-
 
   const getTrainingDescription = (type: string) => {
     switch (type) {
       case 'LSD':
         return (
           <>
-            <span className="font-bold">LSD</span>란 Long Slow Distance의 약자로, 장거리 달리기 훈련입니다.
+            <span className="font-bold">LSD</span>란 Long Slow Distance의 약자로, 장거리 달리기
+            훈련입니다.
           </>
         );
       // 다른 trainingtype에 대한 설명을 추가할 수 있습니다.
       case '인터벌':
         return (
           <>
-            <span className="font-bold">인터벌</span> 훈련 이란 짧은 고강도 러닝과, 휴식 또는 저강도의 회복러닝을 번갈아가며 하는 훈련입니다.
+            <span className="font-bold">인터벌</span> 훈련 이란 짧은 고강도 러닝과, 휴식 또는
+            저강도의 회복러닝을 번갈아가며 하는 훈련입니다.
           </>
         );
       case '조깅':
@@ -171,11 +160,10 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
 
   const [postCreatorImg, setPostCreatorImg] = useState<string | null>(null);
 
-
   useEffect(() => {
     const fetchPostData = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
         const response = await customAxios.get(`/run/training/post/${postId}`, {
           headers: { Authorization: `${token}` },
         });
@@ -195,9 +183,9 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
           setAttachmentUrls(result.attachmentUrls || []);
           setUserInfo({
             userId: result.userInfo?.userId || 0,
-            userName: result.userInfo?.userName || "",
-            userProfileImg: result.userInfo?.userProfileImg || "",
-            userRole: result.userInfo?.userRole || "",
+            userName: result.userInfo?.userName || '',
+            userProfileImg: result.userInfo?.userProfileImg || '',
+            userRole: result.userInfo?.userRole || '',
           });
           setPostCreatorName(result.postCreatorInfo.userName);
           setPostCreatorImg(result.postCreatorInfo.userProfileImg || null);
@@ -205,27 +193,27 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
           setTrainingtype(result.trainingType);
           setPostStatus(result.postStatus);
 
-
-
           const myInfo = result.userInfo;
-          const foundGroup = result.groupedParticipants?.find(group =>
+          const foundGroup = result.groupedParticipants?.find((group) =>
             group.participants?.some((p: any) => p.userId === myInfo.userId)
           );
           if (foundGroup) {
             setSelectedGroup(foundGroup.group);
-            const matchedUser = foundGroup.participants.find((p: any) => p.userId === myInfo.userId);
-            setUserStatus(matchedUser?.status || "");
+            const matchedUser = foundGroup.participants.find(
+              (p: any) => p.userId === myInfo.userId
+            );
+            setUserStatus(matchedUser?.status || '');
             setButtonText(
-              matchedUser?.status === "ATTENDED"
-                ? "출석완료"
-                : matchedUser?.status === "PENDING"
-                  ? "출석하기"
-                  : "참여하기"
+              matchedUser?.status === 'ATTENDED'
+                ? '출석완료'
+                : matchedUser?.status === 'PENDING'
+                  ? '출석하기'
+                  : '참여하기'
             );
           }
         }
       } catch {
-        setError("데이터 로딩 실패");
+        setError('데이터 로딩 실패');
       }
     };
 
@@ -234,7 +222,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
 
   const fetchParticipantsInfo = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
       const response = await customAxios.get(`/run/training/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -245,19 +233,19 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
         setParticipantsNum(result.participantsNum || 0);
         setGroupedParticipants(result.groupedParticipants || []);
 
-        console.log("📦 Fetched participants:", result.participants);
-        console.log("👥 Fetched grouped participants:", result.groupedParticipants);
+        console.log('📦 Fetched participants:', result.participants);
+        console.log('👥 Fetched grouped participants:', result.groupedParticipants);
       }
     } catch (error: any) {
-      console.error("❌ 참여/취소 요청 실패:", error);
+      console.error('❌ 참여/취소 요청 실패:', error);
 
       if (error?.response?.data) {
         const serverError = error.response.data;
-        console.error("📦 서버 응답 내용:", serverError);
+        console.error('📦 서버 응답 내용:', serverError);
 
-        setError(serverError.responseMessage || "참여 요청 실패");
+        setError(serverError.responseMessage || '참여 요청 실패');
       } else {
-        setError("참여 요청 실패");
+        setError('참여 요청 실패');
       }
     }
   };
@@ -267,7 +255,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
   }, [postId]);
 
   useEffect(() => {
-    if (activeTab === "명단") {
+    if (activeTab === '명단') {
       fetchParticipantsInfo();
     }
   }, [activeTab]);
@@ -275,24 +263,23 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
   const handleOpenGroupModal = async () => {
     setIsGroupModalOpen(true);
     try {
-      const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
       const res = await customAxios.get(`/run/training/post/${postId}/group`, {
         headers: { Authorization: `${token}` },
       });
       if (res.data.isSuccess) setGroupList(res.data.result);
     } catch {
-      setError("그룹 조회 실패");
+      setError('그룹 조회 실패');
     }
   };
 
-
   const handleJoinConfirm = async () => {
-    const isCancel = selectedGroup === "";
+    const isCancel = selectedGroup === '';
 
     try {
-      const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
       const res = await customAxios.patch(
-        `/run/training/post/${postId}/join${!isCancel ? `?group=${selectedGroup}` : ""}`,
+        `/run/training/post/${postId}/join${!isCancel ? `?group=${selectedGroup}` : ''}`,
         {},
         { headers: { Authorization: `${token}` } }
       );
@@ -306,88 +293,84 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
         setGroupedParticipants(updatedGroup);
 
         if (isCancel) {
-          setUserStatus("");
-          setButtonText("참여하기");
-          setSelectedGroup("");
+          setUserStatus('');
+          setButtonText('참여하기');
+          setSelectedGroup('');
         } else {
-          setUserStatus("PENDING");
-          setButtonText("출석하기");
+          setUserStatus('PENDING');
+          setButtonText('출석하기');
           setIsGroupModalOpen(false);
         }
 
-
         setIsGroupModalOpen(false);
-
-
-
       } else {
         setError(res.data.responseMessage);
       }
     } catch (error: any) {
-      console.error("❌ 참여/취소 요청 실패:", error);
+      console.error('❌ 참여/취소 요청 실패:', error);
       if (error?.response?.data) {
-        setError(error.response.data.responseMessage || "참여 요청 실패");
+        setError(error.response.data.responseMessage || '참여 요청 실패');
       } else {
-        setError("참여 요청 실패");
+        setError('참여 요청 실패');
       }
     }
   };
 
-
-
-
-
   const handleStartClick = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem("accessToken") || "null");
-      const response = await customAxios.post(`/run/training/post/${postId}/join`, {}, {
-        headers: { Authorization: `${token}` },
-      });
+      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const response = await customAxios.post(
+        `/run/training/post/${postId}/join`,
+        {},
+        {
+          headers: { Authorization: `${token}` },
+        }
+      );
       if (response.data.isSuccess) {
         setUserStatus(response.data.result.status);
-        setButtonText("출석하기");
+        setButtonText('출석하기');
         setError(null);
       } else {
         setError(response.data.responseMessage);
       }
     } catch {
-      setError("러닝 참여에 실패했습니다.");
+      setError('러닝 참여에 실패했습니다.');
     }
   };
 
   const handleOpenAttendanceModal = () => setIsModalOpen(true);
 
   const handleAttendanceClick = async () => {
-    if (!code) return setError("출석 코드를 입력해주세요.");
+    if (!code) return setError('출석 코드를 입력해주세요.');
     try {
-      const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
       const response = await customAxios.post(
         `/run/training/post/${postId}/attend`,
         { code },
         { headers: { Authorization: `${token}` } }
       );
       if (response.data.isSuccess) {
-        setUserStatus("ATTENDED");
-        setButtonText("출석완료");
+        setUserStatus('ATTENDED');
+        setButtonText('출석완료');
         setIsModalOpen(false);
         setError(null);
       } else {
         setError(response.data.responseMessage);
       }
     } catch {
-      setError("출석 요청에 실패했습니다.");
+      setError('출석 요청에 실패했습니다.');
     }
   };
 
   const formatDateTime = (iso: string) => {
     const utcDate = new Date(iso);
     const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
-    return `${kstDate.getMonth() + 1}월 ${kstDate.getDate()}일 ${kstDate.getHours().toString().padStart(2, "0")}:${kstDate.getMinutes().toString().padStart(2, "0")}`;
+    return `${kstDate.getMonth() + 1}월 ${kstDate.getDate()}일 ${kstDate.getHours().toString().padStart(2, '0')}:${kstDate.getMinutes().toString().padStart(2, '0')}`;
   };
 
-  const handleTabChange = async (tab: "소개" | "명단") => {
+  const handleTabChange = async (tab: '소개' | '명단') => {
     setActiveTab(tab);
-    const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
 
     try {
       const response = await customAxios.get(`/run/training/post/${postId}`, {
@@ -407,9 +390,9 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
         setPostCreatorImg(result.postCreatorInfo.userProfileImg || null);
         setUserInfo({
           userId: result.userInfo?.userId || 0,
-          userName: result.userInfo?.userName || "",
-          userProfileImg: result.userInfo?.userProfileImg || "",
-          userRole: result.userInfo?.userRole || "",
+          userName: result.userInfo?.userName || '',
+          userProfileImg: result.userInfo?.userProfileImg || '',
+          userRole: result.userInfo?.userRole || '',
         });
 
         // 댓글도 항상 최신화
@@ -418,7 +401,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
         setError(response.data.responseMessage);
       }
     } catch {
-      setError("데이터를 불러오는 데 실패했습니다.");
+      setError('데이터를 불러오는 데 실패했습니다.');
     }
   };
   // 말풍선 외부를 클릭했을 때 숨기기
@@ -443,8 +426,8 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
         setShowMenu(false);
       }
     };
-    if (showMenu) document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    if (showMenu) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showMenu]);
 
   const handleEditAttempt = () => {
@@ -452,40 +435,44 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
     const postDateKST = new Date(new Date(date).getTime() + 9 * 60 * 60 * 1000);
 
     if (now < postDateKST) {
-      alert("아직 명단 수정을 할 수 없습니다.");
+      alert('아직 명단 수정을 할 수 없습니다.');
       return;
     }
 
-
     // 취소 글은 누구도 편집 불가
-    if (postStatus === "CANCELED") {
-      alert("취소된 러닝은 명단을 수정할 수 없습니다.");
+    if (postStatus === 'CANCELED') {
+      alert('취소된 러닝은 명단을 수정할 수 없습니다.');
       return;
     }
 
     // ADMIN 은 CLOSED 여도 편집 허용
-    if (userInfo.userRole === "ADMIN") {
+    if (userInfo.userRole === 'ADMIN') {
       setIsEditMode(true);
       return;
     }
 
     // 일반 작성자/유저는 기존 정책 유지
-    if (postStatus === "CLOSED") {
-      alert("출석이 종료되어 명단 수정이 불가능합니다.");
+    if (postStatus === 'CLOSED') {
+      alert('출석이 종료되어 명단 수정이 불가능합니다.');
       return;
     }
-
 
     setIsEditMode(true);
   };
 
-
   return (
-    <div className="flex flex-col items-center text-center max-w-[430px] mx-auto justify-center" onClick={handleOutsideClick}>
+    <div
+      className="flex flex-col items-center text-center max-w-[430px] mx-auto justify-center"
+      onClick={handleOutsideClick}
+    >
       <div className="relative flex bg-kuDarkGreen w-full h-[56px] text-white text-center text-xl font-semibold justify-center items-center">
-        <img src={BackBtnimg} className="absolute left-[24px] cursor-pointer" onClick={handleBack} />
+        <img
+          src={BackBtnimg}
+          className="absolute left-[24px] cursor-pointer"
+          onClick={handleBack}
+        />
         훈련
-        {userInfo.userRole === "ADMIN" && (
+        {userInfo.userRole === 'ADMIN' && (
           <div
             ref={dotButtonRef}
             className="absolute right-[5px] top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-white/20 cursor-pointer"
@@ -501,9 +488,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
             </div>
           </div>
         )}
-
-
-        {userInfo.userRole === "ADMIN" && showMenu && (
+        {userInfo.userRole === 'ADMIN' && showMenu && (
           <motion.div
             ref={menuRef}
             initial="hidden"
@@ -520,29 +505,30 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
               transition={{ duration: 0.2 }}
               className="w-[100px] py-2 px-3 rounded-tl-xl rounded-b-xl bg-white shadow-md text-black text-sm"
               onClick={async () => {
-                const ok = window.confirm("정말 게시글을 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.");
+                const ok = window.confirm(
+                  '정말 게시글을 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.'
+                );
                 if (!ok) return;
                 try {
-                  const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+                  const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
                   if (!token) {
-                    alert("로그인이 필요합니다.");
+                    alert('로그인이 필요합니다.');
                     return;
                   }
-                  const { data } = await customAxios.delete(
-                    `/run/training/post/${postId}`,
-                    { headers: { Authorization: `${token}` } }
-                  );
+                  const { data } = await customAxios.delete(`/run/training/post/${postId}`, {
+                    headers: { Authorization: `${token}` },
+                  });
                   if (data.isSuccess) {
-                    alert("게시글이 삭제되었습니다.");
+                    alert('게시글이 삭제되었습니다.');
                     setShowMenu(false);
                     // 목록으로 이동
-                    window.location.href = "/training";
+                    window.location.href = '/training';
                   } else {
-                    alert(data.responseMessage || "삭제에 실패했습니다.");
+                    alert(data.responseMessage || '삭제에 실패했습니다.');
                   }
                 } catch (err) {
                   console.error(err);
-                  alert("삭제 요청 중 오류가 발생했습니다.");
+                  alert('삭제 요청 중 오류가 발생했습니다.');
                 }
               }}
             >
@@ -556,13 +542,14 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
         <div className="relative w-full h-[308px] overflow-hidden">
           <img
             src={postImageUrl || flashrunimage}
-            className={`w-full h-full object-cover transition-all duration-300 ${postStatus === "CANCELED" || postStatus === "CLOSED" ? "brightness-75" : ""
-              }`}
+            className={`w-full h-full object-cover transition-all duration-300 ${
+              postStatus === 'CANCELED' || postStatus === 'CLOSED' ? 'brightness-75' : ''
+            }`}
           />
-          {(postStatus === "CANCELED" || postStatus === "CLOSED") && (
+          {(postStatus === 'CANCELED' || postStatus === 'CLOSED') && (
             <div className="absolute inset-0 flex justify-center items-center z-1 pointer-events-none bg-opacity-40 bg-black">
               <div className="transform -translate-y-[60%] text-white text-xl font-bold bg-opacity-60 px-4 py-2 rounded">
-                {postStatus === "CANCELED" ? "취소된 훈련입니다." : "마감된 훈련입니다."}
+                {postStatus === 'CANCELED' ? '취소된 훈련입니다.' : '마감된 훈련입니다.'}
               </div>
             </div>
           )}
@@ -597,7 +584,6 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
               )}
             </div>
 
-
             <div className="text-lg font-semibold mt-2 text-[24px]">{title}</div>
           </div>
           <div className="flex flex-col items-start w-full max-w-[360px] mt-5 px-5">
@@ -608,7 +594,6 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
             <div className="flex items-center my-1.5">
               <object data={time} className="w-[24px] h-[24px] mr-2" />
               <span>{formatDateTime(date)}</span>
-
             </div>
             <div className="flex items-center my-1.5">
               <object data={people} className="w-[24px] h-[24px] mr-2" />
@@ -618,9 +603,11 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
         </div>
       </div>
 
-      <div className="mt-[12px]"><TabButton leftLabel="소개" rightLabel="명단" onTabChange={handleTabChange} /></div>
+      <div className="mt-[12px]">
+        <TabButton leftLabel="소개" rightLabel="명단" onTabChange={handleTabChange} />
+      </div>
 
-      {activeTab === "소개" && (
+      {activeTab === '소개' && (
         <>
           <div className="flex items-start text-left w-full mt-3 my-2 max-w-[349px]">
             <img src={pacermark} />
@@ -657,7 +644,9 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
               </div>
             </div>
           )}
-          <div className="flex flex-col mt-2 items-start text-left w-full max-w-[327px]">세부 내용</div>
+          <div className="flex flex-col mt-2 items-start text-left w-full max-w-[327px]">
+            세부 내용
+          </div>
           <div className="mt-2 w-[327px] border border-[#ECEBE4] rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
               {postCreatorImg ? (
@@ -679,7 +668,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
         </>
       )}
 
-      {activeTab === "명단" &&
+      {activeTab === '명단' && (
         <AttendanceList
           groupedParticipants={groupedParticipants}
           isEditMode={isEditMode}
@@ -689,23 +678,28 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
           onToggleEditMode={handleEditAttempt}
           userInfoName={userInfo.userName}
           postCreatorName={postCreatorName}
-          userRole={userInfo.userRole}     
+          userRole={userInfo.userRole}
           postStatus={postStatus}
         />
-      }
+      )}
 
-      <CommentSection postId={postId!} postType="training" userInfo={userInfo} refreshTrigger={refreshComments} />
+      <CommentSection
+        postId={postId!}
+        postType="training"
+        userInfo={userInfo}
+        refreshTrigger={refreshComments}
+      />
 
       <div className="mb-[100px]">
-        {(postStatus === "CANCELED" || postStatus === "CLOSED") ? (
+        {postStatus === 'CANCELED' || postStatus === 'CLOSED' ? (
           <div className="w-[327px] h-14 rounded-lg bg-[#ECEBE4] text-[#757575] font-bold mt-6 flex justify-center items-center cursor-not-allowed">
             모집 종료
           </div>
-        ) : userStatus === "ATTENDED" ? (
+        ) : userStatus === 'ATTENDED' ? (
           <div className="w-[327px] h-14 rounded-lg bg-[#ECEBE4] text-[#757575] font-bold mt-6 flex justify-center items-center cursor-not-allowed">
             출석완료
           </div>
-        ) : userStatus === "PENDING" ? (
+        ) : userStatus === 'PENDING' ? (
           <>
             {selectedGroup && (
               <div className="text-sm text-left text-kuDarkGray w-full max-w-[327px] mt-4 pl-6">
@@ -737,9 +731,6 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
         )}
       </div>
 
-
-
-
       {isGroupModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-10">
           <div className="bg-white p-6 rounded-lg w-[300px] max-w-[90%] text-center relative shadow-lg">
@@ -753,14 +744,16 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
 
             {/* 그룹 선택 옵션 */}
             <div className="flex justify-center">
-              <div className="flex flex-col gap-3 max-h-[500px] overflow-y-auto w-full"
-                style={{ paddingRight: "8px", marginRight: "-8px" }}>
+              <div
+                className="flex flex-col gap-3 max-h-[500px] overflow-y-auto w-full"
+                style={{ paddingRight: '8px', marginRight: '-8px' }}
+              >
                 {groupList.map((group, index) => {
                   const isSelected = selectedGroup === group.group;
 
                   const handleSelect = () => {
                     if (isSelected) {
-                      setSelectedGroup(""); // 다시 누르면 해제
+                      setSelectedGroup(''); // 다시 누르면 해제
                     } else {
                       setSelectedGroup(group.group); // 선택
                     }
@@ -769,24 +762,33 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
                   return (
                     <button
                       key={index}
-                      className={`rounded-lg border flex items-center justify-between w-[230px] h-[48px] ${isSelected ? "bg-[#F3F8E8]" : "bg-gray-100 hover:bg-gray-200"
-                        }`}
+                      className={`rounded-lg border flex items-center justify-between w-[230px] h-[48px] ${
+                        isSelected ? 'bg-[#F3F8E8]' : 'bg-gray-100 hover:bg-gray-200'
+                      }`}
                       onClick={handleSelect}
                     >
                       {/* 왼쪽: 그룹명 | 페이스 */}
                       <div className="flex items-center text-left">
-                        <span className={`my-[16px] ml-[16px] font-bold text-base ${isSelected ? "text-black" : "text-gray-400"}`}>
+                        <span
+                          className={`my-[16px] ml-[16px] font-bold text-base ${isSelected ? 'text-black' : 'text-gray-400'}`}
+                        >
                           {group.group}
                         </span>
                         <div className="w-px h-[42px] ml-[16px] bg-gray-400" />
-                        <span className={`text-[16px] font-semibold ml-[10px] ${isSelected ? "text-kuDarkGreen" : "text-gray-400"}`}>
+                        <span
+                          className={`text-[16px] font-semibold ml-[10px] ${isSelected ? 'text-kuDarkGreen' : 'text-gray-400'}`}
+                        >
                           {group.pace}
                         </span>
                       </div>
 
                       {/* 오른쪽 체크 아이콘 */}
                       {isSelected && (
-                        <img src={checkedicon} alt="checked" className="w-[24px] h-[24px] mr-[16px]" />
+                        <img
+                          src={checkedicon}
+                          alt="checked"
+                          className="w-[24px] h-[24px] mr-[16px]"
+                        />
                       )}
                     </button>
                   );
@@ -811,7 +813,12 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-10">
           <div className="bg-white p-5 rounded-lg w-[280px] text-center relative">
-            <button className="absolute top-2.5 right-2.5 text-2xl cursor-pointer" onClick={() => setIsModalOpen(false)}>×</button>
+            <button
+              className="absolute top-2.5 right-2.5 text-2xl cursor-pointer"
+              onClick={() => setIsModalOpen(false)}
+            >
+              ×
+            </button>
             <h2 className="text-lg font-semibold">참여 코드를 입력해주세요.</h2>
             <input
               type="text"

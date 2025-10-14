@@ -1,4 +1,14 @@
-import axios, { AxiosInstance, AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosInstance } from 'axios';
+
+// 요청 취소 함수(cancelRequest)에서 사용할 인터페이스들
+interface CancelMetadata {
+  cancel?: {
+    cancel: (message: string) => void;
+  };
+}
+interface RequestConfig {
+  metadata?: CancelMetadata;
+}
 
 // Axios 인스턴스 생성
 const customAxios: AxiosInstance = axios.create({
@@ -30,7 +40,6 @@ customAxios.interceptors.response.use(
       window.location.href = '/';
       return new Promise(() => {}); // 후속 실행 차단
     }
-    
 
     // 그 외의 서버 응답 에러
     console.error('서버 응답 에러:', error.response?.data);
@@ -39,7 +48,7 @@ customAxios.interceptors.response.use(
 );
 
 // 요청 취소 함수
-export const cancelRequest = (config: any) => {
+export const cancelRequest = (config: RequestConfig) => {
   if (config.metadata?.cancel) {
     config.metadata.cancel.cancel('사용자 요청에 의해 취소되었습니다.');
   }

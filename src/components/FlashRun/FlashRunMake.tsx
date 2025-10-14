@@ -1,29 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import customAxios from "../../apis/customAxios";
-import BackIcon from "../../assets/BackBtn.svg";
-import { DateInput } from "../common/DateInput";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import customAxios from '@shared/apis/customAxios';
+import BackIcon from '../../assets/BackBtn.svg';
+import { DateInput } from '../common/DateInput';
 
-import { TimePickerBottomSheet } from "../common/TimePickerBottomSheet";
-import imageCompression from "browser-image-compression";
-
-
-
-interface Pacer {
-  id: number;
-  name: string;
-}
+import { TimePickerBottomSheet } from '../common/TimePickerBottomSheet';
+import imageCompression from 'browser-image-compression';
 
 function FlashRunMake() {
   const navigate = useNavigate();
-  const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
-  const [content, setContent] = useState("");
-  const [dateTime, setDateTime] = useState<{ date: Date | null; time: string }>({ date: null, time: "00:00" });
+  const [title, setTitle] = useState('');
+  const [location, setLocation] = useState('');
+  const [content, setContent] = useState('');
+  const [dateTime, setDateTime] = useState<{ date: Date | null; time: string }>({
+    date: null,
+    time: '00:00',
+  });
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
-  const [pacers, setPacers] = useState<Pacer[]>([]);
   const [postImage, setPostImage] = useState<File | null>(null);
   const [postImagePreview, setPostImagePreview] = useState<string | null>(null);
   const [attachments, setAttachments] = useState<File[]>([]);
@@ -31,48 +25,42 @@ function FlashRunMake() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-
-
   const handlePostImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-  
+
     try {
       const compressedFile = await imageCompression(file, {
-        maxSizeMB: 5,        
-        maxWidthOrHeight: 1224, 
+        maxSizeMB: 5,
+        maxWidthOrHeight: 1224,
         useWebWorker: true,
       });
-  
+
       setPostImage(compressedFile);
-  
+
       const reader = new FileReader();
       reader.onloadend = () => setPostImagePreview(reader.result as string);
       reader.readAsDataURL(compressedFile);
-  
     } catch (error) {
-      console.error("이미지 압축 실패:", error);
-      alert("이미지 압축 중 오류가 발생했습니다.");
+      console.error('이미지 압축 실패:', error);
+      alert('이미지 압축 중 오류가 발생했습니다.');
     }
-  
-    event.target.value = ""; // input 초기화
+
+    event.target.value = ''; // input 초기화
   };
-  
-  
-  
 
   const handleAttachmentUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
     if (!selectedFiles) return;
-  
+
     const selectedArray = Array.from(selectedFiles);
-  
+
     if (attachments.length + selectedArray.length > 6) {
-      alert("최대 6장까지만 업로드할 수 있습니다.");
-      event.target.value = "";
+      alert('최대 6장까지만 업로드할 수 있습니다.');
+      event.target.value = '';
       return;
     }
-  
+
     try {
       for (const file of selectedArray) {
         const compressedFile = await imageCompression(file, {
@@ -80,26 +68,22 @@ function FlashRunMake() {
           maxWidthOrHeight: 1224,
           useWebWorker: true,
         });
-  
+
         const reader = new FileReader();
         reader.onloadend = () => {
           setAttachmentPreviews((prev) => [...prev, reader.result as string]);
         };
         reader.readAsDataURL(compressedFile);
-  
+
         setAttachments((prev) => [...prev, compressedFile]);
       }
     } catch (error) {
-      console.error("첨부 이미지 압축 실패:", error);
-      alert("첨부 이미지 압축 중 오류가 발생했습니다.");
+      console.error('첨부 이미지 압축 실패:', error);
+      alert('첨부 이미지 압축 중 오류가 발생했습니다.');
     }
-  
-    event.target.value = "";
+
+    event.target.value = '';
   };
-  
-  
-  
-  
 
   const handleRemoveAttachment = (index: number) => {
     setAttachments((prev) => prev.filter((_, i) => i !== index));
@@ -107,15 +91,15 @@ function FlashRunMake() {
   };
 
   const handleSubmit = async () => {
-    if (isSubmitting) return; 
+    if (isSubmitting) return;
 
     if (!title || !location || !content || !dateTime.date || !postImage) {
-      alert("모든 정보를 입력해주세요.");
+      alert('모든 정보를 입력해주세요.');
       return;
     }
 
     try {
-      const [hours, minutes] = dateTime.time.split(":").map(Number);
+      const [hours, minutes] = dateTime.time.split(':').map(Number);
       const selected = dateTime.date!;
 
       const kstDate = new Date(
@@ -129,57 +113,45 @@ function FlashRunMake() {
 
       const utcDate = new Date(kstDate.getTime() - 9 * 60 * 60 * 1000);
 
-      const pad = (n: number) => n.toString().padStart(2, "0");
+      const pad = (n: number) => n.toString().padStart(2, '0');
       const eventDateTime = `${utcDate.getFullYear()}-${pad(utcDate.getMonth() + 1)}-${pad(utcDate.getDate())}T${pad(utcDate.getHours())}:${pad(utcDate.getMinutes())}:${pad(utcDate.getSeconds())}`;
 
-      console.log("선택한 시간:", dateTime.date, dateTime.time);
-      console.log("KST 조립된 시간:", kstDate.toString());
-      console.log("변환된 UTC:", eventDateTime);
+      console.log('선택한 시간:', dateTime.date, dateTime.time);
+      console.log('KST 조립된 시간:', kstDate.toString());
+      console.log('변환된 UTC:', eventDateTime);
 
-      const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
 
       const formData = new FormData();
-      formData.append("title", title);
-      formData.append("location", location);
-      formData.append("date", eventDateTime);
-      formData.append("content", content);
-      formData.append("postImage", postImage);
-      attachments.forEach((file) => formData.append("attachments", file));
+      formData.append('title', title);
+      formData.append('location', location);
+      formData.append('date', eventDateTime);
+      formData.append('content', content);
+      formData.append('postImage', postImage);
+      attachments.forEach((file) => formData.append('attachments', file));
 
-      const response = await customAxios.post("/run/flash/post", formData, {
+      const response = await customAxios.post('/run/flash/post', formData, {
         headers: {
           Authorization: `${token}`,
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       });
 
       if (response.data.isSuccess) {
-        alert("번개런이 성공적으로 생성되었습니다!");
-        navigate("/flash");
+        alert('번개런이 성공적으로 생성되었습니다!');
+        navigate('/flash');
       } else {
         alert(`요청 실패: ${response.data.responseMessage}`);
       }
     } catch (error) {
-      console.error("번개런 생성 중 오류:", error);
-      alert("번개런 생성 중 문제가 발생했습니다.");
+      console.error('번개런 생성 중 오류:', error);
+      alert('번개런 생성 중 문제가 발생했습니다.');
     }
   };
-
-  const formatDate = (date: Date | null) => {
-    if (!date) return "";
-    return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
-  };
-
-
-
-  // 시간 입력 관련 상태 및 핸들러
-  const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
 
   const handleTimeChange = (time: string) => {
     setDateTime((prev) => ({ ...prev, time }));
   };
-
-
 
   return (
     <div className="flex flex-col items-center min-h-screen w-full max-w-[430px] mx-auto">
@@ -205,7 +177,6 @@ function FlashRunMake() {
           onChange={(e) => setLocation(e.target.value)}
         />
 
-
         <DateInput
           selectedDate={selectedDate}
           onChange={(date) => {
@@ -214,9 +185,7 @@ function FlashRunMake() {
           }}
         />
 
-        
         <TimePickerBottomSheet time={dateTime.time} onChange={handleTimeChange} />
-
 
         <div className="mb-2 mt-4">세부사항</div>
         <textarea
@@ -251,7 +220,13 @@ function FlashRunMake() {
               +
             </label>
           )}
-          <input type="file" id="postImageUpload" accept="image/*" onChange={handlePostImageUpload} className="hidden" />
+          <input
+            type="file"
+            id="postImageUpload"
+            accept="image/*"
+            onChange={handlePostImageUpload}
+            className="hidden"
+          />
         </div>
 
         {/* 첨부 이미지 업로드 */}
@@ -278,10 +253,20 @@ function FlashRunMake() {
               </label>
             )}
           </div>
-          <input type="file" id="attachmentUpload" multiple accept="image/*" onChange={handleAttachmentUpload} className="hidden" />
+          <input
+            type="file"
+            id="attachmentUpload"
+            multiple
+            accept="image/*"
+            onChange={handleAttachmentUpload}
+            className="hidden"
+          />
         </div>
 
-        <button onClick={handleSubmit} className="w-full bg-[#366943] text-white py-3 rounded-lg mt-4">
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-[#366943] text-white py-3 rounded-lg mt-4"
+        >
           만들기
         </button>
       </div>

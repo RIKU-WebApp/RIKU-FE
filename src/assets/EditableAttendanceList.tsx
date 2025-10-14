@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { FaCheckCircle } from "react-icons/fa";
-import { BsCircle } from "react-icons/bs";
-import customAxios from "../../apis/customAxios";
+import React, { useState } from 'react';
+import { FaCheckCircle } from 'react-icons/fa';
+import { BsCircle } from 'react-icons/bs';
+import customAxios from '@shared/apis/customAxios';
 
 interface User {
   userId: number;
   userName: string;
   userProfileImg?: string | null;
-  status: "ATTENDED" | "PENDING";
+  status: 'ATTENDED' | 'PENDING';
 }
 
 interface EditableAttendanceListProps {
@@ -32,20 +32,20 @@ const EditableAttendanceList: React.FC<EditableAttendanceListProps> = ({
       user.userId === userId
         ? {
             ...user,
-            status: user.status === "ATTENDED" ? "PENDING" : "ATTENDED",
+            status: user.status === 'ATTENDED' ? 'PENDING' : 'ATTENDED',
           }
         : user
     );
-    onUsersChange(updated);
+    onUsersChange(updated as User[]);
   };
 
   const handleSave = async () => {
-    const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
 
     // status를 확실하게 명시해줘야 타입 에러 방지됨
     const payload = users.map((user) => ({
       userId: user.userId,
-      isAttend: user.status === "ATTENDED",
+      isAttend: user.status === 'ATTENDED',
     }));
 
     try {
@@ -60,14 +60,14 @@ const EditableAttendanceList: React.FC<EditableAttendanceListProps> = ({
       );
 
       if (response.data.isSuccess) {
-        alert("명단이 저장되었습니다.");
+        alert('명단이 저장되었습니다.');
         setEditMode(false);
         if (onSaveComplete) onSaveComplete();
       } else {
         alert(response.data.responseMessage);
       }
-    } catch (err) {
-      alert("저장 중 오류가 발생했습니다.");
+    } catch {
+      alert('저장 중 오류가 발생했습니다.');
     }
   };
 
@@ -76,7 +76,7 @@ const EditableAttendanceList: React.FC<EditableAttendanceListProps> = ({
       {/* 상단 통계 & 버튼 */}
       <div className="flex justify-between items-center">
         <span className="text-[16px] text-kuDarkGreen font-semibold">
-          {users.filter((u) => u.status === "ATTENDED").length} / {users.length}
+          {users.filter((u) => u.status === 'ATTENDED').length} / {users.length}
         </span>
         <button
           onClick={() => {
@@ -87,17 +87,17 @@ const EditableAttendanceList: React.FC<EditableAttendanceListProps> = ({
             }
           }}
           className={`px-3 py-1 text-sm font-semibold rounded ${
-            editMode ? "bg-kuDarkGreen text-white" : "bg-gray-100 text-gray-600"
+            editMode ? 'bg-kuDarkGreen text-white' : 'bg-gray-100 text-gray-600'
           }`}
         >
-          {editMode ? "명단 저장" : "명단 수정"}
+          {editMode ? '명단 저장' : '명단 수정'}
         </button>
       </div>
 
       {/* 유저 목록 */}
       {users.map((user, index) => {
-        const isAttended = user.status === "ATTENDED";
-        const background = isAttended ? "bg-[#F0F4DD]" : "bg-[#ECEBE4]";
+        const isAttended = user.status === 'ATTENDED';
+        const background = isAttended ? 'bg-[#F0F4DD]' : 'bg-[#ECEBE4]';
 
         return (
           <div
@@ -105,9 +105,7 @@ const EditableAttendanceList: React.FC<EditableAttendanceListProps> = ({
             className={`flex items-center gap-3 w-[335px] h-[56px] px-4 py-2.5 rounded-lg ${background}`}
           >
             {/* 순서 */}
-            <div className="w-5 text-center text-gray-500 font-semibold">
-              {index + 1}
-            </div>
+            <div className="w-5 text-center text-gray-500 font-semibold">{index + 1}</div>
 
             {/* 프로필 */}
             <div className="w-10 h-10 rounded-full bg-gray-400 text-white font-bold flex items-center justify-center overflow-hidden">
@@ -127,10 +125,7 @@ const EditableAttendanceList: React.FC<EditableAttendanceListProps> = ({
 
             {/* 상태 표시 or 토글 */}
             {editMode ? (
-              <div
-                className="cursor-pointer"
-                onClick={() => handleToggle(user.userId)}
-              >
+              <div className="cursor-pointer" onClick={() => handleToggle(user.userId)}>
                 {isAttended ? (
                   <FaCheckCircle size={20} color="#4CAF50" />
                 ) : (

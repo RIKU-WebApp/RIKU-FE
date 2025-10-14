@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import customAxios from '../../apis/customAxios';
-import BackIcon from "../../assets/BackBtn.svg";
-import { DateInput } from "../common/DateInput";
-import { TimePickerBottomSheet } from "../common/TimePickerBottomSheet";
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import customAxios from '@shared/apis/customAxios';
+import BackIcon from '@assets/BackBtn.svg';
+import { DateInput } from '../common/DateInput';
+import { TimePickerBottomSheet } from '../common/TimePickerBottomSheet';
 import imageCompression from 'browser-image-compression';
-
 
 interface Pacer {
   id: number;
@@ -29,22 +28,22 @@ interface CreatePacerRequest {
 function EventMake() {
   const navigate = useNavigate();
 
-  const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState('');
+  const [location, setLocation] = useState('');
+  const [content, setContent] = useState('');
   const [dateTime, setDateTime] = useState<{ date: Date | null; time: string }>({
     date: null,
-    time: "00:00",
+    time: '00:00',
   });
   const [pacerGroups, setPacerGroups] = useState<PacerGroup[]>([
-    { id: "A", pacer: "", distance: "", pace: "" },
+    { id: 'A', pacer: '', distance: '', pace: '' },
   ]);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [bottomSheetType, setBottomSheetType] = useState<'distance' | 'pace' | null>(null);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-  const [selectedDistance, setSelectedDistance] = useState<string>("5");
-  const [selectedMinutes, setSelectedMinutes] = useState<string>("5");
-  const [selectedSeconds, setSelectedSeconds] = useState<string>("30");
+  const [selectedDistance, setSelectedDistance] = useState<string>('5');
+  const [selectedMinutes, setSelectedMinutes] = useState<string>('5');
+  const [selectedSeconds, setSelectedSeconds] = useState<string>('30');
   const [pacers, setPacers] = useState<Pacer[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
@@ -58,14 +57,14 @@ function EventMake() {
     const fetchPacers = async () => {
       try {
         const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
-        const response = await customAxios.get("/pacers", {
+        const response = await customAxios.get('/pacers', {
           headers: { Authorization: `${token}` },
         });
         if (response.data.isSuccess) {
           setPacers(response.data.result);
         }
       } catch (error) {
-        console.error("페이서 목록을 가져오는 중 오류 발생:", error);
+        console.error('페이서 목록을 가져오는 중 오류 발생:', error);
       }
     };
     fetchPacers();
@@ -73,22 +72,22 @@ function EventMake() {
 
   const addPacerGroup = () => {
     const nextGroupId = String.fromCharCode(65 + pacerGroups.length);
-    setPacerGroups([...pacerGroups, { id: nextGroupId, pacer: "", distance: "", pace: "" }]);
+    setPacerGroups([...pacerGroups, { id: nextGroupId, pacer: '', distance: '', pace: '' }]);
   };
 
   const removePacerGroup = (id: string) => {
-    setPacerGroups(pacerGroups.filter(group => group.id !== id));
+    setPacerGroups(pacerGroups.filter((group) => group.id !== id));
   };
 
   const handleInputChange = (id: string, field: keyof PacerGroup, value: string) => {
     setPacerGroups(
-      pacerGroups.map(group => group.id === id ? { ...group, [field]: value } : group)
+      pacerGroups.map((group) => (group.id === id ? { ...group, [field]: value } : group))
     );
   };
 
   const handlePacerChange = (id: string, value: string) => {
     setPacerGroups(
-      pacerGroups.map(group => group.id === id ? { ...group, pacer: value } : group)
+      pacerGroups.map((group) => (group.id === id ? { ...group, pacer: value } : group))
     );
   };
 
@@ -101,9 +100,9 @@ function EventMake() {
   const applySelection = () => {
     if (selectedGroup) {
       if (bottomSheetType === 'distance') {
-        handleInputChange(selectedGroup, "distance", `${selectedDistance} km`);
+        handleInputChange(selectedGroup, 'distance', `${selectedDistance} km`);
       } else if (bottomSheetType === 'pace') {
-        handleInputChange(selectedGroup, "pace", `${selectedMinutes}:${selectedSeconds}`);
+        handleInputChange(selectedGroup, 'pace', `${selectedMinutes}:${selectedSeconds}`);
       }
     }
     setIsBottomSheetOpen(false);
@@ -114,13 +113,13 @@ function EventMake() {
     if (!selectedFiles) return;
     const selectedArray = Array.from(selectedFiles);
     if (files.length + selectedArray.length > 6) {
-      alert("최대 6장까지만 업로드할 수 있습니다.");
+      alert('최대 6장까지만 업로드할 수 있습니다.');
       return;
     }
     selectedArray.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviews(prev => [...prev, reader.result as string]);
+        setPreviews((prev) => [...prev, reader.result as string]);
       };
       reader.readAsDataURL(file);
     });
@@ -128,8 +127,8 @@ function EventMake() {
   };
 
   const handleRemoveImage = (index: number) => {
-    setFiles(prev => prev.filter((_, i) => i !== index));
-    setPreviews(prev => prev.filter((_, i) => i !== index));
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+    setPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleDateTimeChange = (date: Date | null, time: string) => {
@@ -138,15 +137,14 @@ function EventMake() {
 
   const handleSubmit = async () => {
     if (!title || !location || !content || !dateTime.date || !postImage) {
-      alert("모든 정보를 입력해주세요.");
+      alert('모든 정보를 입력해주세요.');
       return;
     }
 
     try {
-      const [hours, minutes] = dateTime.time.split(":").map(Number);
+      const [hours, minutes] = dateTime.time.split(':').map(Number);
       const selectedDate = dateTime.date!;
 
-      
       const kstDate = new Date(
         selectedDate.getFullYear(),
         selectedDate.getMonth(),
@@ -156,46 +154,43 @@ function EventMake() {
         0
       );
 
-      
       const utcDate = new Date(kstDate.getTime() - 9 * 60 * 60 * 1000);
 
-      
-      const pad = (n: number) => n.toString().padStart(2, "0");
+      const pad = (n: number) => n.toString().padStart(2, '0');
       const eventDateTime = `${utcDate.getFullYear()}-${pad(utcDate.getMonth() + 1)}-${pad(utcDate.getDate())}T${pad(utcDate.getHours())}:${pad(utcDate.getMinutes())}:${pad(utcDate.getSeconds())}`;
 
       const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
 
       const formData = new FormData();
       const eventType = isCustom ? customInput : selected;
-      formData.append("eventType", eventType);
-      formData.append("title", title);
-      formData.append("location", location);
-      formData.append("date", eventDateTime); // ⬅ 여기!
-      formData.append("content", content);
-      formData.append("postImage", postImage);
-      attachments.forEach(file => formData.append("attachments", file));
+      formData.append('eventType', eventType);
+      formData.append('title', title);
+      formData.append('location', location);
+      formData.append('date', eventDateTime); // ⬅ 여기!
+      formData.append('content', content);
+      formData.append('postImage', postImage);
+      attachments.forEach((file) => formData.append('attachments', file));
 
-      const response = await customAxios.post("/run/event/post", formData, {
+      const response = await customAxios.post('/run/event/post', formData, {
         headers: {
           Authorization: `${token}`,
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       });
 
       if (response.data.isSuccess) {
-        alert("행사가 성공적으로 생성되었습니다!");
-        navigate("/event");
+        alert('행사가 성공적으로 생성되었습니다!');
+        navigate('/event');
       } else {
         alert(`요청 실패: ${response.data.responseMessage}`);
       }
     } catch (error) {
-      console.error("행사 생성 중 오류:", error);
-      alert("행사 생성 중 문제가 발생했습니다.");
+      console.error('행사 생성 중 오류:', error);
+      alert('행사 생성 중 문제가 발생했습니다.');
     }
   };
 
   const eventTypes = ['마라톤', '동아리 행사', '러닝 세션', '기타 (직접입력)'];
-
 
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState('마라톤');
@@ -232,79 +227,71 @@ function EventMake() {
   const handlePostImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-  
+
     try {
       const compressedFile = await imageCompression(file, {
         maxSizeMB: 5,
         maxWidthOrHeight: 1000,
         useWebWorker: true,
       });
-  
+
       setPostImage(compressedFile);
-  
+
       const reader = new FileReader();
       reader.onloadend = () => setPostImagePreview(reader.result as string);
       reader.readAsDataURL(compressedFile);
     } catch (error) {
-      console.error("대표 이미지 압축 실패:", error);
-      alert("대표 이미지 압축 중 문제가 발생했습니다.");
+      console.error('대표 이미지 압축 실패:', error);
+      alert('대표 이미지 압축 중 문제가 발생했습니다.');
     }
-  
-    event.target.value = "";
+
+    event.target.value = '';
   };
-  
-  
-  
 
   const handleRemoveAttachment = (index: number) => {
-    setAttachments(prev => prev.filter((_, i) => i !== index));
-    setAttachmentPreviews(prev => prev.filter((_, i) => i !== index));
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
+    setAttachmentPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleAttachmentUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
     if (!selectedFiles) return;
-  
+
     const selectedArray = Array.from(selectedFiles);
-  
+
     if (attachments.length + selectedArray.length > 6) {
-      alert("최대 6장까지만 업로드할 수 있습니다.");
-      event.target.value = "";
+      alert('최대 6장까지만 업로드할 수 있습니다.');
+      event.target.value = '';
       return;
     }
-  
+
     try {
       const compressedFiles: File[] = [];
-  
+
       for (const file of selectedArray) {
         const compressedFile = await imageCompression(file, {
           maxSizeMB: 5,
-          maxWidthOrHeight: 1000,  // 첨부파일은 해상도 살짝 더 줄여도 좋음
+          maxWidthOrHeight: 1000, // 첨부파일은 해상도 살짝 더 줄여도 좋음
           useWebWorker: true,
         });
-  
+
         compressedFiles.push(compressedFile);
-  
+
         const reader = new FileReader();
         reader.onloadend = () => {
-          setAttachmentPreviews(prev => [...prev, reader.result as string]);
+          setAttachmentPreviews((prev) => [...prev, reader.result as string]);
         };
         reader.readAsDataURL(compressedFile);
       }
-  
-      setAttachments(prev => [...prev, ...compressedFiles]);
+
+      setAttachments((prev) => [...prev, ...compressedFiles]);
     } catch (error) {
-      console.error("첨부 이미지 압축 실패:", error);
-      alert("첨부 이미지 압축 중 문제가 발생했습니다.");
+      console.error('첨부 이미지 압축 실패:', error);
+      alert('첨부 이미지 압축 중 문제가 발생했습니다.');
     }
-  
-    event.target.value = "";
+
+    event.target.value = '';
   };
-  
-  
-  
-  
-  
 
   const handleDateChange = (date: Date | null) => {
     setDateTime((prev) => ({ ...prev, date }));
@@ -340,13 +327,19 @@ function EventMake() {
                 {selected}
                 <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                   <svg
-                    className={`w-4 h-4 transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''
-                      }`}
+                    className={`w-4 h-4 transform transition-transform duration-200 ${
+                      isOpen ? 'rotate-180' : ''
+                    }`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </span>
               </button>
@@ -397,7 +390,12 @@ function EventMake() {
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
             </div>
@@ -407,10 +405,18 @@ function EventMake() {
 
       <div className="w-full max-w-md px-4">
         <div className="my-2">제목</div>
-        <input className="border rounded-lg w-full p-2" placeholder="제목을 입력하세요" onChange={(e) => setTitle(e.target.value)} />
+        <input
+          className="border rounded-lg w-full p-2"
+          placeholder="제목을 입력하세요"
+          onChange={(e) => setTitle(e.target.value)}
+        />
 
         <div className="my-2">집합 장소</div>
-        <input className="border rounded-lg w-full p-2" placeholder="장소명을 입력하세요" onChange={(e) => setLocation(e.target.value)} />
+        <input
+          className="border rounded-lg w-full p-2"
+          placeholder="장소명을 입력하세요"
+          onChange={(e) => setLocation(e.target.value)}
+        />
 
         {/* <div className="my-2">날짜 및 시간</div>
         <DateNtime onDateTimeChange={handleDateTimeChange} /> */}
@@ -426,20 +432,37 @@ function EventMake() {
           onChange={handleContent}
         ></textarea>
 
-
-
         {/* 대표 이미지 업로드 */}
         <div className="my-4">
           <h2 className="mb-2">대표 이미지 (필수)</h2>
           {postImagePreview ? (
             <div className="relative w-[104px] h-[104px]">
               <img src={postImagePreview} className="w-full h-full object-cover rounded-md" />
-              <button onClick={() => { setPostImage(null); setPostImagePreview(null); }} className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">✕</button>
+              <button
+                onClick={() => {
+                  setPostImage(null);
+                  setPostImagePreview(null);
+                }}
+                className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+              >
+                ✕
+              </button>
             </div>
           ) : (
-            <label htmlFor="postImageUpload" className="w-[104px] h-[104px] border border-dashed border-gray-400 flex items-center justify-center text-gray-500 cursor-pointer rounded-md">+</label>
+            <label
+              htmlFor="postImageUpload"
+              className="w-[104px] h-[104px] border border-dashed border-gray-400 flex items-center justify-center text-gray-500 cursor-pointer rounded-md"
+            >
+              +
+            </label>
           )}
-          <input type="file" id="postImageUpload" accept="image/*" onChange={handlePostImageUpload} className="hidden" />
+          <input
+            type="file"
+            id="postImageUpload"
+            accept="image/*"
+            onChange={handlePostImageUpload}
+            className="hidden"
+          />
         </div>
 
         {/* 첨부 이미지 업로드 */}
@@ -449,17 +472,39 @@ function EventMake() {
             {attachmentPreviews.map((img, index) => (
               <div key={index} className="relative w-[104px] h-[104px]">
                 <img src={img} className="w-full h-full object-cover rounded-md" />
-                <button onClick={() => handleRemoveAttachment(index)} className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">✕</button>
+                <button
+                  onClick={() => handleRemoveAttachment(index)}
+                  className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                >
+                  ✕
+                </button>
               </div>
             ))}
             {attachmentPreviews.length < 6 && (
-              <label htmlFor="attachmentUpload" className="w-[104px] h-[104px] border border-dashed border-gray-400 flex items-center justify-center text-gray-500 cursor-pointer rounded-md">+</label>
+              <label
+                htmlFor="attachmentUpload"
+                className="w-[104px] h-[104px] border border-dashed border-gray-400 flex items-center justify-center text-gray-500 cursor-pointer rounded-md"
+              >
+                +
+              </label>
             )}
           </div>
-          <input type="file" id="attachmentUpload" multiple accept="image/*" onChange={handleAttachmentUpload} className="hidden" />
+          <input
+            type="file"
+            id="attachmentUpload"
+            multiple
+            accept="image/*"
+            onChange={handleAttachmentUpload}
+            className="hidden"
+          />
         </div>
 
-        <button onClick={handleSubmit} className="w-full bg-[#366943] text-white py-3 rounded-lg mt-4">만들기</button>
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-[#366943] text-white py-3 rounded-lg mt-4"
+        >
+          만들기
+        </button>
       </div>
     </div>
   );

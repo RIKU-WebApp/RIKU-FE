@@ -1,14 +1,14 @@
 // "이벤트" 기간에 토글이 가능한 이벤트 순위 페이지
 
-import React, { useEffect, useState } from "react";
-import { SimpleUserInfo } from "../../../types/RankingPageTypes";
-import customAxios from "../../../apis/customAxios";
-import defaultProfileImg from "../../../assets/default_profile.png";
-import eventStar from "../../../assets/RankingPage/eventStar.png";
-import EventSectionTopBanner from "./EventSectionTopBanner";
+import React, { useEffect, useState } from 'react';
+import { SimpleUserInfo } from '../../../types/RankingPageTypes';
+import customAxios from '@shared/apis/customAxios';
+import defaultProfileImg from '@assets/default_profile.png';
+import eventStar from '@assets/RankingPage/eventStar.png';
+import EventSectionTopBanner from './EventSectionTopBanner';
 
-import star1 from "../../../assets/RankingPage/star1.png";
-import star2 from "../../../assets/RankingPage/star2.png";
+import star1 from '@assets/RankingPage/star1.png';
+import star2 from '@assets/RankingPage/star2.png';
 
 export default function EventSection({ onShowDetailModal }: { onShowDetailModal: () => void }) {
   const [eventTop20, setEventTop20] = useState<SimpleUserInfo[]>([]);
@@ -16,8 +16,8 @@ export default function EventSection({ onShowDetailModal }: { onShowDetailModal:
 
   // 자신의 정보 myInfo (안 불러와졌을 경우 표시할 placeholder 격의 데이터 하나 넣어놓을 것임)
   const [eventMyInfo, setEventMyInfo] = useState<SimpleUserInfo>({
-    userName: "라이꾸",
-    userProfileImg: "https://via.placeholder.com/48",
+    userName: '라이꾸',
+    userProfileImg: 'https://via.placeholder.com/48',
     totalPoints: 111,
     userId: 1,
   });
@@ -35,21 +35,21 @@ export default function EventSection({ onShowDetailModal }: { onShowDetailModal:
 
   // 이벤트에 관한 랭킹 정보를 가지고 오는 메소드 fetchEventRanking
   const fetchEventRanking = async () => {
-    const accessToken = JSON.parse(localStorage.getItem("accessToken") || ""); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
-    const url = "/ranking/event";
+    const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+    const url = '/ranking/event';
 
     try {
       const response = await customAxios.post(
         url, // 요청 url
         {
-          startDate: "2025-06-02",
-          endDate: "2025-06-30",
-          pointTypes: ["ADD_FLASH_CREATE", "ADD_FLASH_JOIN"],
+          startDate: '2025-06-02',
+          endDate: '2025-06-30',
+          pointTypes: ['ADD_FLASH_CREATE', 'ADD_FLASH_JOIN'],
         },
         {
           headers: {
             Authorization: accessToken,
-            "Content-Type": "application/json", // 일반적으로 명시해줌
+            'Content-Type': 'application/json', // 일반적으로 명시해줌
           },
         }
       );
@@ -58,7 +58,7 @@ export default function EventSection({ onShowDetailModal }: { onShowDetailModal:
       let idx: number = 1;
 
       //상위 10명의 정보를 넣어둘 배열 top20 (response.data.result의 "top20"에서 정보를 가져온다)
-      let top20: SimpleUserInfo[] = response.data.result.top20?.map((user: SimpleUserInfo) => ({
+      const top20: SimpleUserInfo[] = response.data.result.top20?.map((user: SimpleUserInfo) => ({
         userId: idx++,
         userName: user.userName,
         userProfileImg: user.userProfileImg || null,
@@ -73,15 +73,15 @@ export default function EventSection({ onShowDetailModal }: { onShowDetailModal:
         }
       }
 
-      let my: SimpleUserInfo = response.data.result.userPoints; //사용자 정보를 불러와서 저장
-      let myRank: number = response.data.result.userRanking; //사용자 랭킹 정보를 불러와서 저장
+      const my: SimpleUserInfo = response.data.result.userPoints; //사용자 정보를 불러와서 저장
+      const myRank: number = response.data.result.userRanking; //사용자 랭킹 정보를 불러와서 저장
 
       //불러온 정보를 바탕으로 set
       setEventTop20(top20);
       setEventMyInfo(my);
       setMyRankingInfo(myRank);
     } catch (err) {
-      console.error("이벤트 랭킹 정보 불러오기 실패: ", err);
+      console.error('이벤트 랭킹 정보 불러오기 실패: ', err);
     } finally {
       setIsLoaded(true); // 로딩이 다 되었다고 표시(state 변경)
     }
@@ -238,7 +238,7 @@ export default function EventSection({ onShowDetailModal }: { onShowDetailModal:
             onClick={toggleViewCount}
           >
             <span className="text-black text-base font-normal">
-              {viewCount === 10 ? "전체보기" : "간략히 보기"}
+              {viewCount === 10 ? '전체보기' : '간략히 보기'}
             </span>
           </div>
         </div>

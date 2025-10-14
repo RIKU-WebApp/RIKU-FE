@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Link 컴포넌트 import
-import customAxios from "../../apis/customAxios";
-import riku_logo from "../../assets/riku_logo_loginPage.png"; //라이쿠 로고 불러오기
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
+import customAxios from '@shared/apis/customAxios';
+import riku_logo from '@assets/riku_logo_loginPage.png'; //라이쿠 로고 불러오기
 
 //회원 정보와 관련된 객체 정보를 정의한 Member interface
 interface Member {
@@ -27,13 +27,13 @@ function AdminPage() {
   const [roleChangedMembers, setRoleChangedMembers] = useState<Member[]>([]); //역할 바뀐 놈들 저장
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Member;
-    sortDirection: "asc" | "desc";
+    sortDirection: 'asc' | 'desc';
   } | null>(null);
 
   //회원 정보 불러올 함수 fetchMembers()
   async function fetchMembers() {
-    const accessToken = JSON.parse(localStorage.getItem("accessToken") || ""); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
-    const url = "/admin";
+    const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+    const url = '/admin';
 
     try {
       const response = await customAxios.get(
@@ -45,7 +45,7 @@ function AdminPage() {
         }
       );
 
-      let fetchedMembers = response.data.result.map((user: Member) => ({
+      const fetchedMembers = response.data.result.map((user: Member) => ({
         studentId: user.studentId,
         userName: user.userName,
         college: user.college,
@@ -59,8 +59,8 @@ function AdminPage() {
 
       setMembers(fetchedMembers);
       setEditedMembers(fetchedMembers);
-    } catch (error) {
-      alert("회원 정보를 가져 오는 데 실패했습니다");
+    } catch {
+      alert('회원 정보를 가져 오는 데 실패했습니다');
     }
   }
 
@@ -112,36 +112,36 @@ function AdminPage() {
   function compareValues(
     a: string | number | boolean | null,
     b: string | number | boolean | null,
-    direction: "asc" | "desc"
+    direction: 'asc' | 'desc'
   ) {
     //telNum 옵션에서 null이 발생할 수 있음, 이에 대해선 예외 처리를 해주어야 함
     if (a === null || b === null) return a === b ? 0 : a === null ? 1 : -1;
 
     // boolean 처리
-    if (typeof a === "boolean" && typeof b === "boolean") {
+    if (typeof a === 'boolean' && typeof b === 'boolean') {
       const aNum = a ? 1 : 0;
       const bNum = b ? 1 : 0;
-      return direction === "asc" ? aNum - bNum : bNum - aNum;
+      return direction === 'asc' ? aNum - bNum : bNum - aNum;
     }
 
     // 타입 안전한 비교 (number vs string)
-    if (typeof a === "number" && typeof b === "number") {
-      return direction === "asc" ? a - b : b - a;
+    if (typeof a === 'number' && typeof b === 'number') {
+      return direction === 'asc' ? a - b : b - a;
     }
 
     // 문자열 비교 (localeCompare로 안정성 확보한다 --> 다국어 문자열 비교 지원을 하나, 성능이 부등호 보단 다소 느릴 수 있음)
-    return direction === "asc"
+    return direction === 'asc'
       ? String(a).localeCompare(String(b))
       : String(b).localeCompare(String(a));
   }
 
   //회원 정보들을 정렬하기 위한 handleSort
   function handleSort(key: keyof Member) {
-    let sortDirection: "asc" | "desc" = "asc"; //내림차순(desc) 혹은 오름차순(asc) 옵션 관련한 자료형 sortDirection 선언
+    let sortDirection: 'asc' | 'desc' = 'asc'; //내림차순(desc) 혹은 오름차순(asc) 옵션 관련한 자료형 sortDirection 선언
 
     //sortConfig 값이 null이 아니라면, sortDirection을 반전 시킨다
-    if (sortConfig && sortConfig.key === key && sortConfig.sortDirection === "asc") {
-      sortDirection = "desc";
+    if (sortConfig && sortConfig.key === key && sortConfig.sortDirection === 'asc') {
+      sortDirection = 'desc';
     }
 
     const sortedMembers = [...editedMembers].sort((a, b) => {
@@ -158,8 +158,8 @@ function AdminPage() {
   //저장하는 프로세스를 핸들링하는 메소드 handleSave
   async function handleSave() {
     try {
-      const accessToken = JSON.parse(localStorage.getItem("accessToken") || ""); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
-      const url = "/admin";
+      const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+      const url = '/admin';
       //roleChangedMembers 배열의 요소들에서 studentId, userName만을 추출
       const payload = roleChangedMembers.map(({ studentId, userRole, isPacer }) => ({
         studentId,
@@ -168,19 +168,19 @@ function AdminPage() {
       }));
       //바뀐 친구가 없다면(roleChangedMembers에 들어간 놈이 아무것도 없다면..)
       if (payload.length === 0) {
-        alert("현재 바뀐 정보가 없습니다.");
+        alert('현재 바뀐 정보가 없습니다.');
       } else {
         await customAxios.patch(url, payload, {
           headers: {
             Authorization: accessToken, //accessToken을 헤더로 추가해서 요청 보냄
           },
         }); //추후 해당하는 api 엔드포인트로 교체할 예정
-        alert("성공적으로 회원 정보 수정이 완료 되었습니다!");
-        navigate("/tab/my-page");
+        alert('성공적으로 회원 정보 수정이 완료 되었습니다!');
+        navigate('/tab/my-page');
       }
     } catch (error) {
-      console.error("수정 사항을 저장하는 데 오류가 발생했습니다", error);
-      alert("수정 사항을 저장하는 데 오류가 발생했습니다!");
+      console.error('수정 사항을 저장하는 데 오류가 발생했습니다', error);
+      alert('수정 사항을 저장하는 데 오류가 발생했습니다!');
     }
   }
 
@@ -191,7 +191,7 @@ function AdminPage() {
 
   //마이 페이지로 돌아가는 버튼
   function handleToMyPage() {
-    navigate("/tab/my-page");
+    navigate('/tab/my-page');
   }
 
   return (
@@ -213,15 +213,15 @@ function AdminPage() {
           <thead>
             <tr>
               {[
-                "학번",
-                "이름",
-                "단과대학명",
-                "전공명",
-                "전화번호",
-                "포인트",
-                "활동내역 갯수",
-                "회원등급",
-                "페이서 여부",
+                '학번',
+                '이름',
+                '단과대학명',
+                '전공명',
+                '전화번호',
+                '포인트',
+                '활동내역 갯수',
+                '회원등급',
+                '페이서 여부',
               ].map((header, index) => (
                 <th
                   key={index}
@@ -229,15 +229,15 @@ function AdminPage() {
                   onClick={() =>
                     handleSort(
                       [
-                        "studentId",
-                        "userName",
-                        "college",
-                        "major",
-                        "phone",
-                        "points",
-                        "participationCount",
-                        "userRole",
-                        "isPacer",
+                        'studentId',
+                        'userName',
+                        'college',
+                        'major',
+                        'phone',
+                        'points',
+                        'participationCount',
+                        'userRole',
+                        'isPacer',
                       ][index] as keyof Member
                     )
                   }

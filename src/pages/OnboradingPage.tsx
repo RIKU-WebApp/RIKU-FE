@@ -1,12 +1,13 @@
-import rikulogo from "./assets/onboarding_logo.svg";
-import { useNavigate } from "react-router-dom";
-import backgroundVideo from "./assets/onboard_video_no_sound.mp4";
+import rikulogo from '@assets/onboarding_logo.svg';
+import { useNavigate } from 'react-router-dom';
+import backgroundVideo from '@assets/onboard_video_no_sound.mp4';
 
+// 웹사이트 처음 접속 시 보여지는 "온보딩" 페이지
 function OnbordingPage() {
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
-    navigate("/login");
+    navigate('/login');
   };
 
   return (

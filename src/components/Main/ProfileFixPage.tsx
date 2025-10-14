@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Link 컴포넌트 import
-import customAxios from "../../apis/customAxios";
-import pencil_Icon from "../../assets/Main-img/pencil.svg"; //연필 로고 불러오기
-import ActionBar from "../../components/ActionBar";
-import defaultProfileImg from "../../assets/default_profile.png";
-import imageCompression from "browser-image-compression"; //이미지 압축을 위한 라이브러리 추가
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
+import customAxios from '@shared/apis/customAxios';
+import pencil_Icon from '@assets/Main-img/pencil.svg'; //연필 로고 불러오기
+import ActionBar from '../../components/ActionBar';
+import defaultProfileImg from '@assets/default_profile.png';
+import imageCompression from 'browser-image-compression'; //이미지 압축을 위한 라이브러리 추가
 
-import EyeIcon from "../../assets/visibility_true.svg";
-import EyeOffIcon from "../../assets/visibility_false.svg";
+import EyeIcon from '@assets/visibility_true.svg';
+import EyeOffIcon from '@assets/visibility_false.svg';
 
 interface InputFieldProps {
   label: string;
@@ -27,12 +27,12 @@ const InputField: React.FC<InputFieldProps> = ({
   onChange,
   disabled = false,
   password = false,
-  errorMessage = "",
+  errorMessage = '',
   hasError = false,
-  placeholder = "",
+  placeholder = '',
 }) => {
   const [showPassword, setShowPassword] = useState(false); //비밀번호 입력창인 경우 비밀번호를 보여주는 여부
-  const inputType = password ? (showPassword ? "text" : "password") : "text";
+  const inputType = password ? (showPassword ? 'text' : 'password') : 'text';
 
   return (
     <div className="mb-6 max-w-[430px] w-full mx-auto">
@@ -41,8 +41,8 @@ const InputField: React.FC<InputFieldProps> = ({
         <input
           className={`w-full border rounded-xl px-3 py-3 ${
             hasError
-              ? "border-red-500 focus:outline-red-600"
-              : "border-kuCoolGray focus:outline-kuDarkGreen"
+              ? 'border-red-500 focus:outline-red-600'
+              : 'border-kuCoolGray focus:outline-kuDarkGreen'
           }`}
           value={value}
           onChange={(e) => {
@@ -109,9 +109,9 @@ function validatePassword(password: string) {
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/;
 
   if (!passwordRegex.test(password)) {
-    return { valid: false, message: "영문, 숫자, 특수문자 조합 8~20자리까지 가능합니다." };
+    return { valid: false, message: '영문, 숫자, 특수문자 조합 8~20자리까지 가능합니다.' };
   } else {
-    return { valid: true, message: "유효한 비밀번호 형식입니다" };
+    return { valid: true, message: '유효한 비밀번호 형식입니다' };
   }
 }
 
@@ -119,18 +119,18 @@ function validatePassword(password: string) {
 function ProfileFixPage() {
   const navigate = useNavigate(); //useNavigate 훅을 사용해 navigate 함수 생성
 
-  const [name, setName] = useState("허기철"); //이름
-  const [collegeName, setCollegeName] = useState("공과대학"); //학교 정보-단과대명
-  const [departmentName, setDepartmentName] = useState("힙합공학부"); //학교 정보-학과명
-  const [telNum, setTelNum] = useState(""); //전화번호
+  const [name, setName] = useState('허기철'); //이름
+  const [collegeName, setCollegeName] = useState('공과대학'); //학교 정보-단과대명
+  const [departmentName, setDepartmentName] = useState('힙합공학부'); //학교 정보-학과명
+  const [telNum, setTelNum] = useState(''); //전화번호
   const [telNumChanged, setTelNumChanged] = useState(false); //전화번호가 바뀌었는지 확인하는 state
-  const [studentID, setStudentID] = useState("201911291"); //학번(ID)
-  const [userProfileImageUrl, setUserProfileImageUrl] = useState(""); //유저 프로필 이미지 url
+  const [studentID, setStudentID] = useState('201911291'); //학번(ID)
+  const [userProfileImageUrl, setUserProfileImageUrl] = useState(''); //유저 프로필 이미지 url
 
   //비밀번호 유효성 검사 관련
-  const [password, setPassword] = useState(""); //비밀번호
+  const [password, setPassword] = useState(''); //비밀번호
   const [isPasswordValid, setIsPasswordValid] = useState(false);
-  const [passwordError, setPasswordError] = useState("");
+  const [passwordError, setPasswordError] = useState('');
 
   //프로필 이미지 관련
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -147,30 +147,30 @@ function ProfileFixPage() {
   async function handleSubmitBtnClick() {
     const formData = new FormData();
 
-    if (telNum) formData.append("phone", telNum);
-    if (selectedImage) formData.append("userProfileImg", selectedImage);
-    if (password !== "") formData.append("password", password); //비밀번호가 공백이라면, 빈 채로 보내줘야 함
+    if (telNum) formData.append('phone', telNum);
+    if (selectedImage) formData.append('userProfileImg', selectedImage);
+    if (password !== '') formData.append('password', password); //비밀번호가 공백이라면, 빈 채로 보내줘야 함
 
     try {
-      const accessToken = JSON.parse(localStorage.getItem("accessToken") || ""); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+      const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
       const url = `/user/profile`;
       const response = await customAxios.patch(url, formData, {
         headers: {
           Authorization: accessToken,
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       });
 
       //성공했다면
       if (response.data.isSuccess) {
-        alert("프로필 수정에 성공했습니다.");
-        navigate("/tab/my-page");
+        alert('프로필 수정에 성공했습니다.');
+        navigate('/tab/my-page');
       } else {
         alert(response.data.errors.message);
       }
     } catch (error) {
-      console.error("프로필 수정 실패:", error);
-      alert("프로필 수정 실패!");
+      console.error('프로필 수정 실패:', error);
+      alert('프로필 수정 실패!');
     }
   }
 
@@ -186,21 +186,21 @@ function ProfileFixPage() {
         maxSizeMB: 1, //최대 1MB 목표 (가볍게 하려면 추후 0.5로도 가능할 듯)
         maxWidthOrHeight: 512, //가로/세로 길이 제한
         useWebWorker: true,
-        fileType: "image/webp", //변환 포맴ㅅ 지정 (브라우저 지원 범위 고려해서..)
+        fileType: 'image/webp', //변환 포맴ㅅ 지정 (브라우저 지원 범위 고려해서..)
       };
 
       const compressedFile = await imageCompression(file, options); //압축할 것임
 
       // 압축 후에도 3MB를 초과한다면 업로드 금지
       if (compressedFile.size > MAX_FILE_SIZE) {
-        alert("압축 후에도 파일이 너무 큽니다. 다른 파일을 선택해 주세요.");
+        alert('압축 후에도 파일이 너무 큽니다. 다른 파일을 선택해 주세요.');
         return;
       }
       setSelectedImage(compressedFile);
       setPreviewUrl(URL.createObjectURL(compressedFile)); // 미리보기용 URL 생성
     } catch (error) {
-      console.error("이미지 압축 실패: ", error);
-      alert("이미지 압축하는 도중에 오류가 발생함!");
+      console.error('이미지 압축 실패: ', error);
+      alert('이미지 압축하는 도중에 오류가 발생함!');
     }
   };
 
@@ -213,11 +213,11 @@ function ProfileFixPage() {
   }, []);
 
   //저장하기 전에 필수 form이 다 채워졌나 확인하는 변수들 (전화번호를 제외한 모든 form이 채워져 있어야 함), 그리고 이를 검증하는 isFormsValid() 함수
-  const isPasswordFormValid = password.trim() === "" || isPasswordValid;
+  const isPasswordFormValid = password.trim() === '' || isPasswordValid;
 
   function isFormsValid() {
     //비번도 비어있는 상태이고, 프사 선택도 안했다면, 가차없이 false 반환
-    if (password.trim() === "" && selectedImage === null && telNumChanged === false) return false;
+    if (password.trim() === '' && selectedImage === null && telNumChanged === false) return false;
 
     if (isPasswordFormValid) {
       //비밀번호가 유효한 경우
@@ -231,8 +231,8 @@ function ProfileFixPage() {
   //유저 세부 정보를 불러오는 fetchUserDetailedProfile()
   async function fetchUserDetailedProfile() {
     try {
-      const url = "/user/profile/detail";
-      const accessToken = JSON.parse(localStorage.getItem("accessToken") || ""); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+      const url = '/user/profile/detail';
+      const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
       const response = await customAxios.get(url, {
         headers: {
           Authorization: accessToken,
@@ -247,17 +247,17 @@ function ProfileFixPage() {
       setStudentID(response.data.result.studentId);
       setUserProfileImageUrl(response.data.result.profileImageUrl);
     } catch (error) {
-      console.error("프로필 불러오기 실패:", error);
-      alert("프로필 불러오기 실패!");
+      console.error('프로필 불러오기 실패:', error);
+      alert('프로필 불러오기 실패!');
     }
   }
 
   //password를 바꿨을 때를 컨트롤 하는 handlePasswordChange
   const handlePasswordChange = (value: string, isValid?: boolean) => {
     setPassword(value);
-    if (typeof isValid === "boolean") {
+    if (typeof isValid === 'boolean') {
       setIsPasswordValid(isValid);
-      setPasswordError(isValid ? "" : "영문, 숫자, 특수문자 조합 8~20자리까지 가능합니다.");
+      setPasswordError(isValid ? '' : '영문, 숫자, 특수문자 조합 8~20자리까지 가능합니다.');
     }
   };
 
@@ -334,8 +334,8 @@ function ProfileFixPage() {
               className={`w-full font-bold text-xl py-3 rounded-lg mt-6
             ${
               isFormsValid()
-                ? "bg-kuDarkGreen text-white hover:bg-kuGreen"
-                : "bg-kuLightGray text-white"
+                ? 'bg-kuDarkGreen text-white hover:bg-kuGreen'
+                : 'bg-kuLightGray text-white'
             }`}
             >
               저장하기

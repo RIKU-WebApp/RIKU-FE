@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
-import defaultProfileImg from "../../../assets/default_profile.png";
-import rikuHorn_left from "../../../assets/RankingPage/rikuHorn_left.svg";
-import rikuHorn_right from "../../../assets/RankingPage/rikuHorn_right.svg";
-import { SimpleUserInfo } from "../../../types/RankingPageTypes";
-import customAxios from "../../../apis/customAxios";
+import React, { useEffect, useState } from 'react';
+import defaultProfileImg from '@assets/default_profile.png';
+import rikuHorn_left from '@assets/RankingPage/rikuHorn_left.svg';
+import rikuHorn_right from '@assets/RankingPage/rikuHorn_right.svg';
+import { SimpleUserInfo } from '../../../types/RankingPageTypes';
+import customAxios from '@shared/apis/customAxios';
 
 // 토글에서 "순위" 탭이 선택된 경우, 보여줄 RankingSection
 export default function RankingSection() {
   const [top20, setTop20] = useState<SimpleUserInfo[]>([]);
   const [myInfo, setMyInfo] = useState<SimpleUserInfo>({
-    userName: "라이쿠",
-    userProfileImg: "https://via.placeholder.com/48",
+    userName: '라이쿠',
+    userProfileImg: 'https://via.placeholder.com/48',
     totalPoints: 111,
     userId: 1,
   });
@@ -25,10 +25,10 @@ export default function RankingSection() {
 
   // top20 랭킹 정보를 가져오는 fetchRanking
   const fetchRanking = async () => {
-    const accessToken = JSON.parse(localStorage.getItem("accessToken") || "");
+    const accessToken = JSON.parse(localStorage.getItem('accessToken') || '');
 
     try {
-      const response = await customAxios.get("/ranking", {
+      const response = await customAxios.get('/ranking', {
         headers: { Authorization: accessToken },
       });
 
@@ -51,7 +51,7 @@ export default function RankingSection() {
       setMyInfo(response.data.result.userPoints);
       setMyRanking(response.data.result.userRanking);
     } catch (error) {
-      console.error("랭킹 정보 요청 실패:", error);
+      console.error('랭킹 정보 요청 실패:', error);
     } finally {
       setIsLoaded(true);
     }
@@ -213,7 +213,7 @@ export default function RankingSection() {
             onClick={toggleViewCount}
           >
             <span className="text-black text-base font-normal">
-              {viewCount === 10 ? "전체보기" : "간략히 보기"}
+              {viewCount === 10 ? '전체보기' : '간략히 보기'}
             </span>
           </div>
         </div>

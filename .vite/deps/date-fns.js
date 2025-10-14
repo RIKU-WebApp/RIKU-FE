@@ -247,9 +247,9 @@ import {
   weeksToDays,
   yearsToDays,
   yearsToMonths,
-  yearsToQuarters
-} from "./chunk-JTEA6FHL.js";
-import "./chunk-DC5AMYBS.js";
+  yearsToQuarters,
+} from './chunk-JTEA6FHL.js';
+import './chunk-DC5AMYBS.js';
 export {
   add,
   addBusinessDays,
@@ -500,6 +500,6 @@ export {
   weeksToDays,
   yearsToDays,
   yearsToMonths,
-  yearsToQuarters
+  yearsToQuarters,
 };
 //# sourceMappingURL=date-fns.js.map

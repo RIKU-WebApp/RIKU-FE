@@ -1,35 +1,35 @@
 //러닝 리스트 Page
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { format } from "date-fns";
-import { ko } from "date-fns/locale";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination, Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 
-import customAxios from "../../apis/customAxios";
-import BacbBtnimg from "../../assets/BackBtn.svg";
-import ListEventCard from "./ListEventCard";
-import TodayRun from "./TodayRun";
-import PastRuns from "./PastRuns";
-import NavBar from "../NavBar";
+import customAxios from '@shared/apis/customAxios';
+import BacbBtnimg from '@assets/BackBtn.svg';
+import ListEventCard from './ListEventCard';
+import TodayRun from './TodayRun';
+import PastRuns from './PastRuns';
+import NavBar from '../NavBar';
 
 interface RunData {
   id: number;
   title: string;
   date: string;
   participants: number;
-  postStatus: "NOW" | "CANCELED" | "CLOSED";
+  postStatus: 'NOW' | 'CANCELED' | 'CLOSED';
   postImageUrl: string;
 }
 
 const config = {
-  regular: { title: "정규런", api: "/run/regular", path: "regular" },
-  flash: { title: "번개런", api: "/run/flash", path: "flash" },
-  event: { title: "행사", api: "/run/event", path: "event" },
-  training: { title: "훈련", api: "/run/training", path: "training" },
+  regular: { title: '정규런', api: '/run/regular', path: 'regular' },
+  flash: { title: '번개런', api: '/run/flash', path: 'flash' },
+  event: { title: '행사', api: '/run/event', path: 'event' },
+  training: { title: '훈련', api: '/run/training', path: 'training' },
 };
 
 const RunList: React.FC = () => {
@@ -42,17 +42,17 @@ const RunList: React.FC = () => {
   const [upcomingRuns, setUpcomingRuns] = useState<RunData[]>([]);
   const [pastRuns, setPastRuns] = useState<RunData[]>([]);
 
-  const current = config[runType ?? "regular"];
+  const current = config[runType ?? 'regular'];
 
-  // 조사 분기 함수 => 이 / 가 
+  // 조사 분기 함수 => 이 / 가
   const getSubjectParticle = (word: string) => {
     const lastChar = word[word.length - 1];
     const code = lastChar.charCodeAt(0);
-    return (code - 44032) % 28 === 0 ? "가" : "이";
+    return (code - 44032) % 28 === 0 ? '가' : '이';
   };
 
   useEffect(() => {
-    const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
     const fetchRunData = async () => {
       try {
         const response = await customAxios.get(current.api, {
@@ -63,7 +63,7 @@ const RunList: React.FC = () => {
         setUpcomingRuns(result.upcomingRuns ?? []);
         setPastRuns(result.pastRuns ?? []);
       } catch (error) {
-        console.error("Error fetching run data:", error);
+        console.error('Error fetching run data:', error);
       }
     };
     fetchRunData();
@@ -83,8 +83,8 @@ const RunList: React.FC = () => {
     const kst = new Date(utc.getTime() + 9 * 60 * 60 * 1000);
     return {
       kst,
-      formattedDate: format(kst, "MM/dd EEEE", { locale: ko }),
-      formattedTime: format(kst, "HH:mm"),
+      formattedDate: format(kst, 'MM/dd EEEE', { locale: ko }),
+      formattedTime: format(kst, 'HH:mm'),
     };
   };
 
@@ -96,7 +96,7 @@ const RunList: React.FC = () => {
           src={BacbBtnimg}
           className="absolute left-[24px] cursor-pointer"
           alt="Back"
-          onClick={() => navigate("/tab/main")}
+          onClick={() => navigate('/tab/main')}
         />
         {current.title}
       </div>
@@ -113,7 +113,7 @@ const RunList: React.FC = () => {
               <Swiper
                 modules={[Pagination, Navigation]}
                 pagination={{
-                  el: ".custom-pagination",
+                  el: '.custom-pagination',
                   clickable: true,
                 }}
                 spaceBetween={16}
@@ -145,11 +145,13 @@ const RunList: React.FC = () => {
           ) : (
             <div className="flex flex-col items-center justify-center w-[335px] h-[200px] bg-kuLightGray rounded-lg mt-4">
               <p className="text-[18px] font-semibold text-black">
-              현재 진행중인 {current.title}
-              {getSubjectParticle(current.title)} 없습니다.
+                현재 진행중인 {current.title}
+                {getSubjectParticle(current.title)} 없습니다.
               </p>
-              {runType === "flash" && (
-                <p className="text-[14px] text-gray-500 mt-2">직접 러닝을 만들어보는 건 어떨까요?</p>
+              {runType === 'flash' && (
+                <p className="text-[14px] text-gray-500 mt-2">
+                  직접 러닝을 만들어보는 건 어떨까요?
+                </p>
               )}
             </div>
           )}

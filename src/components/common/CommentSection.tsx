@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import customAxios from "../../apis/customAxios";
-import CommentIcon from "../../assets/CommentIcon.svg";
-import CommentInputOn from "../../assets/comment_input_on.svg";
-import CommentInputOff from "../../assets/comment_input_off.svg";
+import React, { useEffect, useState } from 'react';
+import customAxios from '@shared/apis/customAxios';
+import CommentIcon from '@assets/CommentIcon.svg';
+import CommentInputOn from '@assets/comment_input_on.svg';
+import CommentInputOff from '@assets/comment_input_off.svg';
 
 // 대댓글(Reply) 인터페이스
 interface Reply {
@@ -22,7 +22,7 @@ interface Comment extends Reply {}
 // 컴포넌트 Props 타입
 interface CommentSectionProps {
   postId: string;
-  postType: "event" | "regular" | "training" | "flash";
+  postType: 'event' | 'regular' | 'training' | 'flash';
   userInfo: {
     userId: number;
     userName: string;
@@ -32,10 +32,15 @@ interface CommentSectionProps {
 }
 
 // 댓글 섹션 컴포넌트
-const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refreshTrigger, postType }) => {
+const CommentSection: React.FC<CommentSectionProps> = ({
+  postId,
+  userInfo,
+  refreshTrigger,
+  postType,
+}) => {
   // 상태 관리
   const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState<string>("");
+  const [newComment, setNewComment] = useState<string>('');
   const [replyInputs, setReplyInputs] = useState<Record<number, string>>({});
   const [replyTargetCommentId, setReplyTargetCommentId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -55,7 +60,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
   // 서버에서 댓글 데이터 불러오기
   const fetchComments = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
       const response = await customAxios.get(`/run/${postType}/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -63,7 +68,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
         setComments(response.data.result.comments);
       }
     } catch (err) {
-      console.error("댓글 불러오기 실패", err);
+      console.error('댓글 불러오기 실패', err);
     }
   };
 
@@ -72,18 +77,18 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
     if (!newComment.trim() || isSubmitting) return;
     setIsSubmitting(true);
     try {
-      const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
       const response = await customAxios.post(
         `/run/${postType}/post/${postId}/comment`,
         { content: newComment, targetId: null },
         { headers: { Authorization: `${token}` } }
       );
       if (response.data.isSuccess) {
-        setNewComment(""); // 입력창 비우기
+        setNewComment(''); // 입력창 비우기
         fetchComments(); // 댓글 목록 새로고침
       }
     } catch {
-      alert("댓글 등록 오류");
+      alert('댓글 등록 오류');
     } finally {
       setIsSubmitting(false);
     }
@@ -95,19 +100,19 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
     if (!content?.trim() || isSubmitting) return;
     setIsSubmitting(true);
     try {
-      const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
       const response = await customAxios.post(
         `/run/${postType}/post/${postId}/comment`,
         { content, targetId },
         { headers: { Authorization: `${token}` } }
       );
       if (response.data.isSuccess) {
-        setReplyInputs((prev) => ({ ...prev, [targetId]: "" }));
+        setReplyInputs((prev) => ({ ...prev, [targetId]: '' }));
         setReplyTargetCommentId(null); // 대댓글 입력창 닫기
         fetchComments(); // 댓글 목록 새로고침
       }
     } catch {
-      alert("대댓글 등록 오류");
+      alert('대댓글 등록 오류');
     } finally {
       setIsSubmitting(false);
     }
@@ -121,7 +126,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
   // 댓글 삭제하기
   const handleDeleteComment = async (commentId: number) => {
     try {
-      const token = JSON.parse(localStorage.getItem("accessToken") || "null");
+      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
       const response = await customAxios.patch(
         `/run/${postType}/post/${postId}/comment/${commentId}`,
         {},
@@ -131,16 +136,16 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
         fetchComments(); // 삭제 후 목록 새로고침
       }
     } catch {
-      alert("댓글 삭제 오류");
+      alert('댓글 삭제 오류');
     }
   };
 
   // 댓글과 대댓글 중 ACTIVE 상태만 필터링
-  const activeComments = comments.filter((c) => c.commentStatus === "ACTIVE");
+  const activeComments = comments.filter((c) => c.commentStatus === 'ACTIVE');
   const totalActiveCount =
     activeComments.length +
     activeComments.reduce(
-      (sum, c) => sum + c.replies.filter((r) => r.commentStatus === "ACTIVE").length,
+      (sum, c) => sum + c.replies.filter((r) => r.commentStatus === 'ACTIVE').length,
       0
     );
 
@@ -153,7 +158,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
       {/* 댓글 리스트 */}
       <div className="bg-[#F5F5F5] rounded-xl p-4 space-y-4">
         {activeComments.map((comment) => {
-          const activeReplies = comment.replies.filter((r) => r.commentStatus === "ACTIVE");
+          const activeReplies = comment.replies.filter((r) => r.commentStatus === 'ACTIVE');
           return (
             <div key={comment.commentId} className="border-b border-[#E0E0E0] pb-3 space-y-2">
               {/* 원댓글 */}
@@ -162,7 +167,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
                   {/* 작성자 프로필 */}
                   <div className="w-6 aspect-square rounded-full flex items-center justify-center overflow-hidden bg-[#9DC34A] text-white text-[10px] font-bold">
                     {comment.userProfileImg ? (
-                      <img src={comment.userProfileImg} alt="작성자" className="w-full h-full object-cover" />
+                      <img
+                        src={comment.userProfileImg}
+                        alt="작성자"
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       comment.userName.charAt(0)
                     )}
@@ -171,7 +180,9 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
                   {/* 작성자 이름, 내용 */}
                   <div className="flex flex-col w-full">
                     <div className="font-semibold text-left">{comment.userName}</div>
-                    <div className="text-[16px] text-left break-words whitespace-pre-wrap">{comment.content}</div>
+                    <div className="text-[16px] text-left break-words whitespace-pre-wrap">
+                      {comment.content}
+                    </div>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-xs text-gray-400">{comment.createdAt}</span>
                       <button
@@ -197,12 +208,19 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
 
               {/* 대댓글 리스트 */}
               {activeReplies.map((reply) => (
-                <div key={reply.commentId} className="w-full mt-2 pl-8 flex justify-between items-start">
+                <div
+                  key={reply.commentId}
+                  className="w-full mt-2 pl-8 flex justify-between items-start"
+                >
                   <div className="flex items-start gap-2 flex-1">
                     {/* 대댓글 작성자 */}
                     <div className="w-6 aspect-square rounded-full flex items-center justify-center overflow-hidden bg-[#9DC34A] text-white text-[10px] font-bold">
                       {reply.userProfileImg ? (
-                        <img src={reply.userProfileImg} alt="작성자" className="w-full h-full object-cover" />
+                        <img
+                          src={reply.userProfileImg}
+                          alt="작성자"
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         reply.userName.charAt(0)
                       )}
@@ -211,7 +229,9 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
                     {/* 대댓글 내용 */}
                     <div className="flex flex-col w-full">
                       <div className="font-semibold text-[16px] text-left">{reply.userName}</div>
-                      <div className="text-[16px] text-left break-words whitespace-pre-wrap">{reply.content}</div>
+                      <div className="text-[16px] text-left break-words whitespace-pre-wrap">
+                        {reply.content}
+                      </div>
                       <div className="text-xs text-gray-400 mt-1 text-left">{reply.createdAt}</div>
                     </div>
                   </div>
@@ -234,7 +254,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
                   {/* 내 프로필 */}
                   <div className="w-6 aspect-square rounded-full flex items-center justify-center overflow-hidden bg-[#9DC34A] text-white text-[10px] font-bold">
                     {userInfo.userProfileImg ? (
-                      <img src={userInfo.userProfileImg} alt="내 프로필" className="w-full h-full object-cover" />
+                      <img
+                        src={userInfo.userProfileImg}
+                        alt="내 프로필"
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       userInfo.userName.charAt(0)
                     )}
@@ -252,10 +276,10 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
                         }
                       }}
                       className="w-full bg-kuLightGray text-[16px] py-[9px] pr-[35px] pl-[8px] rounded-[8px] h-[32px]"
-                      value={replyInputs[comment.commentId] || ""}
+                      value={replyInputs[comment.commentId] || ''}
                       onChange={(e) => handleReplyChange(comment.commentId, e.target.value)}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter" && replyInputs[comment.commentId]?.trim()) {
+                        if (e.key === 'Enter' && replyInputs[comment.commentId]?.trim()) {
                           e.preventDefault();
                           handleSubmitReply(comment.commentId);
                         }
@@ -267,7 +291,9 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
                       className="absolute right-2 top-1/2 -translate-y-1/2"
                     >
                       <img
-                        src={replyInputs[comment.commentId]?.trim() ? CommentInputOn : CommentInputOff}
+                        src={
+                          replyInputs[comment.commentId]?.trim() ? CommentInputOn : CommentInputOff
+                        }
                         alt="등록"
                         className="w-4 h-4"
                       />
@@ -283,7 +309,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
         <div className="flex items-center mt-3 bg-[#F5F5F5] rounded-xl px-3 py-2 gap-[8px]">
           <div className="w-6 aspect-square rounded-full flex items-center justify-center overflow-hidden bg-[#9DC34A] text-white text-[10px] font-bold">
             {userInfo.userProfileImg ? (
-              <img src={userInfo.userProfileImg} alt="내 프로필" className="w-full h-full object-cover" />
+              <img
+                src={userInfo.userProfileImg}
+                alt="내 프로필"
+                className="w-full h-full object-cover"
+              />
             ) : (
               userInfo.userName.charAt(0)
             )}
@@ -304,7 +334,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, userInfo, refre
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && newComment.trim()) {
+                if (e.key === 'Enter' && newComment.trim()) {
                   e.preventDefault();
                   handleSubmitComment();
                 }
