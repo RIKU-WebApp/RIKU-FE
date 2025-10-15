@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
-import customAxios from '@shared/apis/customAxios';
+import customAxios from '@/shared/lib/customAxios';
 import peopleimg from '@assets/people_darkgreen.svg';
 
 interface User {

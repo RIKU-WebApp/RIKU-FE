@@ -5,7 +5,7 @@ import place from '../../assets/FlashRunDetail/place.svg';
 import time from '../../assets/FlashRunDetail/time.svg';
 import TabButton from './TapButton';
 import AttendanceList from './AttendanceList';
-import customAxios from '@shared/apis/customAxios';
+import customAxios from '@/shared/lib/customAxios';
 import flashrunimage from '../../assets/Run-img/flashrunimage.jpg';
 import { useNavigate } from 'react-router-dom';
 import BackBtnimg from '../../assets/BackBtn.svg';

@@ -1,4 +1,4 @@
-import useStudentidInputData from '@features/createAccount/hooks/useStudentidInputData';
+import useStudentidInputData from '@features/auth/hooks/useStudentidInputData';
 
 // 학번 입력 컴포넌트
 function StudentidInput() {

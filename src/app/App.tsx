@@ -31,7 +31,7 @@ import RunList from '../components/common/RunList';
 
 import RecordPage from '../components/RecordPage';
 import CreateAccountPage from '@pages/CreateAccountPage';
-import { CreateAccountProvider } from '@features/createAccount/context/CreateAccountProvider'; // 회원가입 페이지에 대한 Provider
+import { CreateAccountProvider } from '@features/auth/context/CreateAccountProvider'; // 회원가입 페이지에 대한 Provider
 
 function App() {
   return (

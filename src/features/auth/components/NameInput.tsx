@@ -1,4 +1,4 @@
-import useNameInputData from '@features/createAccount/hooks/useNameInputData';
+import useNameInputData from '@features/auth/hooks/useNameInputData';
 
 // 이름 입력 컴포넌트
 function NameInput() {

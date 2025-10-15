@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import customAxios from '@shared/apis/customAxios';
+import customAxios from '@/shared/lib/customAxios';
 import CommentIcon from '@assets/CommentIcon.svg';
 import CommentInputOn from '@assets/comment_input_on.svg';
 import CommentInputOff from '@assets/comment_input_off.svg';

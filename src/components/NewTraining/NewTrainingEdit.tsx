@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import customAxios from '@shared/apis/customAxios';
+import customAxios from '@/shared/lib/customAxios';
 import { motion } from 'framer-motion';
 import BackIcon from '../../assets/BackBtn.svg';
 import { DateInput } from '../common/DateInput';

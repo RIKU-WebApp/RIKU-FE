@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useCreateAccountData } from '@features/createAccount/hooks/useCreateAccountData';
+import { useCreateAccountData } from '@features/auth/hooks/useCreateAccountData';
 
 // 단과대학, 학과 정보 입력 컴포넌트에 대한 비즈니스 로직을 담당하는 훅
 function useSchoolInfoInputData() {

@@ -12,7 +12,7 @@ import img2 from '@assets/Main-img/main-moving-images/1.png';
 import img3 from '@assets/Main-img/main-moving-images/2.png';
 import img4 from '@assets/Main-img/main-moving-images/3.jpg';
 
-import customAxios from '@shared/apis/customAxios';
+import customAxios from '@/shared/lib/customAxios';
 import NOWimg from '@assets/Main-img/NewOpenStatus.svg';
 import PROGRESSimg from '@assets/progress.svg';
 import CLODESDimg from '@assets/Main-img/NewClosedStatus.svg';

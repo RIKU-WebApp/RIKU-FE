@@ -6,7 +6,7 @@ import NavBar from '../components/NavBar';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import plusBtn from './assets/plus_Icon.svg'; //라이쿠 로고 불러오기
-import customAxios from '@shared/apis/customAxios';
+import customAxios from '@/shared/lib/customAxios';
 import defaultTrainimg from './assets/basicImg.png'; // 게시물 디폴트 이미지
 import runcircleclosed from './assets/Run-img/runcircle-closed.svg';
 import runclosedstatus from './assets/Run-img/run-closed.svg';

@@ -9,7 +9,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
-import customAxios from '@shared/apis/customAxios';
+import customAxios from '@/shared/lib/customAxios';
 import BacbBtnimg from '@assets/BackBtn.svg';
 import ListEventCard from './ListEventCard';
 import TodayRun from './TodayRun';

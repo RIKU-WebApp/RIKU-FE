@@ -1,5 +1,5 @@
-import customAxios from '@shared/apis/customAxios';
-import { SignupData } from '@features/createAccount/types';
+import customAxios from '@shared/lib/customAxios';
+import { SignupData } from '@features/auth/types';
 
 //서버에 회원가입 request 진행(POST 요청)
 const postSignUpRequest = async (data: SignupData) => {

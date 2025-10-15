@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
-import customAxios from '@shared/apis/customAxios';
+import customAxios from '@/shared/lib/customAxios';
 import riku_logo from '@assets/riku_logo_loginPage.png'; //라이쿠 로고 불러오기
 
 //회원 정보와 관련된 객체 정보를 정의한 Member interface

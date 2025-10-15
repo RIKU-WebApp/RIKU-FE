@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import customAxios from '@shared/apis/customAxios';
+import customAxios from '@/shared/lib/customAxios';
 import NewRegularRunAdmin from './NewRegularRunAdmin';
 import NewRegularRunUser from './NewRegularRunUser';
 

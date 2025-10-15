@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useCreateAccountData } from '@features/createAccount/hooks/useCreateAccountData';
-import getIsStudentidValidate from '@features/createAccount/api/getIsStudentidValidate';
+import { useCreateAccountData } from '@features/auth/hooks/useCreateAccountData';
+import getIsStudentidValidate from '@features/auth/api/getIsStudentidValidate';
 
 // 학번 입력 컴포넌트에 대한 비즈니스 로직을 담당하는 훅
 function useStudentidInputData() {

@@ -1,4 +1,4 @@
-import useSchoolInfoInputData from '@features/createAccount/hooks/useSchoolInfoInputData';
+import useSchoolInfoInputData from '@features/auth/hooks/useSchoolInfoInputData';
 
 // 학교 정보 입력 컴포넌트
 function SchoolInfoInput() {
