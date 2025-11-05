@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import customAxios from '@shared/apis/customAxios';
+import customAxios from '@/shared/lib/customAxios';
 import BackIcon from '@assets/BackBtn.svg';
 import { DateInput } from '../common/DateInput';
 import { TimePickerBottomSheet } from '../common/TimePickerBottomSheet';

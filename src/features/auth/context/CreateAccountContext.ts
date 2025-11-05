@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { SignupData } from '@features/createAccount/types';
+import { SignupData } from '@features/auth/types';
 
 // Context가 제공할 값의 타입 정의
 export interface CreateAccountContextType {

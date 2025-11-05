@@ -1,4 +1,4 @@
-import customAxios from '@shared/apis/customAxios';
+import customAxios from '@shared/lib/customAxios';
 
 // 학번 중복 검사 요청하는 api 함수
 async function getIsStudentidValidate(studentID: string) {

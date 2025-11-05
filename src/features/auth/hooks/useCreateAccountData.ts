@@ -1,6 +1,6 @@
 // "회원가입" 페이지에 대한 Context 소비 훅
 import { useContext } from 'react';
-import { CreateAccountContext } from '@/features/createAccount/context/CreateAccountContext';
+import { CreateAccountContext } from '@/features/auth/context/CreateAccountContext';
 
 // "회원가입" 페이지에 대한 Context 소비 훅 (-> 회원가입 페이지에 대한 비즈니스 로직을 담당하는 훅)
 export function useCreateAccountData() {

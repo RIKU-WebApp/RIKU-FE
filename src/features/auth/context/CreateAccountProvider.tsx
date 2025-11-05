@@ -2,8 +2,8 @@
 
 import { useState, useEffect, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SignupData } from '@features/createAccount/types';
-import { CreateAccountContext } from '@features/createAccount/context/CreateAccountContext';
+import { SignupData } from '@features/auth/types';
+import { CreateAccountContext } from '@features/auth/context/CreateAccountContext';
 
 // "회원가입" 페이지에 대한 Provider 컴포넌트
 export function CreateAccountProvider({ children }: { children: ReactNode }) {

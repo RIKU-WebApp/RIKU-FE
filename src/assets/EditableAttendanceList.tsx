@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
 import { BsCircle } from 'react-icons/bs';
-import customAxios from '@shared/apis/customAxios';
+import customAxios from '@/shared/lib/customAxios';
 
 interface User {
   userId: number;

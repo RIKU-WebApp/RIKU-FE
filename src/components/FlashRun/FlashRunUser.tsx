@@ -5,7 +5,7 @@ import place from '@assets/FlashRunDetail/place.svg';
 import time from '@assets/FlashRunDetail/time.svg';
 import TabButton from './TapButton';
 
-import customAxios from '@shared/apis/customAxios';
+import customAxios from '@/shared/lib/customAxios';
 import flashrunimage from '@assets/Run-img/flashrunimage.jpg'; // 번개런 기본이미지
 import { useNavigate } from 'react-router-dom';
 import BackBtnimg from '@assets/BackBtn.svg';

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { SimpleUserInfo } from '../../../types/RankingPageTypes';
-import customAxios from '@shared/apis/customAxios';
+import customAxios from '@/shared/lib/customAxios';
 import defaultProfileImg from '@assets/default_profile.png';
 import eventStar from '@assets/RankingPage/eventStar.png';
 import EventSectionTopBanner from './EventSectionTopBanner';

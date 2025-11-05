@@ -1,4 +1,4 @@
-import usePasswordInputData from '@features/createAccount/hooks/usePasswordInputData';
+import usePasswordInputData from '@features/auth/hooks/usePasswordInputData';
 
 // 비밀번호 입력 컴포넌트
 function PasswordInput() {

@@ -1,10 +1,10 @@
-import Header from '@features/createAccount/components/Header';
-import PasswordInput from '@features/createAccount/components/PasswordInput';
-import NameInput from '@features/createAccount/components/NameInput';
-import SchoolInfoInput from '@features/createAccount/components/SchoolInfoInput';
-import TelNumberInput from '@features/createAccount/components/TelNumberInput';
-import StudentidInput from '@features/createAccount/components/StudentidInput';
-import { useCreateAccountData } from '@features/createAccount/hooks/useCreateAccountData';
+import Header from '@features/auth/components/Header';
+import PasswordInput from '@features/auth/components/PasswordInput';
+import NameInput from '@features/auth/components/NameInput';
+import SchoolInfoInput from '@features/auth/components/SchoolInfoInput';
+import TelNumberInput from '@features/auth/components/TelNumberInput';
+import StudentidInput from '@features/auth/components/StudentidInput';
+import { useCreateAccountData } from '@features/auth/hooks/useCreateAccountData';
 
 // 회원가입을 진행하는 페이지의 "최상단" 컴포넌트 -> Route에 바로 붙일 수 있는 컴포넌트
 function CreateAccountPage() {

@@ -1,4 +1,4 @@
-import useTelNumberInputData from '@features/createAccount/hooks/useTelNumberInputData';
+import useTelNumberInputData from '@features/auth/hooks/useTelNumberInputData';
 
 //전화번호 입력하는 화면인 TelNumberInput
 function TelNumberInput() {

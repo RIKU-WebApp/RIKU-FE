@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
 import profile_Img from '@assets/default_profile.png'; //이미지 불러오기
 import rightArrow_Icon from '@assets/right_arrow.svg'; //라이쿠 로고 불러오기
-import customAxios from '@shared/apis/customAxios';
+import customAxios from '@/shared/lib/customAxios';
 
 import {
   format,
