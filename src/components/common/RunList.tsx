@@ -14,7 +14,7 @@ import BacbBtnimg from '@assets/BackBtn.svg';
 import ListEventCard from './ListEventCard';
 import TodayRun from './TodayRun';
 import PastRuns from './PastRuns';
-import NavBar from '../NavBar';
+import NavBar from '@shared/ui/NavBar';
 
 interface RunData {
   id: number;

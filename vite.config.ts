@@ -5,7 +5,12 @@ import svgr from 'vite-plugin-svgr';
 import path from 'path';
 
 export default defineConfig({
-  plugins: [react(), svgr()],
+  plugins: [
+    react(),
+    svgr({
+      include: '**/*.svg?react',
+    }),
+  ],
   resolve: {
     // alias 설정 (경로 별칭 설정)
     alias: {
