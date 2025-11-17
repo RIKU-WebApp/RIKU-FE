@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 function useNavBar() {
@@ -7,18 +7,21 @@ function useNavBar() {
   const [selectedTab, setSelectedTab] = useState<string>('main'); //초기에는 main
 
   //경로와 Tab 이름의 Mapping
-  const tabMapping: { [key: string]: string } = {
-    '/tab/main': 'main',
-    '/tab/schedule-page': 'schedule-page',
-    '/tab/ranking-page': 'ranking-page',
-    '/tab/my-page': 'my-page',
-  };
+  const tabMapping: { [key: string]: string } = useMemo(
+    () => ({
+      '/tab/main': 'main',
+      '/tab/schedule-page': 'schedule-page',
+      '/tab/ranking-page': 'ranking-page',
+      '/tab/my-page': 'my-page',
+    }),
+    []
+  );
 
   //현재 경로에 따라 selectedTab을 업데이트(location 객체를 활용하여..)
   useEffect(() => {
     const currentTab = tabMapping[location.pathname] || 'main'; //경로에 맵핑되지 않으면 기본값 'main'
     setSelectedTab(currentTab);
-  }, [location.pathname]); //location.pathname이 변경될 때마다 실행
+  }, [location.pathname, tabMapping]); //location.pathname이 변경될 때마다 실행
 
   // 각 네비게이션 아이템에 클릭 이벤트 추가
   function handleNavigation(path: string, tabName: string) {
