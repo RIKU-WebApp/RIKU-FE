@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import SchedulePage from '../components/Main/SchedulePage';
-import MyPage from '../components/Main/MyPage';
+import SchedulePage from '../pages/SchedulePage';
+import MyPage from '../pages/MyPage';
 import FlashRunMake from '../components/FlashRun/FlashRunMake';
 import FlashRunDetail from '../components/FlashRun/FlashRunDetail';
 import LoginPage from '../pages/LoginPage';
@@ -25,8 +25,8 @@ import NewTrainingEdit from '../components/NewTraining/NewTrainingEdit';
 import FlashRunEdit from '../components/FlashRun/FlashRunEdit';
 import EventEdit from '../components/NewEvent/EventEdit';
 
-import ProfileFixPage from '../components/Main/ProfileFixPage';
-import ActivityDetailPage from '../components/Main/ActivityDetailPage';
+import ProfileFixPage from '../pages/ProfileFixPage';
+import ActivityDetailPage from '../pages/ActivityDetailPage';
 import OnbordingPage from '@pages/OnboradingPage';
 import RunList from '../components/common/RunList';
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
-import customAxios from '@/shared/lib/customAxios';
+import customAxios from '@shared/lib/customAxios';
 import pencil_Icon from '@assets/Main-img/pencil.svg'; //연필 로고 불러오기
-import ActionBar from '../../shared/ui/ActionBar';
+import ActionBar from '@shared/ui/ActionBar';
 import defaultProfileImg from '@assets/default_profile.png';
 import imageCompression from 'browser-image-compression'; //이미지 압축을 위한 라이브러리 추가
 

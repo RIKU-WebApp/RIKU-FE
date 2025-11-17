@@ -10,11 +10,11 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
 import customAxios from '@/shared/lib/customAxios';
-import BacbBtnimg from '@assets/BackBtn.svg';
 import ListEventCard from './ListEventCard';
 import TodayRun from './TodayRun';
 import PastRuns from './PastRuns';
 import NavBar from '@shared/ui/NavBar';
+import { RunCategory } from '@shared/types';
 
 interface RunData {
   id: number;
@@ -32,10 +32,11 @@ const config = {
   training: { title: '훈련', api: '/run/training', path: 'training' },
 };
 
+// RunList 컴포넌트 타입 정의
 const RunList: React.FC = () => {
-  const { runType } = useParams(); // runType은 러닝 타입(regular, flash, event, training)
-  console.log(runType);
   const navigate = useNavigate();
+  // 여기서 URL의 :runType 값을 직접 꺼냅니다.
+  const { runType } = useParams() as { runType: RunCategory };
   const paginationRef = useRef<HTMLDivElement | null>(null);
   const swiperInstance = useRef<any>(null);
 
@@ -43,7 +44,7 @@ const RunList: React.FC = () => {
   const [upcomingRuns, setUpcomingRuns] = useState<RunData[]>([]);
   const [pastRuns, setPastRuns] = useState<RunData[]>([]);
 
-  const current = config[runType ?? 'regular'];
+  const current = config[runType];
 
   // 조사 분기 함수 => 이 / 가
   const getSubjectParticle = (word: string) => {
@@ -53,7 +54,7 @@ const RunList: React.FC = () => {
   };
 
   useEffect(() => {
-    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+    const token = localStorage.getItem('accessToken') || 'null';
     const fetchRunData = async () => {
       try {
         const response = await customAxios.get(current.api, {

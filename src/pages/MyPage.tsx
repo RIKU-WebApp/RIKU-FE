@@ -103,7 +103,7 @@ function MyPage() {
 
   //유저 정보를 가져오는 메소드 fetchUserInfo
   async function fetchUserInfo() {
-    const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+    const accessToken = localStorage.getItem('accessToken') || ''; //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
     const todayDate = format(new Date(), 'yyyy-MM-dd');
     const url = `/user/profile?date=${todayDate}`;
 
