@@ -17,8 +17,6 @@ import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-import TabNavigationUI_detail from '../TabNavigationUI_detail';
-
 interface Participant {
   id: number;
   name: string;
@@ -630,7 +628,6 @@ const NewEventUser: React.FC<FlashRunUserData> = ({
           </div>
         </div>
       )}
-      <TabNavigationUI_detail />
     </div>
   );
 };

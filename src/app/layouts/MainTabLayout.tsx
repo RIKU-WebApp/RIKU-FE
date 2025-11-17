@@ -1,11 +1,16 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 import NavBar from '@shared/ui/NavBar';
-import ActionBar from '../../components/ActionBar';
+import ActionBar from '@shared/ui/ActionBar';
+import DetailActionBar from '@shared/ui/DetailActionBar';
 
 // 메인화면, 일정, 순위, 마이페이지 페이지를 이용해서 오고가는 MainTabLayout 페이지
 function MainTabLayout() {
+  const runType = useParams<{ runType: string }>(); // 현재 url에 있는 runType 가져오기
+  const title = runType?.runType || ''; // runType이 있으면 runType을 사용, 없으면 빈 문자열
+
   return (
     <div>
+      {title !== '' ? <DetailActionBar title={title} /> : <ActionBar />}
       <ActionBar />
       {/* 하위 라우트들이 렌더링될 공간 */}
       <Outlet />

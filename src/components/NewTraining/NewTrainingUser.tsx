@@ -20,7 +20,6 @@ import checkedicon from '../../assets/checkedicon.svg';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { motion } from 'framer-motion';
-import TabNavigationUI_detail from '../TabNavigationUI_detail';
 
 interface Participant {
   id: number;
@@ -836,7 +835,6 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
           </div>
         </div>
       )}
-      <TabNavigationUI_detail />
     </div>
   );
 };

@@ -52,8 +52,6 @@ function App() {
 
           {/* ProtectedRoute 내부에 들어 있는 Route들은 로그인 안됐는데 url로 이동하지 못하도록 막아놓은 것임 (보안용) */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/schedule-page" element={<SchedulePage />} />
-            <Route path="/my-page" element={<MyPage />} />
             <Route path="/activity-detail" element={<ActivityDetailPage />} />
             <Route path="/flash/:postId" element={<FlashRunDetail />} />
             <Route path="/regular/:postId" element={<NewRegularRunDetail />} />
@@ -75,9 +73,8 @@ function App() {
               <Route path="schedule-page" element={<SchedulePage />} />
               <Route path="ranking-page" element={<RankingPage />} />
               <Route path="my-page" element={<MyPage />} />
+              <Route path=":runType" element={<RunList />} />
             </Route>
-            <Route path="/:runType" element={<RunList />} />
-
             <Route path="/regular/edit/:postId" element={<NewRegularRunEdit />} />
             <Route path="/training/edit/:postId" element={<NewTrainingEdit />} />
             <Route path="/flash/edit/:postId" element={<FlashRunEdit />} />

@@ -2,8 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 //Icon들 import
-import rikuLogo_text from '../assets/navi-icon/rikuLogo_text.svg'; //라이쿠 로고(왼쪽) 불러오기
-import rikuLogo_picture from '../assets/navi-icon/rikuLogo_picture.svg'; //라이쿠 로고(왼쪽) 불러오기
+import rikuLogo_text from '@assets/navi-icon/rikuLogo_text.svg'; //라이쿠 로고(왼쪽) 불러오기
+import rikuLogo_picture from '@assets/navi-icon/rikuLogo_picture.svg'; //라이쿠 로고(왼쪽) 불러오기
 
 const ActionBar: React.FC = () => {
   const navigate = useNavigate();

@@ -33,7 +33,8 @@ const config = {
 };
 
 const RunList: React.FC = () => {
-  const { runType } = useParams<{ runType: keyof typeof config }>();
+  const { runType } = useParams(); // runType은 러닝 타입(regular, flash, event, training)
+  console.log(runType);
   const navigate = useNavigate();
   const paginationRef = useRef<HTMLDivElement | null>(null);
   const swiperInstance = useRef<any>(null);
@@ -90,17 +91,6 @@ const RunList: React.FC = () => {
 
   return (
     <div className="flex flex-col justify-center items-center mx-auto max-w-[430px]">
-      {/* 상단바 */}
-      <div className="relative flex bg-kuDarkGreen w-full h-[56px] text-white text-xl font-semibold justify-center items-center">
-        <img
-          src={BacbBtnimg}
-          className="absolute left-[24px] cursor-pointer"
-          alt="Back"
-          onClick={() => navigate('/tab/main')}
-        />
-        {current.title}
-      </div>
-
       {/* 오늘의 러닝 */}
       <div className="relative bg-kuDarkGreen w-full min-h-[268px]">
         <div className="w-full flex flex-col items-center pt-2">

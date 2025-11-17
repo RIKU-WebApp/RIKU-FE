@@ -19,8 +19,6 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import { useNavigate } from 'react-router-dom';
 
-import TabNavigationUI_detail from '../TabNavigationUI_detail';
-
 interface Participant {
   id: number;
   name: string;
@@ -667,7 +665,6 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
           </div>
         )}
       </div>
-      <TabNavigationUI_detail />
     </div>
   );
 };

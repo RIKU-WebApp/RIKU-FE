@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
 import customAxios from '@/shared/lib/customAxios';
-import ActionBar from '../../components/ActionBar';
+import ActionBar from '../../shared/ui/ActionBar';
 import defaultProfileImg from '@assets/default_profile.png';
 
 interface points {
