@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import NewMainCard from './NewMainCard';
+import NewMainCard from '../components/MainPage/NewMainCard';
 import flashImage from '@assets/default_flashRun.jpeg';
 import trainImage from '@assets/defalut_trainingRun.jpeg';
 import regularImg from '@assets/default_regular.jpeg';
 import eventImg from '@assets/default_event.jpeg';
-import TabNavigationUI from '../TabNavigationUI';
+import TabNavigationUI from '../components/TabNavigationUI';
 import plusBtn from '@assets/plus_Icon.svg';
 import img1 from '@assets/main_new.jpg';
 import img2 from '@assets/Main-img/main-moving-images/1.png';

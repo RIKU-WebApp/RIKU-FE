@@ -7,7 +7,7 @@ import LoginPage from '../pages/LoginPage';
 import MainTabLayout from '@app/layouts/MainTabLayout';
 import RankingPage from '@pages/RankingPage';
 
-import NewMain from '../components/MainPage/NewMain';
+import NewMain from '../pages/NewMain';
 import AdminPage from '../components/AdminPage/AdminPage';
 
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -68,7 +68,7 @@ function App() {
             <Route path="/make/event" element={<EventMake />} />
             <Route path="/make/training" element={<TrainingMake />} />
 
-            {/* 메인화면, 일정, 순위, 마이페이지 페이지를 이용해서 오고가는 MainTabLayout 페이지 */}
+            {/* 메인화면, 일정, 순위, 마이페이지를 오고가는 MainTabLayout 페이지 */}
             <Route path="/tab" element={<MainTabLayout />}>
               <Route index element={<NewMain />} /> {/* /tab → 기본 탭 */}
               <Route path="main" element={<NewMain />} />
