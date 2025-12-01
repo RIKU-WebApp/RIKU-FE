@@ -22,8 +22,6 @@ import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-import TabNavigationUI_detail from '../TabNavigationUI_detail';
-
 interface Participant {
   userId: number;
   userName: string;
@@ -697,7 +695,6 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
             </div>
           </div>
         )}
-        <TabNavigationUI_detail />
       </div>
     </div>
   );

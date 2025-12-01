@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
-import customAxios from '@/shared/lib/customAxios';
-import ActionBar from '../../components/ActionBar';
+import customAxios from '@shared/lib/customAxios';
+import ActionBar from '@shared/ui/ActionBar';
 import defaultProfileImg from '@assets/default_profile.png';
 
 interface points {
@@ -58,8 +57,6 @@ function getUserRole(role: string | undefined) {
 
 //user의 활동 내역을 불러오는 화면 ActivityDetailPage()
 function ActivityDetailPage() {
-  const navigate = useNavigate(); //useNavigate 훅을 사용해 navigate 함수 생성
-
   const [userData, setUserData] = useState<userData | null>(null);
 
   //유저 세부 정보를 불러오는 fetchUserDetailedProfile()

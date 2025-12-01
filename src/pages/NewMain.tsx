@@ -1,18 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import NewMainCard from './NewMainCard';
+import NewMainCard from '../components/MainPage/NewMainCard';
 import flashImage from '@assets/default_flashRun.jpeg';
 import trainImage from '@assets/defalut_trainingRun.jpeg';
 import regularImg from '@assets/default_regular.jpeg';
 import eventImg from '@assets/default_event.jpeg';
-import TabNavigationUI from '../TabNavigationUI';
 import plusBtn from '@assets/plus_Icon.svg';
 import img1 from '@assets/main_new.jpg';
 import img2 from '@assets/Main-img/main-moving-images/1.png';
 import img3 from '@assets/Main-img/main-moving-images/2.png';
 import img4 from '@assets/Main-img/main-moving-images/3.jpg';
 
-import customAxios from '@/shared/lib/customAxios';
+import customAxios from '@shared/lib/customAxios';
 import NOWimg from '@assets/Main-img/NewOpenStatus.svg';
 import PROGRESSimg from '@assets/progress.svg';
 import CLODESDimg from '@assets/Main-img/NewClosedStatus.svg';
@@ -84,11 +83,7 @@ const NewMain: React.FC = () => {
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [startX, setStartX] = useState<number | null>(null);
-  const slideRef = useRef<HTMLDivElement | null>(null);
-
   const [isFloatingButtonOpen, setIsFloatingButtonOpen] = useState(false);
-
   const [showFirstButton, setShowFirstButton] = useState(false);
   const [showSecondButton, setShowSecondButton] = useState(false);
   const [showThirdButton, setShowThirdButton] = useState(false);
@@ -124,7 +119,7 @@ const NewMain: React.FC = () => {
   useEffect(() => {
     const fetchMain = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.get(`/run`, {
           headers: { Authorization: `${token}` },
         });
@@ -232,11 +227,6 @@ const NewMain: React.FC = () => {
     setCurrentIndex(index);
   };
 
-  //그리드 레이아웃에 있는 동그라미 버튼(GridContent)를 눌렀을 시의 동작 수행
-  const handleCardClick = () => {
-    navigate('/run');
-  };
-
   const handleflashRunMake = () => {
     navigate('/make/flash');
   };
@@ -314,7 +304,7 @@ const NewMain: React.FC = () => {
             statusImg={getStatusImg(maindata.regularRun.poststatus, maindata.regularRun.rawDate)}
             imageUrl={maindata.regularRun.postimgurl || regularImg}
             event_type="정규런"
-            path="/regular"
+            path="/tab/regular"
           />
         </div>
         <div className="cursor-pointer">
@@ -324,7 +314,7 @@ const NewMain: React.FC = () => {
             statusImg={getStatusImg(maindata.flashRun.poststatus, maindata.flashRun.rawDate)}
             imageUrl={maindata.flashRun.postimgurl || flashImage}
             event_type="번개런"
-            path="/flash"
+            path="/tab/flash"
           />
         </div>
         <div className="cursor-pointer">
@@ -334,7 +324,7 @@ const NewMain: React.FC = () => {
             statusImg={getStatusImg(maindata.training.poststatus, maindata.training.rawDate)}
             imageUrl={maindata.training.postimgurl || trainImage}
             event_type="훈련"
-            path="/training"
+            path="/tab/training"
           />
         </div>
         <div className="cursor-pointer">
@@ -344,7 +334,7 @@ const NewMain: React.FC = () => {
             statusImg={getStatusImg(maindata.event.poststatus, maindata.event.rawDate)}
             imageUrl={maindata.event.postimgurl || eventImg}
             event_type="행사"
-            path="/event"
+            path="/tab/event"
           />
         </div>
       </div>
@@ -456,9 +446,6 @@ const NewMain: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* TabNavigationUI */}
-      <TabNavigationUI />
     </div>
   );
 };

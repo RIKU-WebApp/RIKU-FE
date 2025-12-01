@@ -23,8 +23,6 @@ import 'swiper/css/pagination';
 import questionmarkOn from '../../assets/questionmark_on.svg';
 import questionmarkOff from '../../assets/questionmark_off.svg';
 
-import TabNavigationUI_detail from '../TabNavigationUI_detail';
-
 interface Participant {
   userId: number;
   userName: string;
@@ -776,7 +774,6 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
           </div>
         </div>
       )}
-      <TabNavigationUI_detail />
     </div>
   );
 };

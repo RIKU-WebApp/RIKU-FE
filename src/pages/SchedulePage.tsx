@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import plusBtn from '@assets/plus_Icon.svg'; //라이쿠 로고 불러오기
-import customAxios from '@/shared/lib/customAxios'; //커스텀 axios 호출
+import customAxios from '@shared/lib/customAxios'; //커스텀 axios 호출
 
 import {
   format,

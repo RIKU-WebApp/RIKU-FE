@@ -1,12 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import SchedulePage from '../components/Main/SchedulePage';
-import MyPage from '../components/Main/MyPage';
+import SchedulePage from '../pages/SchedulePage';
+import MyPage from '../pages/MyPage';
 import FlashRunMake from '../components/FlashRun/FlashRunMake';
 import FlashRunDetail from '../components/FlashRun/FlashRunDetail';
 import LoginPage from '../pages/LoginPage';
-import TabNavigationUI from '../components/TabNavigationUI';
+import MainTabLayout from '@app/layouts/MainTabLayout';
+import RankingPage from '@pages/RankingPage';
 
-import NewMain from '../components/MainPage/NewMain';
+import NewMain from '../pages/NewMain';
 import AdminPage from '../components/AdminPage/AdminPage';
 
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -24,8 +25,8 @@ import NewTrainingEdit from '../components/NewTraining/NewTrainingEdit';
 import FlashRunEdit from '../components/FlashRun/FlashRunEdit';
 import EventEdit from '../components/NewEvent/EventEdit';
 
-import ProfileFixPage from '../components/Main/ProfileFixPage';
-import ActivityDetailPage from '../components/Main/ActivityDetailPage';
+import ProfileFixPage from '../pages/ProfileFixPage';
+import ActivityDetailPage from '../pages/ActivityDetailPage';
 import OnbordingPage from '@pages/OnboradingPage';
 import RunList from '../components/common/RunList';
 
@@ -51,8 +52,6 @@ function App() {
 
           {/* ProtectedRoute 내부에 들어 있는 Route들은 로그인 안됐는데 url로 이동하지 못하도록 막아놓은 것임 (보안용) */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/schedule-page" element={<SchedulePage />} />
-            <Route path="/my-page" element={<MyPage />} />
             <Route path="/activity-detail" element={<ActivityDetailPage />} />
             <Route path="/flash/:postId" element={<FlashRunDetail />} />
             <Route path="/regular/:postId" element={<NewRegularRunDetail />} />
@@ -67,10 +66,15 @@ function App() {
             <Route path="/make/event" element={<EventMake />} />
             <Route path="/make/training" element={<TrainingMake />} />
 
-            <Route path="/tab/*" element={<TabNavigationUI />} />
-            <Route path="/main" element={<NewMain />} />
-            <Route path="/:runType" element={<RunList />} />
-
+            {/* 메인화면, 일정, 순위, 마이페이지를 오고가는 MainTabLayout 페이지 */}
+            <Route path="/tab" element={<MainTabLayout />}>
+              <Route index element={<NewMain />} /> {/* /tab → 기본 탭 */}
+              <Route path="main" element={<NewMain />} />
+              <Route path="schedule-page" element={<SchedulePage />} />
+              <Route path="ranking-page" element={<RankingPage />} />
+              <Route path="my-page" element={<MyPage />} />
+              <Route path=":runType" element={<RunList />} />
+            </Route>
             <Route path="/regular/edit/:postId" element={<NewRegularRunEdit />} />
             <Route path="/training/edit/:postId" element={<NewTrainingEdit />} />
             <Route path="/flash/edit/:postId" element={<FlashRunEdit />} />

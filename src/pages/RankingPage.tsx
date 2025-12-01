@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import defaultProfileImg from '@assets/default_profile.png'; //기본 프로필 이미지 불러오기
 import rikuHorn_left from '@assets/RankingPage/rikuHorn_left.svg';
 import rikuHorn_right from '@assets/RankingPage/rikuHorn_right.svg';
-import customAxios from '@/shared/lib/customAxios';
+import customAxios from '@shared/lib/customAxios';
 
 //랭킹 페이지에서 보여줄 간단한 회원 정보에 관한 SimpleUserInfo interface
 interface SimpleUserInfo {

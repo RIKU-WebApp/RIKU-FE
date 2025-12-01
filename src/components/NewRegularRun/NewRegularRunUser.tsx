@@ -21,8 +21,6 @@ import { motion } from 'framer-motion';
 
 import checkedicon from '../../assets/checkedicon.svg';
 
-import TabNavigationUI_detail from '../TabNavigationUI_detail';
-
 interface FlashRunUserData {
   postId?: string;
 }
@@ -689,7 +687,6 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
           </div>
         )}
       </div>
-      <TabNavigationUI_detail />
     </div>
   );
 };
