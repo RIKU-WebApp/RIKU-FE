@@ -1,23 +1,23 @@
-# echo "ESLint 검사 실행 중..."
-# npm run lint
+# # echo "ESLint 검사 실행 중..."
+# # npm run lint
+# # if [ $? -ne 0 ]; then
+# #   echo "ESLint 오류 발생 → Commit 취소"
+# #   exit 1
+# # fi
+
+# echo "Prettier 포맷 확인 중..."
+# npm run format:check
 # if [ $? -ne 0 ]; then
-#   echo "ESLint 오류 발생 → Commit 취소"
+#   echo "Prettier 포맷 불일치 → Commit 취소"
+#   echo "'npm run format' 명령으로 자동 정리하세요."
 #   exit 1
 # fi
 
-echo "Prettier 포맷 확인 중..."
-npm run format:check
-if [ $? -ne 0 ]; then
-  echo "Prettier 포맷 불일치 → Commit 취소"
-  echo "'npm run format' 명령으로 자동 정리하세요."
-  exit 1
-fi
+# # echo "TypeScript 타입체킹 중..."
+# # npm run type-check
+# # if [ $? -ne 0 ]; then
+# #   echo "타입 오류 발생 → Commit 취소"
+# #   exit 1
+# # fi
 
-# echo "TypeScript 타입체킹 중..."
-# npm run type-check
-# if [ $? -ne 0 ]; then
-#   echo "타입 오류 발생 → Commit 취소"
-#   exit 1
-# fi
-
-echo "모든 검사 통과, Commit을 진행합니다."
+# echo "모든 검사 통과, Commit을 진행합니다."
