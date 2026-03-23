@@ -43,6 +43,7 @@ function SchoolInfoInput() {
             <option value="예술디자인대학">예술디자인대학</option>
             <option value="사범대학">사범대학</option>
             <option value="언어교육원">언어교육원</option>
+            <option value="KU자율전공학부">KU자율전공학부(단과대 미정)</option>
             <option value="대학원">대학원</option>
           </select>
           {college !== '' ? (
