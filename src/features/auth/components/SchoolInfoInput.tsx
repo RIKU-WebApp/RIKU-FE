@@ -27,7 +27,7 @@ function SchoolInfoInput() {
           <select
             value={college}
             onChange={handleChangeCollege}
-            className={`w-full px-4 py-2 border 'border-gray-300' rounded-md focus:outline-none`}
+            className={`w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none`}
           >
             <option value="">단과대를 선택해 주세요</option>
             <option value="문과대학">문과대학</option>
@@ -43,15 +43,16 @@ function SchoolInfoInput() {
             <option value="예술디자인대학">예술디자인대학</option>
             <option value="사범대학">사범대학</option>
             <option value="언어교육원">언어교육원</option>
+            <option value="KU자율전공학부">KU자율전공학부</option>
             <option value="대학원">대학원</option>
           </select>
-          {college !== '' ? (
+          {college !== '' && college !== 'KU자율전공학부' ? (
             <input
               type="text"
               value={major}
               onChange={handleChangeMajor}
               placeholder="학과(학부)를 입력해주세요"
-              className={`w-full px-4 py-2 border 'border-gray-300' rounded-md focus:outline-none mt-4`}
+              className={`w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none mt-4`}
             />
           ) : null}
         </div>
@@ -59,7 +60,7 @@ function SchoolInfoInput() {
         {/* 다음 버튼 */}
         <button
           type="submit"
-          className={`w-full py-3 mt-72 rounded-md ${college !== '' && major !== '' ? 'bg-kuDarkGreen text-kuWhite hover: hover:bg-kuGreen' : ' text-gray-500 bg-gray-100'} transition-colors`}
+          className={`w-full py-3 mt-72 rounded-md ${college !== '' && (college === 'KU자율전공학부' || major !== '') ? 'bg-kuDarkGreen text-kuWhite hover:bg-kuGreen' : ' text-gray-500 bg-gray-100'} transition-colors`}
           disabled={!gotoNextScreenValid}
         >
           다음
