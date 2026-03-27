@@ -12,7 +12,7 @@ interface RequestConfig {
 
 // Axios 인스턴스 생성
 const customAxios: AxiosInstance = axios.create({
-  baseURL: 'https://riku-server.store/', // 기본 URL
+  baseURL: import.meta.env.VITE_API_BASE_URL, // 기본 URL
   timeout: 30000, // 기본 타임아웃 설정 (10초), 추후에 오버라이드 가능
 });
 

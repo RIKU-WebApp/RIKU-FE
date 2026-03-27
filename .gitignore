@@ -12,3 +12,6 @@ dist-ssr/
 !.vscode/settings.json
 !.vscode/extensions.json
 !.vscode/tasks.json
+
+# Environment Variable
+.env
