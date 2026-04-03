@@ -34,9 +34,30 @@ import RecordPage from '../components/RecordPage';
 import CreateAccountPage from '@pages/CreateAccountPage';
 import { CreateAccountProvider } from '@features/auth/context/CreateAccountProvider'; // 회원가입 페이지에 대한 Provider
 
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { setTabHistory } from '@shared/utils/tabHistory';
+
+function RouteTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const homeTabPrefixes = ['/flash', '/regular', '/training', '/event'];
+
+    const isHomeRelevant = homeTabPrefixes.some((prefix) => location.pathname.includes(prefix));
+
+    if (isHomeRelevant) {
+      setTabHistory('home', location.pathname);
+    }
+  }, [location.pathname]);
+
+  return null; // 화면에 아무것도 안 그림
+}
+
 function App() {
   return (
     <Router>
+      <RouteTracker />
       <div className="min-w-{375px} max-w-full font-AppleSDGothicNeo overflow-y-auto">
         <Routes>
           <Route path="/" element={<OnbordingPage />} />
