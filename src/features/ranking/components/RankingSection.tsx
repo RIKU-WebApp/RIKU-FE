@@ -25,7 +25,7 @@ export default function RankingSection() {
 
   // top20 랭킹 정보를 가져오는 fetchRanking
   const fetchRanking = async () => {
-    const accessToken = JSON.parse(localStorage.getItem('accessToken') || '');
+    const accessToken = localStorage.getItem('accessToken') || '';
 
     try {
       const response = await customAxios.get('/ranking', {

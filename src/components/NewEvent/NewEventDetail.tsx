@@ -35,7 +35,7 @@ const NewEventDetail: React.FC = () => {
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.get(`/run/event/post/${postId}`, {
           headers: {
             Authorization: `${token}`,

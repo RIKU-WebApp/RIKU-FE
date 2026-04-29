@@ -48,7 +48,7 @@ const EditableAttendanceList: React.FC<EditableAttendanceListProps> = ({
   };
 
   const handleSave = async () => {
-    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+    const token = localStorage.getItem('accessToken') || 'null';
 
     // 서버에 보낼 payload (종료 전/후 동일)
     const payload = users.map((user) => ({

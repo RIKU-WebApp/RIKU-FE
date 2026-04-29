@@ -47,14 +47,14 @@ function NewTrainingEdit() {
 
   useEffect(() => {
     const fetchPacers = async () => {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.get('/pacers', {
         headers: { Authorization: `${token}` },
       });
       if (response.data.isSuccess) setPacers(response.data.result);
     };
     const fetchPostData = async () => {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const res = await customAxios.get(`/run/training/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -201,7 +201,7 @@ function NewTrainingEdit() {
       const day = pad(dateTime.date!.getDate());
       const time = dateTime.time;
       const eventDateTime = `${year}-${month}-${day}T${time}:00`;
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const formData = new FormData();
       formData.append('title', title);
       formData.append('location', location);

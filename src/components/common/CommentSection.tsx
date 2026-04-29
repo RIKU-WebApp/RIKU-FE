@@ -60,7 +60,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   // 서버에서 댓글 데이터 불러오기
   const fetchComments = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.get(`/run/${postType}/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -77,7 +77,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     if (!newComment.trim() || isSubmitting) return;
     setIsSubmitting(true);
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.post(
         `/run/${postType}/post/${postId}/comment`,
         { content: newComment, targetId: null },
@@ -100,7 +100,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     if (!content?.trim() || isSubmitting) return;
     setIsSubmitting(true);
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.post(
         `/run/${postType}/post/${postId}/comment`,
         { content, targetId },
@@ -126,7 +126,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   // 댓글 삭제하기
   const handleDeleteComment = async (commentId: number) => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.patch(
         `/run/${postType}/post/${postId}/comment/${commentId}`,
         {},

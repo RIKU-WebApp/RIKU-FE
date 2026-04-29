@@ -104,7 +104,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
   };
 
   const saveAttendanceChanges = async () => {
-    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+    const token = localStorage.getItem('accessToken') || 'null';
     const payload = Object.entries(editedAttendance).map(([userId, isAttend]) => ({
       userId: Number(userId),
       isAttend,
@@ -162,7 +162,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
   useEffect(() => {
     const fetchPostData = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.get(`/run/training/post/${postId}`, {
           headers: { Authorization: `${token}` },
         });
@@ -221,7 +221,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
 
   const fetchParticipantsInfo = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.get(`/run/training/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -262,7 +262,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
   const handleOpenGroupModal = async () => {
     setIsGroupModalOpen(true);
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const res = await customAxios.get(`/run/training/post/${postId}/group`, {
         headers: { Authorization: `${token}` },
       });
@@ -276,7 +276,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
     const isCancel = selectedGroup === '';
 
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const res = await customAxios.patch(
         `/run/training/post/${postId}/join${!isCancel ? `?group=${selectedGroup}` : ''}`,
         {},
@@ -317,7 +317,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
 
   const handleStartClick = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.post(
         `/run/training/post/${postId}/join`,
         {},
@@ -342,7 +342,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
   const handleAttendanceClick = async () => {
     if (!code) return setError('출석 코드를 입력해주세요.');
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.post(
         `/run/training/post/${postId}/attend`,
         { code },
@@ -369,7 +369,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
 
   const handleTabChange = async (tab: '소개' | '명단') => {
     setActiveTab(tab);
-    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+    const token = localStorage.getItem('accessToken') || 'null';
 
     try {
       const response = await customAxios.get(`/run/training/post/${postId}`, {
@@ -509,7 +509,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
                 );
                 if (!ok) return;
                 try {
-                  const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+                  const token = localStorage.getItem('accessToken') || 'null';
                   if (!token) {
                     alert('로그인이 필요합니다.');
                     return;

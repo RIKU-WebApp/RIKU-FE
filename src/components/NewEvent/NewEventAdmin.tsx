@@ -96,7 +96,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
         await attendanceListRef.current.saveAttendance();
       }
 
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.patch(
         `/run/event/post/${postId}/close`,
         {},
@@ -156,7 +156,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
 
   const handleStartClick = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.patch(
         `/run/event/post/${postId}/join`,
         {},
@@ -196,7 +196,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
     }
 
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.post(
         `/run/event/post/${postId}/attend`,
         { code },
@@ -224,7 +224,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
 
   const handleTabChange = async (tab: '소개' | '명단') => {
     setActiveTab(tab);
-    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+    const token = localStorage.getItem('accessToken') || 'null';
 
     try {
       const response = await customAxios.get(`/run/event/post/${postId}`, {
@@ -283,7 +283,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
   useEffect(() => {
     const fetchPostData = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.get(`/run/event/post/${postId}`, {
           headers: { Authorization: `${token}` },
         });
@@ -349,7 +349,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
 
   const fetchParticipants = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.get(`/run/event/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -383,7 +383,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
 
   const handleCancelParticipation = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.patch(
         `/run/event/post/${postId}/join`,
         {},
@@ -468,7 +468,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
                     if (!confirmCancel) return;
 
                     try {
-                      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+                      const token = localStorage.getItem('accessToken') || 'null';
                       if (!token) {
                         alert('로그인이 필요합니다.');
                         return;
@@ -510,7 +510,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
                   );
                   if (!ok) return;
                   try {
-                    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+                    const token = localStorage.getItem('accessToken') || 'null';
                     if (!token) {
                       alert('로그인이 필요합니다.');
                       return;
