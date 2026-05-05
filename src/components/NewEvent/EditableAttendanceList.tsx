@@ -58,7 +58,7 @@ const EditableAttendanceList = forwardRef<
     };
 
     const handleSave = async () => {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
 
       const payload = users.map((u) => ({
         userId: u.userId,

@@ -152,7 +152,7 @@ function ProfileFixPage() {
     if (password !== '') formData.append('password', password); //비밀번호가 공백이라면, 빈 채로 보내줘야 함
 
     try {
-      const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+      const accessToken = localStorage.getItem('accessToken') || ''; //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
       const url = `/user/profile`;
       const response = await customAxios.patch(url, formData, {
         headers: {
@@ -232,7 +232,7 @@ function ProfileFixPage() {
   async function fetchUserDetailedProfile() {
     try {
       const url = '/user/profile/detail';
-      const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+      const accessToken = localStorage.getItem('accessToken') || ''; //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
       const response = await customAxios.get(url, {
         headers: {
           Authorization: accessToken,

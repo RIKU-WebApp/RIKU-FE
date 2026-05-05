@@ -120,7 +120,7 @@ function FlashRunMake() {
       console.log('KST 조립된 시간:', kstDate.toString());
       console.log('변환된 UTC:', eventDateTime);
 
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
 
       const formData = new FormData();
       formData.append('title', title);

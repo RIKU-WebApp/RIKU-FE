@@ -169,7 +169,7 @@ function MyPage() {
 
   //"출석하기" 버튼 클릭 시 이벤트 수행
   async function handleAttendCheckBtn() {
-    const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+    const accessToken = localStorage.getItem('accessToken') || ''; //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
     const url = `/user/attend`;
 
     try {

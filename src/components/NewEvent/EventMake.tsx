@@ -56,7 +56,7 @@ function EventMake() {
   useEffect(() => {
     const fetchPacers = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.get('/pacers', {
           headers: { Authorization: `${token}` },
         });
@@ -159,7 +159,7 @@ function EventMake() {
       const pad = (n: number) => n.toString().padStart(2, '0');
       const eventDateTime = `${utcDate.getFullYear()}-${pad(utcDate.getMonth() + 1)}-${pad(utcDate.getDate())}T${pad(utcDate.getHours())}:${pad(utcDate.getMinutes())}:${pad(utcDate.getSeconds())}`;
 
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
 
       const formData = new FormData();
       const eventType = isCustom ? customInput : selected;

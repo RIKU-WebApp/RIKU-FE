@@ -94,7 +94,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
   };
 
   const saveAttendanceChanges = async () => {
-    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+    const token = localStorage.getItem('accessToken') || 'null';
     const payload = Object.entries(editedAttendance).map(([userId, isAttend]) => ({
       userId: Number(userId),
       isAttend,
@@ -115,7 +115,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
 
   const fetchParticipantsInfo = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.get(`/run/training/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -143,7 +143,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
   useEffect(() => {
     const fetchPostData = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.get(`/run/training/post/${postId}`, {
           headers: { Authorization: `${token}` },
         });
@@ -187,7 +187,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
 
   const handleTabChange = async (tab: '소개' | '명단') => {
     setActiveTab(tab);
-    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+    const token = localStorage.getItem('accessToken') || 'null';
 
     try {
       const response = await customAxios.get(`/run/training/post/${postId}`, {
@@ -225,7 +225,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
   const handleStartClick = async () => {
     if (!code) {
       try {
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.post(
           `/run/training/post/${postId}/code`,
           {},
@@ -256,7 +256,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
     if (!code) return;
 
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
 
       if (Object.keys(editedAttendance).length > 0) {
         const payload = Object.entries(editedAttendance).map(([userId, isAttend]) => ({
@@ -390,7 +390,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
 
   const refetchPost = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const { data } = await customAxios.get(`/run/training/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -497,7 +497,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
                     if (!confirmCancel) return;
 
                     try {
-                      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+                      const token = localStorage.getItem('accessToken') || 'null';
                       if (!token) {
                         alert('로그인이 필요합니다.');
                         return;
@@ -545,7 +545,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
                   );
                   if (!ok) return;
                   try {
-                    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+                    const token = localStorage.getItem('accessToken') || 'null';
                     if (!token) {
                       alert('로그인이 필요합니다.');
                       return;

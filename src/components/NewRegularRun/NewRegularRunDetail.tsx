@@ -33,7 +33,7 @@ const NewRegularRunDetail: React.FC = () => {
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.get(`/run/regular/post/${postId}`, {
           headers: {
             Authorization: `${token}`,

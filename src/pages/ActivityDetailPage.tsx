@@ -63,7 +63,7 @@ function ActivityDetailPage() {
   async function fetchUserDetailedProfile() {
     try {
       const url = '/user/profile/participations'; //"마이페이지 활동내역 조회" api의 url로 설정
-      const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+      const accessToken = localStorage.getItem('accessToken') || ''; //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
       const response = await customAxios.get(url, {
         headers: {
           Authorization: accessToken,
