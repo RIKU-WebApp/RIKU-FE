@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
 import profile_Img from '@assets/default_profile.png'; //이미지 불러오기
 import rightArrow_Icon from '@assets/right_arrow.svg'; //라이쿠 로고 불러오기
 import customAxios from '@/shared/lib/customAxios';
+import { logout } from '@features/auth/api/tokenAuth';
 
 import {
   format,
@@ -192,14 +193,9 @@ function MyPage() {
   }
 
   //"로그아웃" 버튼 클릭 시 이벤트 수행
-  function handleLogout() {
-    //1. 토큰 삭제
-    localStorage.removeItem('accessToken');
-
-    //2. alert창 띄우기 (정상적으로 로그아웃 완료)
+  async function handleLogout() {
+    await logout();
     alert('정상적으로 로그아웃 되었습니다.');
-
-    //3. 로그인 페이지로 이동
     navigate('/');
   }
 

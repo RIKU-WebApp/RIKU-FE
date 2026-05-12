@@ -1,10 +1,39 @@
 import rikulogo from '@assets/onboarding_logo.svg';
 import { useNavigate } from 'react-router-dom';
 import backgroundVideo from '@assets/onboard_video_no_sound.mp4';
+import { useEffect } from 'react';
+import { getAccessToken, getRefreshToken, reissueToken } from '@features/auth/api/tokenAuth';
 
 // 웹사이트 처음 접속 시 보여지는 "온보딩" 페이지
 function OnbordingPage() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const autoLogin = async () => {
+      if (getAccessToken()) {
+        navigate('/tab/main', { replace: true });
+        return;
+      }
+
+      if (!getRefreshToken()) {
+        return;
+      }
+
+      const isReissued = await reissueToken();
+
+      if (isMounted && isReissued) {
+        navigate('/tab/main', { replace: true });
+      }
+    };
+
+    autoLogin();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate]);
 
   const handleLoginClick = () => {
     navigate('/login');

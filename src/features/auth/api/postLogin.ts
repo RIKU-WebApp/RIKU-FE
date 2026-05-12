@@ -1,4 +1,5 @@
 import customAxios from '@shared/lib/customAxios';
+import { saveAuthResult } from './tokenAuth';
 
 // '로그인' 요청을 보내는 API 함수
 async function postLogin(id: string, password: string) {
@@ -24,8 +25,7 @@ async function postLogin(id: string, password: string) {
     }
 
     // 3. 성공 처리
-    localStorage.setItem('accessToken', result.jwtInfo.accessToken);
-    localStorage.setItem('MyId', result.userId);
+    saveAuthResult(result);
     return true; // 'true'를 반환하여, 로그인 성공 여부를 컴포넌트에서 확인할 수 있도록 함
   } catch (error) {
     // 인터셉터에서 정제된 message를 그대로 사용
