@@ -28,6 +28,8 @@ const authAxios = axios.create({
   timeout: 30000,
 });
 
+let reissueTokenPromise: Promise<boolean> | null = null;
+
 export function getAccessToken() {
   return localStorage.getItem(ACCESS_TOKEN_KEY);
 }
@@ -53,7 +55,7 @@ export function clearAuthStorage() {
   localStorage.removeItem(STUDENT_ID_KEY);
 }
 
-export async function reissueToken() {
+async function requestReissueToken() {
   const refreshToken = getRefreshToken();
 
   if (!refreshToken) {
@@ -77,6 +79,16 @@ export async function reissueToken() {
     clearAuthStorage();
     return false;
   }
+}
+
+export function reissueToken() {
+  if (!reissueTokenPromise) {
+    reissueTokenPromise = requestReissueToken().finally(() => {
+      reissueTokenPromise = null;
+    });
+  }
+
+  return reissueTokenPromise;
 }
 
 export async function logout() {
