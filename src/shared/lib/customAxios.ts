@@ -36,7 +36,7 @@ customAxios.interceptors.response.use(
   (response) => response, // 성공적인 응답은 그대로 반환
   async (error) => {
     let message = '알 수 없는 오류가 발생했습니다.'; // 기본 메시지
-    const originalRequest = error.config as RetryableRequestConfig | undefined;
+    const originalRequest = error.config ? (error.config as RetryableRequestConfig) : null;
 
     if (axios.isCancel(error)) {
       // 요청이 취소된 경우

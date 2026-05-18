@@ -7,7 +7,7 @@ import rikuLogo_picture from '@assets/navi-icon/rikuLogo_picture.svg'; //라이�
 
 const ActionBar: React.FC = () => {
   const navigate = useNavigate();
-  const handleMain = () => navigate('/main');
+  const handleMain = () => navigate('/tab/main');
 
   return (
     <div className="fixed top-0 inset-x-0 mx-auto flex justify-between items-center max-w-[430px] w-full h-[56px] border-t-[1.5px] z-[1000] border-kuDarkGreen bg-kuDarkGreen">

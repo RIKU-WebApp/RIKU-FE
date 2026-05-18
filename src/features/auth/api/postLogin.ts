@@ -1,4 +1,5 @@
 import customAxios from '@shared/lib/customAxios';
+import { AUTH_ENDPOINTS } from '@features/auth/constants';
 import { saveAuthResult } from './tokenAuth';
 
 // '로그인' 요청을 보내는 API 함수
@@ -9,7 +10,7 @@ async function postLogin(id: string, password: string) {
     password: password,
   };
 
-  const url = '/user/login'; // URL 설정
+  const url = AUTH_ENDPOINTS.login;
   console.log('data', data);
 
   try {
