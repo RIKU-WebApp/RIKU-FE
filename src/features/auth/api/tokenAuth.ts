@@ -1,9 +1,5 @@
 import axios from 'axios';
-
-const ACCESS_TOKEN_KEY = 'accessToken';
-const REFRESH_TOKEN_KEY = 'refreshToken';
-const MY_ID_KEY = 'MyId';
-const STUDENT_ID_KEY = 'studentId';
+import { AUTH_ENDPOINTS, AUTH_STORAGE_KEYS } from '@features/auth/constants';
 
 interface JwtInfo {
   accessToken: string;
@@ -31,28 +27,27 @@ const authAxios = axios.create({
 let reissueTokenPromise: Promise<boolean> | null = null;
 
 export function getAccessToken() {
-  return localStorage.getItem(ACCESS_TOKEN_KEY);
+  return localStorage.getItem(AUTH_STORAGE_KEYS.accessToken);
 }
 
 export function getRefreshToken() {
-  return localStorage.getItem(REFRESH_TOKEN_KEY);
+  return localStorage.getItem(AUTH_STORAGE_KEYS.refreshToken);
 }
 
 export function saveAuthResult(result: AuthResult) {
-  localStorage.setItem(ACCESS_TOKEN_KEY, result.jwtInfo.accessToken);
-  localStorage.setItem(REFRESH_TOKEN_KEY, result.jwtInfo.refreshToken);
-  localStorage.setItem(MY_ID_KEY, String(result.userId));
+  localStorage.setItem(AUTH_STORAGE_KEYS.accessToken, result.jwtInfo.accessToken);
+  localStorage.setItem(AUTH_STORAGE_KEYS.refreshToken, result.jwtInfo.refreshToken);
+  localStorage.setItem(AUTH_STORAGE_KEYS.myId, String(result.userId));
 
   if (result.studentId) {
-    localStorage.setItem(STUDENT_ID_KEY, result.studentId);
+    localStorage.setItem(AUTH_STORAGE_KEYS.studentId, result.studentId);
   }
 }
 
 export function clearAuthStorage() {
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
-  localStorage.removeItem(REFRESH_TOKEN_KEY);
-  localStorage.removeItem(MY_ID_KEY);
-  localStorage.removeItem(STUDENT_ID_KEY);
+  Object.values(AUTH_STORAGE_KEYS).forEach((storageKey) => {
+    localStorage.removeItem(storageKey);
+  });
 }
 
 async function requestReissueToken() {
@@ -64,7 +59,7 @@ async function requestReissueToken() {
   }
 
   try {
-    const response = await authAxios.post<ApiResponse<AuthResult>>('/user/reissue', {
+    const response = await authAxios.post<ApiResponse<AuthResult>>(AUTH_ENDPOINTS.reissue, {
       refreshToken,
     });
 
@@ -96,7 +91,7 @@ export async function logout() {
 
   try {
     if (refreshToken) {
-      await authAxios.post('/user/logout', { refreshToken });
+      await authAxios.post(AUTH_ENDPOINTS.logout, { refreshToken });
     }
   } catch {
     // 서버 로그아웃에 실패해도 현재 브라우저의 인증 정보는 반드시 제거한다.
