@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import postLogin from '@features/auth/api/postLogin';
+import { getAccessToken, getRefreshToken, reissueToken } from '@features/auth/api/tokenAuth';
 
 // 로그인 페이지 컴포넌트에 대해 비즈니스 로직을 관리하는 훅
 function useLoginPage() {
@@ -8,6 +9,33 @@ function useLoginPage() {
 
   const [id, setID] = useState<string>(''); //ID state
   const [password, setPassword] = useState<string>(''); //비밀번호가 유효한지 확인하기 위한 state
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const autoLogin = async () => {
+      if (getAccessToken()) {
+        navigate('/tab/main', { replace: true });
+        return;
+      }
+
+      if (!getRefreshToken()) {
+        return;
+      }
+
+      const isReissued = await reissueToken();
+
+      if (isMounted && isReissued) {
+        navigate('/tab/main', { replace: true });
+      }
+    };
+
+    autoLogin();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate]);
 
   //로그인 버튼 활성,비활성 관리
   const isLoginBtnValid = () => {
