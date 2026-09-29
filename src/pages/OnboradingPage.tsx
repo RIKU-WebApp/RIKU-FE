@@ -53,7 +53,7 @@ function OnbordingPage() {
 
       {/* 내용 및 버튼 */}
       <div className="z-10 flex flex-col items-center justify-center h-screen">
-        <div className="mt-[-10px] opacity-70">
+        <div className="mt-[-10px] opacity-85">
           <object data={rikulogo} />
         </div>
         <div className="flex flex-col mt-5">
