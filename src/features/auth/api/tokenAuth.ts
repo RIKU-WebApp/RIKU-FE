@@ -26,12 +26,45 @@ const authAxios = axios.create({
 
 let reissueTokenPromise: Promise<boolean> | null = null;
 
+export function normalizeAuthToken(value: string | null) {
+  if (!value) return null;
+
+  let token: unknown = value.trim();
+
+  try {
+    token = JSON.parse(token as string);
+  } catch {
+    // 현재 토큰은 일반 문자열이고, 기존 운영 앱은 JSON 문자열로 저장했다.
+    if ((token as string).startsWith('"')) return null;
+  }
+
+  if (typeof token !== 'string') return null;
+
+  const normalizedToken = token.trim();
+  return normalizedToken && normalizedToken !== 'null' && normalizedToken !== 'undefined'
+    ? normalizedToken
+    : null;
+}
+
+function getStoredAuthToken(storageKey: string) {
+  const storedToken = localStorage.getItem(storageKey);
+  const token = normalizeAuthToken(storedToken);
+
+  if (token === null) {
+    if (storedToken !== null) localStorage.removeItem(storageKey);
+  } else if (token !== storedToken) {
+    localStorage.setItem(storageKey, token);
+  }
+
+  return token;
+}
+
 export function getAccessToken() {
-  return localStorage.getItem(AUTH_STORAGE_KEYS.accessToken);
+  return getStoredAuthToken(AUTH_STORAGE_KEYS.accessToken);
 }
 
 export function getRefreshToken() {
-  return localStorage.getItem(AUTH_STORAGE_KEYS.refreshToken);
+  return getStoredAuthToken(AUTH_STORAGE_KEYS.refreshToken);
 }
 
 export function saveAuthResult(result: AuthResult) {
