@@ -6,7 +6,7 @@ import { RunCategory, titleToKorean } from '@shared/types';
 function DetailActionBar({ title }: { title: RunCategory }) {
   const navigate = useNavigate();
   return (
-    <div className="relative flex bg-kuDarkGreen w-full h-[56px] text-white text-xl font-semibold justify-center items-center">
+    <div className="relative flex bg-kuDarkGreen w-full max-w-[430px] mx-auto h-[56px] text-white text-xl font-semibold justify-center items-center">
       <img
         src={BacbBtnimg}
         className="absolute left-[24px] cursor-pointer"
