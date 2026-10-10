@@ -1,5 +1,10 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
-import { clearAuthStorage, getAccessToken, reissueToken } from '@features/auth/api/tokenAuth';
+import {
+  clearAuthStorage,
+  getAccessToken,
+  normalizeAuthToken,
+  reissueToken,
+} from '@features/auth/api/tokenAuth';
 
 // 요청 취소 함수(cancelRequest)에서 사용할 인터페이스들
 interface CancelMetadata {
@@ -23,6 +28,17 @@ interface RetryableRequestConfig extends InternalAxiosRequestConfig {
 
 customAxios.interceptors.request.use((config) => {
   const accessToken = getAccessToken();
+  const authorization = config.headers.Authorization;
+
+  // 호출부가 이전 저장 형식의 토큰을 먼저 읽어 헤더에 넣은 경우도 호환한다.
+  if (typeof authorization === 'string') {
+    const normalizedAuthorization = normalizeAuthToken(authorization);
+    if (normalizedAuthorization) {
+      config.headers.Authorization = normalizedAuthorization;
+    } else {
+      config.headers.delete('Authorization');
+    }
+  }
 
   if (accessToken && !config.headers.Authorization) {
     config.headers.Authorization = accessToken;
