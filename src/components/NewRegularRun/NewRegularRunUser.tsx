@@ -25,6 +25,8 @@ interface FlashRunUserData {
   postId?: string;
 }
 
+type ParticipantGroup = React.ComponentProps<typeof AttendanceList>['groupedParticipants'][number];
+
 const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
   const navigate = useNavigate();
   const handleBack = () => navigate(-1);
@@ -88,7 +90,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
   useEffect(() => {
     const fetchPostData = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.get(`/run/regular/post/${postId}`, {
           headers: { Authorization: `${token}` },
         });
@@ -118,7 +120,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
           setPostStatus(result.postStatus);
 
           const myInfo = result.userInfo;
-          const foundGroup = result.groupedParticipants?.find((group) =>
+          const foundGroup = result.groupedParticipants?.find((group: ParticipantGroup) =>
             group.participants?.some((p: any) => p.userId === myInfo.userId)
           );
           if (foundGroup) {
@@ -148,7 +150,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
 
   const fetchParticipantsInfo = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.get(`/run/regular/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -189,7 +191,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
   const handleOpenGroupModal = async () => {
     setIsGroupModalOpen(true);
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const res = await customAxios.get(`/run/regular/post/${postId}/group`, {
         headers: { Authorization: `${token}` },
       });
@@ -203,7 +205,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
     const isCancel = selectedGroup === '';
 
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const res = await customAxios.patch(
         `/run/regular/post/${postId}/join${!isCancel ? `?group=${selectedGroup}` : ''}`,
         {},
@@ -242,7 +244,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
   const handleAttendanceClick = async () => {
     if (!code) return setError('출석 코드를 입력해주세요.');
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.post(
         `/run/regular/post/${postId}/attend`,
         { code },
@@ -307,7 +309,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
   };
 
   const saveAttendanceChanges = async () => {
-    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+    const token = localStorage.getItem('accessToken') || 'null';
     const payload = Object.entries(editedAttendance).map(([userId, isAttend]) => ({
       userId: Number(userId),
       isAttend,
@@ -381,7 +383,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
                   if (!confirmDelete) return;
 
                   try {
-                    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+                    const token = localStorage.getItem('accessToken') || 'null';
                     if (!token) {
                       alert('로그인이 필요합니다.');
                       return;

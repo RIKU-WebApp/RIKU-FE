@@ -4,6 +4,7 @@ node_modules/
 # npm run build를 통해 생성되는 빌드 파일
 dist/
 dist-ssr/
+*.tsbuildinfo
 *.local
 
 # IDE configurations
@@ -12,3 +13,7 @@ dist-ssr/
 !.vscode/settings.json
 !.vscode/extensions.json
 !.vscode/tasks.json
+
+# Environment Variable
+.env*
+!.env.example

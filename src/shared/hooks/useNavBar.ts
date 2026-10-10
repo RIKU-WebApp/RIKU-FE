@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { tabHistory, setTabHistory } from '../utils/tabHistory';
 
 function useNavBar() {
   const navigate = useNavigate(); //네비게이팅을 위해 useNavigate() 훅 사용
@@ -29,6 +30,22 @@ function useNavBar() {
     navigate(path); //지정한 경로로 이동
   }
 
+  // useNavBar 안의 홈 클릭 처리
+  const handleHomeClick = () => {
+    const currentPath = location.pathname;
+    const lastSavedHomePath = tabHistory.home;
+
+    // 같은 탭에서 두번 클릭
+    if (currentPath === lastSavedHomePath) {
+      setTabHistory('home', '/tab/main');
+      navigate('/tab/main');
+    }
+    // 2. 다른 탭에서 넘어왔을때
+    else {
+      navigate(lastSavedHomePath);
+    }
+  };
+
   // 아이콘을 선택 상태에 따라 동적으로 색깔 적용
   const getIconColor = (tabName: string) =>
     selectedTab === tabName ? 'text-kuDarkGreen' : 'text-gray-400';
@@ -43,6 +60,7 @@ function useNavBar() {
     selectedTab,
     setSelectedTab,
     handleNavigation,
+    handleHomeClick,
     getIconColor,
     getTextColor,
   };

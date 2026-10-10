@@ -35,7 +35,7 @@ export default function EventSection({ onShowDetailModal }: { onShowDetailModal:
 
   // 이벤트에 관한 랭킹 정보를 가지고 오는 메소드 fetchEventRanking
   const fetchEventRanking = async () => {
-    const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+    const accessToken = localStorage.getItem('accessToken') || ''; //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
     const url = '/ranking/event';
 
     try {

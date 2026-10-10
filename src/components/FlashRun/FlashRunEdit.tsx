@@ -26,7 +26,7 @@ function FlashRunEdit() {
 
   useEffect(() => {
     const fetchPost = async () => {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const res = await customAxios.get(`/run/flash/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -165,7 +165,7 @@ function FlashRunEdit() {
       const pad = (n: number) => n.toString().padStart(2, '0');
       const eventDateTime = `${utcDate.getFullYear()}-${pad(utcDate.getMonth() + 1)}-${pad(utcDate.getDate())}T${pad(utcDate.getHours())}:${pad(utcDate.getMinutes())}:${pad(utcDate.getSeconds())}`;
 
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const formData = new FormData();
 
       if (title) formData.append('title', title);

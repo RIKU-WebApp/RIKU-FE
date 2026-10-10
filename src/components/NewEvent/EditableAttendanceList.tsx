@@ -3,12 +3,11 @@ import { FaCheckCircle } from 'react-icons/fa';
 import customAxios from '@/shared/lib/customAxios';
 import peopleimg from '@assets/people_darkgreen.svg';
 
-interface User {
+export interface User {
   userId: number;
   userName: string;
   userProfileImg?: string | null;
   status: 'ATTENDED' | 'PENDING' | 'ABSENT';
-  canEdit: string;
 }
 
 export interface EditableAttendanceListHandle {
@@ -48,7 +47,7 @@ const EditableAttendanceList = forwardRef<
     const [editMode, setEditMode] = useState(false);
 
     const handleToggle = (userId: number) => {
-      const updated = users.map((user) => {
+      const updated = users.map((user): User => {
         if (user.userId !== userId) return user;
 
         const next = user.status === 'ATTENDED' ? 'ABSENT' : 'ATTENDED';
@@ -58,7 +57,7 @@ const EditableAttendanceList = forwardRef<
     };
 
     const handleSave = async () => {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
 
       const payload = users.map((u) => ({
         userId: u.userId,

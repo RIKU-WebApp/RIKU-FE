@@ -74,7 +74,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
     if (!code) {
       try {
         // 출석 코드 생성 API 호출
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.post(
           `/run/flash/post/${postId}/code`,
           {},
@@ -109,7 +109,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
     if (!code) return;
 
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
 
       // 출석 데이터 준비
       const attendanceData = editableParticipants.map((user) => ({
@@ -155,7 +155,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
 
   const handleTabChange = async (tab: '소개' | '명단') => {
     setActiveTab(tab);
-    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+    const token = localStorage.getItem('accessToken') || 'null';
 
     try {
       const response = await customAxios.get(`/run/flash/post/${postId}`, {
@@ -237,7 +237,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
   useEffect(() => {
     const fetchPostData = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.get(`/run/flash/post/${postId}`, {
           headers: { Authorization: `${token}` },
         });
@@ -309,7 +309,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
 
   const refetchPost = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const { data } = await customAxios.get(`/run/flash/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -404,7 +404,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
                       if (!confirmCancel) return;
 
                       try {
-                        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+                        const token = localStorage.getItem('accessToken') || 'null';
                         if (!token) {
                           alert('로그인이 필요합니다.');
                           return;
@@ -447,7 +447,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
                     if (!confirmDelete) return;
 
                     try {
-                      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+                      const token = localStorage.getItem('accessToken') || 'null';
                       if (!token) {
                         alert('로그인이 필요합니다.');
                         return;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
 import customAxios from '@/shared/lib/customAxios';
-import riku_logo from '@assets/riku_logo_loginPage.png'; //라이쿠 로고 불러오기
+import riku_logo from '@assets/riku_logo_loginPage.svg'; //라이쿠 로고 불러오기
 
 //회원 정보와 관련된 객체 정보를 정의한 Member interface
 interface Member {
@@ -32,7 +32,7 @@ function AdminPage() {
 
   //회원 정보 불러올 함수 fetchMembers()
   async function fetchMembers() {
-    const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+    const accessToken = localStorage.getItem('accessToken') || ''; //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
     const url = '/admin';
 
     try {
@@ -158,7 +158,7 @@ function AdminPage() {
   //저장하는 프로세스를 핸들링하는 메소드 handleSave
   async function handleSave() {
     try {
-      const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+      const accessToken = localStorage.getItem('accessToken') || ''; //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
       const url = '/admin';
       //roleChangedMembers 배열의 요소들에서 studentId, userName만을 추출
       const payload = roleChangedMembers.map(({ studentId, userRole, isPacer }) => ({

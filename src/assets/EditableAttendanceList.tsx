@@ -40,7 +40,7 @@ const EditableAttendanceList: React.FC<EditableAttendanceListProps> = ({
   };
 
   const handleSave = async () => {
-    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+    const token = localStorage.getItem('accessToken') || 'null';
 
     // status를 확실하게 명시해줘야 타입 에러 방지됨
     const payload = users.map((user) => ({

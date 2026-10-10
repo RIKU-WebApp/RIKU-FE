@@ -73,7 +73,7 @@ function SchedulePage() {
   useEffect(() => {
     const fetchMain = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.get(`/run`, {
           headers: { Authorization: `${token}` },
         });
@@ -95,7 +95,7 @@ function SchedulePage() {
   //캘린더 월별 조회 메소드
   async function fetchMonthlyData() {
     const formattedPointDate = format(pointDate, 'yyyy-MM-dd'); //pointDate(기준이 되는 날짜) 포맷팅
-    const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+    const accessToken = localStorage.getItem('accessToken') || ''; //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
 
     //url에 날짜를 'yyyy-MM-dd' 형식으로 담아서 보내야 함
     const url = `/calendar/monthly?date=${formattedPointDate}`;
@@ -132,7 +132,7 @@ function SchedulePage() {
   //캘린더 일별 조회 메소드
   async function fetchSelectedDateEventData() {
     const formattedSelectedDate = format(selectedDate, 'yyyy-MM-dd'); // selectedDate(선택된 날짜) 포맷팅
-    const accessToken = JSON.parse(localStorage.getItem('accessToken') || ''); //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
+    const accessToken = localStorage.getItem('accessToken') || ''; //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
 
     //url에 날짜를 'yyyy-MM-dd' 형식으로 담아서 보내야 함
     const url = `/calendar/daily?date=${formattedSelectedDate}`;

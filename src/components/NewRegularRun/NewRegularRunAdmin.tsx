@@ -79,7 +79,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
 
   const fetchPostData = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.get(`/run/regular/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -132,7 +132,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
   const handleStartClick = async () => {
     if (!code) {
       try {
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.post(
           `/run/regular/post/${postId}/code`,
           {},
@@ -163,7 +163,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
     if (!code) return;
 
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
 
       //수정된 출석 정보가 있다면 먼저 저장
       if (Object.keys(editedAttendance).length > 0) {
@@ -205,7 +205,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
 
   const handleTabChange = async (tab: '소개' | '명단') => {
     setActiveTab(tab);
-    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+    const token = localStorage.getItem('accessToken') || 'null';
 
     try {
       const response = await customAxios.get(`/run/regular/post/${postId}`, {
@@ -242,7 +242,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
 
   const fetchParticipantsInfo = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.get(`/run/regular/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -281,7 +281,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
   };
 
   const saveAttendanceChanges = async () => {
-    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+    const token = localStorage.getItem('accessToken') || 'null';
     const payload = Object.entries(editedAttendance).map(([userId, isAttend]) => ({
       userId: Number(userId),
       isAttend,
@@ -451,7 +451,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
                       const confirmCancel = window.confirm('정말 게시글을 취소하시겠습니까?');
                       if (!confirmCancel) return;
                       try {
-                        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+                        const token = localStorage.getItem('accessToken') || 'null';
                         if (!token) {
                           alert('로그인이 필요합니다.');
                           return;
@@ -493,7 +493,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
                     );
                     if (!confirmDelete) return;
                     try {
-                      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+                      const token = localStorage.getItem('accessToken') || 'null';
                       if (!token) {
                         alert('로그인이 필요합니다.');
                         return;

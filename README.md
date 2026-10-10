@@ -59,6 +59,22 @@ RIKU는 매주 다양한 러닝 활동(정규런, 번개런, 훈련 등)을 운�
 - 패키지 매니저: npm
 - API 통신 : Axios
 
+## Vercel 배포
+
+- 저장소: `RIKU-WebApp/RIKU-FE`
+- 배포 브랜치: `dev`
+- Framework: Vite / Node.js: 22.x
+- Build Command: `npm run build` / Output Directory: `dist`
+- 환경변수: `VITE_API_BASE_URL`의 실제 값은 Vercel 관리 화면에서 별도로 입력합니다.
+
+Vercel은 `main`이 있으면 최초 운영 브랜치로 선택할 수 있습니다. 프로젝트 생성 후
+`Settings → Environments → Production → Branch Tracking`을 `dev`로 맞추고,
+`Deployments → Create Deployment`에서 `dev`로 다시 배포합니다.
+Source 브랜치·커밋과 `Ready` 상태를 확인한 뒤 `vercel.app` 주소에서 API 동작을 확인합니다.
+도메인 연결은 이 검증 이후에 진행합니다.
+
+[운영 브랜치 설정](https://vercel.com/docs/git#production-branch)
+
 <br>
 
 # FE Members: 이운태 & 허준호

@@ -11,7 +11,10 @@ import { useNavigate } from 'react-router-dom';
 import BackBtnimg from '@assets/BackBtn.svg';
 import pacermark from '@assets/pacer-mark.svg';
 import CommentSection from '../common/CommentSection';
-import EditableAttendanceList, { EditableAttendanceListHandle } from './EditableAttendanceList';
+import EditableAttendanceList, {
+  EditableAttendanceListHandle,
+  type User as AttendanceUser,
+} from './EditableAttendanceList';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
@@ -27,11 +30,22 @@ interface Participant {
   isPresent: boolean;
 }
 
+function toAttendanceUser(participant: Participant | AttendanceUser): AttendanceUser {
+  if ('userId' in participant) return participant;
+
+  return {
+    userId: participant.id,
+    userName: participant.name,
+    userProfileImg: participant.profileImage,
+    status: participant.isPresent ? 'ATTENDED' : 'PENDING',
+  };
+}
+
 interface FlashRunUserData {
   title: string;
   location: string;
   date: string;
-  participants: Participant[];
+  participants: (Participant | AttendanceUser)[];
   participantsNum: number;
   content: string;
   userName: string;
@@ -65,7 +79,9 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
     );
   });
   const [code, setCode] = useState(''); // 출석 코드
-  const [currentParticipants, setCurrentParticipants] = useState<Participant[]>(participants);
+  const [currentParticipants, setCurrentParticipants] = useState<AttendanceUser[]>(() =>
+    participants.map(toAttendanceUser)
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null); // 에러 메시지
   const [userStatus, setUserStatus] = useState('');
@@ -96,7 +112,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
         await attendanceListRef.current.saveAttendance();
       }
 
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.patch(
         `/run/event/post/${postId}/close`,
         {},
@@ -156,7 +172,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
 
   const handleStartClick = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.patch(
         `/run/event/post/${postId}/join`,
         {},
@@ -196,7 +212,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
     }
 
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.post(
         `/run/event/post/${postId}/attend`,
         { code },
@@ -224,7 +240,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
 
   const handleTabChange = async (tab: '소개' | '명단') => {
     setActiveTab(tab);
-    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+    const token = localStorage.getItem('accessToken') || 'null';
 
     try {
       const response = await customAxios.get(`/run/event/post/${postId}`, {
@@ -283,7 +299,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
   useEffect(() => {
     const fetchPostData = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.get(`/run/event/post/${postId}`, {
           headers: { Authorization: `${token}` },
         });
@@ -349,7 +365,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
 
   const fetchParticipants = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.get(`/run/event/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -383,7 +399,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
 
   const handleCancelParticipation = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.patch(
         `/run/event/post/${postId}/join`,
         {},
@@ -468,7 +484,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
                     if (!confirmCancel) return;
 
                     try {
-                      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+                      const token = localStorage.getItem('accessToken') || 'null';
                       if (!token) {
                         alert('로그인이 필요합니다.');
                         return;
@@ -510,7 +526,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
                   );
                   if (!ok) return;
                   try {
-                    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+                    const token = localStorage.getItem('accessToken') || 'null';
                     if (!token) {
                       alert('로그인이 필요합니다.');
                       return;

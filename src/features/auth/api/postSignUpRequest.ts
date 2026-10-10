@@ -1,4 +1,5 @@
 import customAxios from '@shared/lib/customAxios';
+import { AUTH_ENDPOINTS } from '@features/auth/constants';
 import { SignupData } from '@features/auth/types';
 
 //서버에 회원가입 request 진행(POST 요청)
@@ -6,7 +7,7 @@ const postSignUpRequest = async (data: SignupData) => {
   //해당 구역에 axios 요청을 진행할 것임(서버에 입력된 회원 정보를 저장해야 함)
   try {
     console.log('data가 뭐임?', data);
-    const response = await customAxios.post('/user/signup', data);
+    const response = await customAxios.post(AUTH_ENDPOINTS.signup, data);
     if (response.data.isSuccess === true) {
       // 회원가입 성공
       alert('정상적으로 회원 가입이 완료되었습니다');

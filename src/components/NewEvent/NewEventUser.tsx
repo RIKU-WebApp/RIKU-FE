@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import BackBtnimg from '@assets/BackBtn.svg';
 import pacermark from '@assets/pacer-mark.svg';
 import CommentSection from '../common/CommentSection';
-import EditableAttendanceList from './EditableAttendanceList';
+import EditableAttendanceList, { type User as AttendanceUser } from './EditableAttendanceList';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -24,11 +24,23 @@ interface Participant {
   isPresent: boolean;
 }
 
+const normalizeParticipants = (participants: (Participant | AttendanceUser)[]): AttendanceUser[] =>
+  participants.map((participant) =>
+    'userId' in participant
+      ? participant
+      : {
+          userId: participant.id,
+          userName: participant.name,
+          userProfileImg: participant.profileImage,
+          status: participant.isPresent ? 'ATTENDED' : 'PENDING',
+        }
+  );
+
 interface FlashRunUserData {
   title: string;
   location: string;
   date: string;
-  participants: Participant[];
+  participants: (Participant | AttendanceUser)[];
   participantsNum: number;
   content: string;
   userName: string;
@@ -60,7 +72,9 @@ const NewEventUser: React.FC<FlashRunUserData> = ({
     );
   });
   const [code, setCode] = useState(''); // 출석 코드
-  const [currentParticipants, setCurrentParticipants] = useState<Participant[]>(participants);
+  const [currentParticipants, setCurrentParticipants] = useState<AttendanceUser[]>(() =>
+    normalizeParticipants(participants)
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null); // 에러 메시지
   const [userStatus, setUserStatus] = useState('');
@@ -86,7 +100,7 @@ const NewEventUser: React.FC<FlashRunUserData> = ({
 
   const handleStartClick = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.patch(
         `/run/event/post/${postId}/join`,
         {},
@@ -122,7 +136,7 @@ const NewEventUser: React.FC<FlashRunUserData> = ({
     }
 
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.post(
         `/run/event/post/${postId}/attend`,
         { code },
@@ -150,7 +164,7 @@ const NewEventUser: React.FC<FlashRunUserData> = ({
 
   const handleTabChange = async (tab: '소개' | '명단') => {
     setActiveTab(tab);
-    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+    const token = localStorage.getItem('accessToken') || 'null';
 
     try {
       const response = await customAxios.get(`/run/event/post/${postId}`, {
@@ -209,7 +223,7 @@ const NewEventUser: React.FC<FlashRunUserData> = ({
   useEffect(() => {
     const fetchPostData = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.get(`/run/event/post/${postId}`, {
           headers: { Authorization: `${token}` },
         });
@@ -274,7 +288,7 @@ const NewEventUser: React.FC<FlashRunUserData> = ({
 
   const fetchParticipants = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.get(`/run/event/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -308,7 +322,7 @@ const NewEventUser: React.FC<FlashRunUserData> = ({
 
   const handleCancelParticipation = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.patch(
         `/run/event/post/${postId}/join`,
         {},
@@ -394,7 +408,7 @@ const NewEventUser: React.FC<FlashRunUserData> = ({
                 );
                 if (!ok) return;
                 try {
-                  const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+                  const token = localStorage.getItem('accessToken') || 'null';
                   if (!token) {
                     alert('로그인이 필요합니다.');
                     return;

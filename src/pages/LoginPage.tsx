@@ -1,5 +1,5 @@
 import useLoginPage from '@features/auth/hooks/useLoginPage';
-import riku_logo from '@assets/riku_logo_loginPage.png'; //라이쿠 로고 불러오기
+import riku_logo from '@assets/riku_logo_loginPage.svg'; //라이쿠 로고 불러오기
 import { Link } from 'react-router-dom'; // Link 컴포넌트 import
 
 // 로그인을 진행하는 "최상단" 컴포넌트 -> Route에 바로 붙일 수 있는 컴포넌트

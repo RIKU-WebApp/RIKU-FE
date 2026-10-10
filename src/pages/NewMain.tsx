@@ -21,7 +21,7 @@ import ARGENTimg from '@assets/Main-img/NewUrgentStatus.svg';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 
 interface EventData {
-  location?: string; // 이벤트 위치
+  location: string; // 이벤트 위치
   date?: string; // 표시할 날짜 문자열
   postimgurl?: string; // 포스트 이미지
   poststatus?: string; // 포스트 상태
@@ -249,16 +249,20 @@ const NewMain: React.FC = () => {
       <div className="max-w-[430px] w-full h-[300px] mx-auto m-0 relative">
         <div className="flex justify-center items-center h-full relative">
           <div className="max-w-[430px] w-full h-[300px] mx-auto relative overflow-hidden">
-            <picture className="block w-full h-full">
-              <source srcSet={images[currentIndex]} type="image/webp" />
+            {images.map((image, index) => (
               <img
-                src={images[currentIndex]}
-                alt={`메인 배너 ${currentIndex + 1}`}
-                className="w-full h-full object-cover block"
-                fetchPriority={currentIndex === 0 ? 'high' : undefined}
-                loading={currentIndex === 0 ? 'eager' : 'lazy'}
+                key={image}
+                src={image}
+                alt={index === currentIndex ? `메인 배너 ${index + 1}` : ''}
+                aria-hidden={index !== currentIndex}
+                className={`absolute inset-0 block h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
+                  // 현재 이미지만 보이도록 (모든 이미지 겹친 상태에서 1000ms 동안 페이드인, 페이드아웃 효과)
+                  index === currentIndex ? 'opacity-100' : 'opacity-0'
+                }`}
+                fetchPriority={index === 0 ? 'high' : undefined}
+                loading="eager"
               />
-            </picture>
+            ))}
 
             {/* 왼쪽 화살표 */}
             <button

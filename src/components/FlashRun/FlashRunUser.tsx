@@ -26,11 +26,25 @@ interface Participant {
   isPresent: boolean;
 }
 
+type AttendanceUser = React.ComponentProps<typeof EditableAttendanceList>['users'][number];
+
+const normalizeParticipants = (participants: (Participant | AttendanceUser)[]): AttendanceUser[] =>
+  participants.map((participant) =>
+    'userId' in participant
+      ? participant
+      : {
+          userId: participant.id,
+          userName: participant.name,
+          userProfileImg: participant.profileImage,
+          status: participant.isPresent ? 'ATTENDED' : 'PENDING',
+        }
+  );
+
 interface FlashRunUserData {
   title: string;
   location: string;
   date: string;
-  participants: Participant[];
+  participants: (Participant | AttendanceUser)[];
   participantsNum: number;
   content: string;
   userName: string;
@@ -55,7 +69,9 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'소개' | '명단'>('소개');
   const [code, setCode] = useState(''); // 출석 코드
-  const [currentParticipants, setCurrentParticipants] = useState<Participant[]>(participants);
+  const [currentParticipants, setCurrentParticipants] = useState<AttendanceUser[]>(() =>
+    normalizeParticipants(participants)
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null); // 에러 메시지
   const [buttonText, setButtonText] = useState('참여하기');
@@ -67,7 +83,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
 
   const handleStartClick = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.patch(
         `/run/flash/post/${postId}/join`,
         {},
@@ -102,7 +118,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
     }
 
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.post(
         `/run/flash/post/${postId}/attend`, // attend 엔드포인트로 변경
         { code },
@@ -130,7 +146,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
 
   const handleTabChange = async (tab: '소개' | '명단') => {
     setActiveTab(tab);
-    const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+    const token = localStorage.getItem('accessToken') || 'null';
 
     try {
       const response = await customAxios.get(`/run/flash/post/${postId}`, {
@@ -190,7 +206,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
   useEffect(() => {
     const fetchPostData = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+        const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.get(`/run/flash/post/${postId}`, {
           headers: { Authorization: `${token}` },
         });
@@ -260,7 +276,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
 
   const handleCancelParticipation = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.patch(
         `/run/flash/post/${postId}/join`,
         {},
@@ -304,7 +320,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
 
   const refetchPost = async () => {
     try {
-      const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+      const token = localStorage.getItem('accessToken') || 'null';
       const { data } = await customAxios.get(`/run/flash/post/${postId}`, {
         headers: { Authorization: `${token}` },
       });
@@ -364,7 +380,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
                 );
                 if (!ok) return;
                 try {
-                  const token = JSON.parse(localStorage.getItem('accessToken') || 'null');
+                  const token = localStorage.getItem('accessToken') || 'null';
                   if (!token) {
                     alert('로그인이 필요합니다.');
                     return;
