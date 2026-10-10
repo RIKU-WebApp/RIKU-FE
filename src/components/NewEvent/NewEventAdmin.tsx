@@ -11,7 +11,10 @@ import { useNavigate } from 'react-router-dom';
 import BackBtnimg from '@assets/BackBtn.svg';
 import pacermark from '@assets/pacer-mark.svg';
 import CommentSection from '../common/CommentSection';
-import EditableAttendanceList, { EditableAttendanceListHandle } from './EditableAttendanceList';
+import EditableAttendanceList, {
+  EditableAttendanceListHandle,
+  type User as AttendanceUser,
+} from './EditableAttendanceList';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
@@ -27,11 +30,22 @@ interface Participant {
   isPresent: boolean;
 }
 
+function toAttendanceUser(participant: Participant | AttendanceUser): AttendanceUser {
+  if ('userId' in participant) return participant;
+
+  return {
+    userId: participant.id,
+    userName: participant.name,
+    userProfileImg: participant.profileImage,
+    status: participant.isPresent ? 'ATTENDED' : 'PENDING',
+  };
+}
+
 interface FlashRunUserData {
   title: string;
   location: string;
   date: string;
-  participants: Participant[];
+  participants: (Participant | AttendanceUser)[];
   participantsNum: number;
   content: string;
   userName: string;
@@ -65,7 +79,9 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
     );
   });
   const [code, setCode] = useState(''); // 출석 코드
-  const [currentParticipants, setCurrentParticipants] = useState<Participant[]>(participants);
+  const [currentParticipants, setCurrentParticipants] = useState<AttendanceUser[]>(() =>
+    participants.map(toAttendanceUser)
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null); // 에러 메시지
   const [userStatus, setUserStatus] = useState('');

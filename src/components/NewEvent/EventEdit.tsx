@@ -82,7 +82,7 @@ function EventEdit() {
           });
           setPostImagePreview(eventData.postImageUrl);
           setAttachmentPreviews(eventData.attachmentUrls || []);
-          setAttachments([]); // File은 새로 업로드할 때만 추가
+          setNewAttachmentFiles([]); // File은 새로 업로드할 때만 추가
 
           console.log(eventData);
         }

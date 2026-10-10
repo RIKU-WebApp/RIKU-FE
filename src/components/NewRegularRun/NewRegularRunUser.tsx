@@ -25,6 +25,8 @@ interface FlashRunUserData {
   postId?: string;
 }
 
+type ParticipantGroup = React.ComponentProps<typeof AttendanceList>['groupedParticipants'][number];
+
 const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
   const navigate = useNavigate();
   const handleBack = () => navigate(-1);
@@ -118,7 +120,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
           setPostStatus(result.postStatus);
 
           const myInfo = result.userInfo;
-          const foundGroup = result.groupedParticipants?.find((group) =>
+          const foundGroup = result.groupedParticipants?.find((group: ParticipantGroup) =>
             group.participants?.some((p: any) => p.userId === myInfo.userId)
           );
           if (foundGroup) {

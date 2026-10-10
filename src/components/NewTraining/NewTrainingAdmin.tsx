@@ -323,7 +323,11 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
 
   // 말풍선 외부를 클릭했을 때 숨기기
   const handleOutsideClick = (event: React.MouseEvent) => {
-    if (!event.target.closest('.tooltip-container') && isTooltipVisible) {
+    const target = event.target;
+    if (
+      isTooltipVisible &&
+      (!(target instanceof Element) || !target.closest('.tooltip-container'))
+    ) {
       setIsTooltipVisible(false);
     }
   };

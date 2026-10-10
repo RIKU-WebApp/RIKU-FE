@@ -26,11 +26,25 @@ interface Participant {
   isPresent: boolean;
 }
 
+type AttendanceUser = React.ComponentProps<typeof EditableAttendanceList>['users'][number];
+
+const normalizeParticipants = (participants: (Participant | AttendanceUser)[]): AttendanceUser[] =>
+  participants.map((participant) =>
+    'userId' in participant
+      ? participant
+      : {
+          userId: participant.id,
+          userName: participant.name,
+          userProfileImg: participant.profileImage,
+          status: participant.isPresent ? 'ATTENDED' : 'PENDING',
+        }
+  );
+
 interface FlashRunUserData {
   title: string;
   location: string;
   date: string;
-  participants: Participant[];
+  participants: (Participant | AttendanceUser)[];
   participantsNum: number;
   content: string;
   userName: string;
@@ -55,7 +69,9 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'소개' | '명단'>('소개');
   const [code, setCode] = useState(''); // 출석 코드
-  const [currentParticipants, setCurrentParticipants] = useState<Participant[]>(participants);
+  const [currentParticipants, setCurrentParticipants] = useState<AttendanceUser[]>(() =>
+    normalizeParticipants(participants)
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null); // 에러 메시지
   const [buttonText, setButtonText] = useState('참여하기');

@@ -21,7 +21,7 @@ import ARGENTimg from '@assets/Main-img/NewUrgentStatus.svg';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 
 interface EventData {
-  location?: string; // 이벤트 위치
+  location: string; // 이벤트 위치
   date?: string; // 표시할 날짜 문자열
   postimgurl?: string; // 포스트 이미지
   poststatus?: string; // 포스트 상태

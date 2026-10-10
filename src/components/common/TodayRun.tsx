@@ -10,11 +10,11 @@ import ARGENTimg from '../../assets/Main-img/NewUrgentStatus.svg';
 interface EventCardProps {
   location: string;
   postimg?: string;
-  runDate: string; // 전체 ISO 날짜 문자열 (예: 2025-03-27T15:00:00)
+  runDate: Date; // 호출부에서 표시 시간대에 맞게 변환한 러닝 날짜
   runState: 'NOW' | 'CANCELED' | 'CLOSED';
   date: string; // 가공된 날짜 문자열 (예: 2025.03.27)
   time: string; // 가공된 시간 문자열 (예: 15:00)
-  participants: string;
+  participants: number;
   onClick: () => void;
 }
 
@@ -45,8 +45,7 @@ const NewEventCard: React.FC<EventCardProps> = ({
     const oneHourInMs = 60 * 60 * 1000;
 
     //  현재 시간이 runDate를 넘겼으면 진행중 이미지 반환
-    const runDateTime = new Date(runDate);
-    if (runState === 'NOW' && runDateTime <= now) {
+    if (runState === 'NOW' && runDate <= now) {
       return PROGRESSimg;
     }
 

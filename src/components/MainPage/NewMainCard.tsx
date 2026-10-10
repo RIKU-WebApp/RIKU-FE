@@ -4,7 +4,7 @@ import ARGENTimg from '../../assets/Main-img/NewUrgentStatus.svg';
 
 interface CardProps {
   title: string;
-  date: string;
+  date?: string;
   imageUrl: string;
   statusImg?: string; // status -> statusImg로 변경
   event_type: string;
