@@ -154,13 +154,12 @@ const RunList: React.FC = () => {
         <h2 className="text-[20px] font-semibold ml-5">예정된 {current.title}</h2>
         <div className="flex flex-col space-y-[12px] mt-[16px] ml-[20px]">
           {upcomingRuns.map((run) => {
-            const { kst, formattedDate, formattedTime } = toKST(run.date);
+            const { formattedDate, formattedTime } = toKST(run.date);
             return (
               <ListEventCard
                 key={run.id}
                 location={run.title}
                 postimg={run.postImageUrl}
-                runDate={kst}
                 runState={run.postStatus}
                 participants={run.participants}
                 date={formattedDate}

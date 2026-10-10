@@ -8,11 +8,10 @@ import defaultimg from '../../assets/CardDefaultImg.svg';
 interface EventCardProps {
   location: string;
   postimg?: string;
-  runDate: string; // 전체 ISO 날짜 문자열 (예: 2025-03-27T15:00:00)
   runState: 'NOW' | 'CANCELED' | 'CLOSED';
   date: string; // 가공된 날짜 문자열 (예: 2025.03.27)
   time: string; // 가공된 시간 문자열 (예: 15:00)
-  participants: string;
+  participants: number;
   onClick: () => void;
 }
 

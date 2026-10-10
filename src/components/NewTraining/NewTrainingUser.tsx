@@ -39,6 +39,8 @@ interface FlashRunUserData {
   postId?: string;
 }
 
+type ParticipantGroup = React.ComponentProps<typeof AttendanceList>['groupedParticipants'][number];
+
 const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
   const navigate = useNavigate();
   const handleBack = () => navigate(-1);
@@ -193,7 +195,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
           setPostStatus(result.postStatus);
 
           const myInfo = result.userInfo;
-          const foundGroup = result.groupedParticipants?.find((group) =>
+          const foundGroup = result.groupedParticipants?.find((group: ParticipantGroup) =>
             group.participants?.some((p: any) => p.userId === myInfo.userId)
           );
           if (foundGroup) {
@@ -405,7 +407,11 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
   };
   // 말풍선 외부를 클릭했을 때 숨기기
   const handleOutsideClick = (event: React.MouseEvent) => {
-    if (!event.target.closest('.tooltip-container') && isTooltipVisible) {
+    if (
+      event.target instanceof Element &&
+      !event.target.closest('.tooltip-container') &&
+      isTooltipVisible
+    ) {
       setIsTooltipVisible(false);
     }
   };
