@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 
 interface TabButtonProps {
+  activeTab?: '소개' | '명단';
   leftLabel: string;
   rightLabel: string;
   onTabChange: (tab: '소개' | '명단') => void;
 }
 
-const TabButton: React.FC<TabButtonProps> = ({ leftLabel, rightLabel, onTabChange }) => {
-  const [activeTab, setActiveTab] = useState<'소개' | '명단'>('소개');
+const TabButton: React.FC<TabButtonProps> = ({ leftLabel, rightLabel, onTabChange, activeTab: controlledTab }) => {
+  const [internalTab, setActiveTab] = useState<'소개' | '명단'>('소개');
 
+  const activeTab = controlledTab ?? internalTab;
   const handleBarClick = (tab: '소개' | '명단') => {
     setActiveTab(tab);
     onTabChange(tab); // 부모 컴포넌트로 상태 전달

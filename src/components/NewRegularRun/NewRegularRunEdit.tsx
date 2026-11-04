@@ -1,3 +1,5 @@
+import { errorMessage, utcDate } from '../../features/improvements/shared';
+import { useRecruitment } from './Recruitment';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
@@ -23,6 +25,9 @@ interface PacerGroup {
 function NewRegularRunEdit() {
   const navigate = useNavigate();
   const { postId } = useParams();
+  const {data: recruitment} = useRecruitment(postId);
+  const [editedCapacity, setEditedCapacity] = useState<string>();
+  const capacity = editedCapacity ?? String(recruitment?.capacity ?? '');
 
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
@@ -68,13 +73,8 @@ function NewRegularRunEdit() {
         setCoursePreviews(result.attachmentUrls || []);
         setAttachmentUrls(result.attachmentUrls || []);
 
-        const utcDate = new Date(result.date); // 서버에서 받은 UTC 날짜
-        const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000); // 9시간 더해 KST로 변환
-
-        setDateTime({
-          date: kstDate,
-          time: kstDate.toTimeString().slice(0, 5), // KST 기준 시간 추출
-        });
+        const start = utcDate(result.date);
+        setDateTime({ date: start, time: start.toTimeString().slice(0, 5) });
         setPacerGroups(
           result.pacers.map((p: any) => ({
             id: p.group,
@@ -215,9 +215,14 @@ function NewRegularRunEdit() {
       !location ||
       !content ||
       !dateTime.date ||
-      pacerGroups.some((g) => !g.pacer || !g.distance || !g.pace)
+      !recruitment || (!recruitment.configured && pacerGroups.some((g) => !g.pacer || !g.distance || !g.pace))
     ) {
       alert('모든 정보를 입력해주세요.');
+      return;
+    }
+    if (recruitment.configured && capacity !== '' &&
+        (!Number.isInteger(Number(capacity)) || Number(capacity) < 1 || Number(capacity) > 1000)) {
+      alert('총정원은 1~1000명으로 입력해주세요.');
       return;
     }
     try {
@@ -233,12 +238,13 @@ function NewRegularRunEdit() {
         0
       );
 
-      const utcDate = new Date(kstDate.getTime() - 9 * 60 * 60 * 1000);
-
-      const pad = (n: number) => n.toString().padStart(2, '0');
-      const eventDateTime = `${utcDate.getFullYear()}-${pad(utcDate.getMonth() + 1)}-${pad(utcDate.getDate())}T${pad(utcDate.getHours())}:${pad(utcDate.getMinutes())}:${pad(utcDate.getSeconds())}`;
+      const eventDateTime = kstDate.toISOString().slice(0, 19);
       const token = localStorage.getItem('accessToken') || 'null';
       const formData = new FormData();
+      if (recruitment.configured && editedCapacity !== undefined && capacity !== String(recruitment.capacity ?? '')) {
+        if (capacity === '') formData.append('clearCapacity', 'true');
+        else formData.append('capacity', capacity);
+      }
       formData.append('title', title);
       formData.append('location', location);
       formData.append('date', eventDateTime);
@@ -258,7 +264,7 @@ function NewRegularRunEdit() {
         formData.append('attachments', file);
       });
 
-      pacerGroups.forEach((group, index) => {
+      if (!recruitment?.configured) pacerGroups.forEach((group, index) => {
         const matchedPacer = pacers.find(
           (p) => p.name === group.pacer || p.pacerName === group.pacer
         );
@@ -282,7 +288,7 @@ function NewRegularRunEdit() {
       }
     } catch (error) {
       console.error('정규런 수정 중 오류:', error);
-      alert('정규런 수정 중 문제가 발생했습니다.');
+      alert(errorMessage(error));
     }
   };
 
@@ -336,6 +342,13 @@ function NewRegularRunEdit() {
           onChange={(e) => setContent(e.target.value)}
         ></textarea>
 
+        {recruitment?.configured && (
+          <label className="my-4 block text-sm">총정원
+            <input type="number" min={1} max={1000} placeholder="제한 없음" value={capacity}
+              className="mt-2 w-full rounded-lg border p-2" onChange={e => setEditedCapacity(e.target.value)} />
+          </label>
+        )}
+        <fieldset disabled={recruitment?.configured}>
         {/* 페이서 그룹 입력 UI */}
         <div className="flex flex-col items-center w-full max-w-md p-4 bg-white rounded-lg relative">
           {isBottomSheetOpen && (
@@ -476,6 +489,7 @@ function NewRegularRunEdit() {
           )}
         </div>
 
+        </fieldset>
         {/* 대표 이미지 */}
         <div className="my-4">
           <h2 className="mb-2">대표 게시글 사진</h2>

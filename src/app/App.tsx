@@ -1,4 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import RecordArchive from '../features/improvements/RecordArchive';
+import AchievementsPage from '../features/improvements/AchievementsPage';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { previewFeaturesEnabled } from '@/shared/config/features';
 import SchedulePage from '../pages/SchedulePage';
 import MyPage from '../pages/MyPage';
 import FlashRunMake from '../components/FlashRun/FlashRunMake';
@@ -76,8 +79,10 @@ function App() {
             <Route path="/activity-detail" element={<ActivityDetailPage />} />
             <Route path="/flash/:postId" element={<FlashRunDetail />} />
             <Route path="/regular/:postId" element={<NewRegularRunDetail />} />
+            <Route path="/my-achievements" element={previewFeaturesEnabled ? <AchievementsPage /> : <Navigate to="/tab/my-page" replace />} />
             <Route path="/training/:postId" element={<NewTrainingDetail />} />
             <Route path="/event/:postId" element={<NewEventDetail />} />
+            <Route path="/record/archive" element={<RecordArchive />} />
             <Route path="/record" element={<RecordPage />} />
 
             <Route path="/admin" element={<AdminPage />} />

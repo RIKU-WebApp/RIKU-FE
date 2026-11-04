@@ -1,9 +1,12 @@
+import type { Enrollment } from './Recruitment';
 import React from 'react';
 import peopleimg from '../../assets/people_darkgreen.svg';
 import checkicon from '../../assets/checkedicon.svg';
 
 interface Participant {
   userId: number;
+  pacer?: boolean;
+  isPacer?: boolean;
   userName: string;
   userProfileImg?: string | null;
   status: 'ATTENDED' | 'PENDING' | string;
@@ -21,14 +24,11 @@ interface AttendanceListProps {
   toggleAttendance?: (userId: number, originalStatus: string) => void;
   onSaveAttendance?: () => void;
   onToggleEditMode?: () => void;
-  userInfoName: string;
-  postCreatorName: string;
   canEdit?: boolean;
+  waiting?: Enrollment[];
 }
 
 const AttendanceList: React.FC<AttendanceListProps> = ({
-  userInfoName,
-  postCreatorName,
   groupedParticipants,
   isEditMode = false,
   editedAttendance = {},
@@ -36,6 +36,7 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
   onSaveAttendance = () => {},
   onToggleEditMode = () => {},
   canEdit = false,
+  waiting,
 }) => {
   const allParticipants = groupedParticipants.flatMap((group) => group.participants);
 
@@ -71,8 +72,7 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
           )}
         </div>
 
-        {/*  작성자인 경우에만 명단 수정/저장 버튼 노출 */}
-        {(userInfoName === postCreatorName || canEdit) && (
+        {canEdit && (
           <button
             className={`text-[12px] w-[72px] h-[24px] font-semibold rounded-[10px] ${
               isEditMode ? 'bg-kuDarkGreen text-white' : 'bg-kuLightGray text-kuDarkGray'
@@ -133,7 +133,7 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
                     </div>
                   </div>
 
-                  <div className="flex-1 ml-1 text-left text-[16px]">{user.userName}</div>
+                  <span className="flex-1 ml-1 text-left text-[16px]">{user.userName}{(user.pacer || user.isPacer) && <span className="role-pill pacer ml-2">페이서</span>}</span>
 
                   {isEditMode ? (
                     <div
@@ -159,6 +159,18 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
           })
         )
       )}
+      {!!waiting?.length && <>
+        <h3 className="text-left font-semibold mt-4">대기명단</h3>
+        {waiting.map(entry => (
+          <div key={entry.userId} className="flex items-center gap-2 text-left rounded-lg bg-kuLightGray px-4 py-3">
+            <span className="text-sm">{entry.group}</span>
+            <span className="flex-1 text-left">
+              {entry.name}
+              {entry.role === 'PACER' && <span className="role-pill pacer ml-2">페이서</span>}
+            </span>
+          </div>
+        ))}
+      </>}
     </div>
   );
 };
