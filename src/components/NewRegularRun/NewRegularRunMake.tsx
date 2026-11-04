@@ -1,3 +1,4 @@
+import { GroupLimit, makePlans, nextGroup } from '../../features/improvements/PaceGroups';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
@@ -16,6 +17,7 @@ interface Pacer {
 }
 
 interface PacerGroup {
+  capacity?: string;
   id: string;
   pacer: string;
   distance: string;
@@ -62,17 +64,13 @@ function NewRegularRunMake() {
 
 
   const addPacerGroup = () => {
-    const nextGroupId = String.fromCharCode(65 + pacerGroups.length);
+    const nextGroupId = nextGroup(pacerGroups);
+    if (!nextGroupId) return;
     setPacerGroups([...pacerGroups, { id: nextGroupId, pacer: '', distance: '', pace: '' }]);
   };
 
   const removePacerGroup = (id: string) => {
-    const filtered = pacerGroups.filter((group) => group.id !== id);
-    const reordered = filtered.map((group, index) => ({
-      ...group,
-      id: String.fromCharCode(65 + index), // A부터 다시 재지정
-    }));
-    setPacerGroups(reordered);
+    setPacerGroups(pacerGroups.filter(group => group.id !== id));
   };
   const handleInputChange = (id: string, field: keyof PacerGroup, value: string) => {
     setPacerGroups(
@@ -189,7 +187,7 @@ function NewRegularRunMake() {
       const [hours, minutes] = dateTime.time.split(':').map(Number);
       const selected = dateTime.date!;
       const local = new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), hours, minutes);
-      const request = {title, location, content, date: local.toISOString().slice(0,19), capacity: capacity === '' ? null : Number(capacity), groups: pacerGroups.map(g => ({name:g.id, distanceKm:parseFloat(g.distance), pace:g.pace}))};
+      const request = {title, location, content, date: local.toISOString().slice(0,19), capacity: capacity === '' ? null : Number(capacity), groups: makePlans(pacerGroups)};
       const formData = new FormData();
       if (previewFeaturesEnabled) {
         formData.append('request', new Blob([JSON.stringify(request)], {type:'application/json'}));
@@ -282,6 +280,7 @@ function NewRegularRunMake() {
                   {!previewFeaturesEnabled && <th className="p-2 text-gray-700 border-b">페이서</th>}
                   <th className="p-2 text-gray-700 border-b w-[85px]">거리</th>
                   <th className="p-2 text-gray-700 border-b w-[70px]">페이스</th>
+                  <th className="border-b">정원</th>
                   <th className="p-2 w-[40px] border-b"></th>
                 </tr>
               </thead>
@@ -306,6 +305,7 @@ function NewRegularRunMake() {
                         {group.pace || '-'}
                       </button>
                     </td>
+                    <td><GroupLimit row={group} onChange={v => handleInputChange(group.id, 'capacity', v)} /></td>
                     <td className="p-2 w-[40px]">
                       {group.id !== 'A' && (
                         <button

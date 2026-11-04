@@ -1,3 +1,4 @@
+import { useRunQueue, WaitingNames } from '../../features/improvements/RunWaitlist';
 import ShareRun from '../../features/improvements/ShareRun';
 import React, { useState, useEffect } from 'react';
 
@@ -47,6 +48,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
   const handleBack = () => navigate(-1);
 
   const [activeTab, setActiveTab] = useState<'소개' | '명단'>('소개');
+  const waitlist = useRunQueue('training', postId, activeTab);
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -264,6 +266,10 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
 
   const handleOpenGroupModal = async () => {
     setIsGroupModalOpen(true);
+    if (waitlist.queue?.groups?.length) {
+      setGroupList(waitlist.queue.groups.map(g => ({group:g.name, pace:g.pace + (g.capacity == null ? '' : '　' + g.capacity + '명')})));
+      return;
+    }
     try {
       const token = localStorage.getItem('accessToken') || 'null';
       const res = await customAxios.get(`/run/training/post/${postId}/group`, {
@@ -287,6 +293,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
       );
 
       if (res.data.isSuccess) {
+        if (waitlist.queue?.capacity != null || waitlist.queue?.groups?.length || res.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
         const result = res.data.result;
 
         const myInfo = result.userInfo;
@@ -329,6 +336,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
         }
       );
       if (response.data.isSuccess) {
+        if (waitlist.queue?.capacity != null || waitlist.queue?.groups?.length || response.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
         setUserStatus(response.data.result.status);
         setButtonText('출석하기');
         setError(null);
@@ -603,7 +611,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
             </div>
             <div className="flex items-center my-1.5">
               <object data={people} className="w-[24px] h-[24px] mr-2" />
-              <span className="font-bold text-kuDarkGreen">{participantsNum}</span>
+              <span className="font-bold text-kuDarkGreen">{participantsNum}{waitlist.queue?.capacity != null && ' / ' + waitlist.queue.capacity}</span>
             </div>
           </div>
         </div>
@@ -690,6 +698,8 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
         />
       )}
 
+      {activeTab === '명단' && <WaitingNames names={waitlist.queue?.waiting} />}
+      {waitlist.error && <p role="alert">{waitlist.error}</p>}
       <CommentSection
         postId={postId!}
         postType="training"
@@ -702,6 +712,8 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
           <div className="w-[327px] h-14 rounded-lg bg-[#ECEBE4] text-[#757575] font-bold mt-6 flex justify-center items-center cursor-not-allowed">
             모집 종료
           </div>
+        ) : waitlist.queue?.mine ? (
+          <button className="mt-6 h-14 w-full max-w-[327px] rounded-lg bg-kuLightGray font-semibold" onClick={waitlist.leave}>대기 취소</button>
         ) : userStatus === 'ATTENDED' ? (
           <div className="w-[327px] h-14 rounded-lg bg-[#ECEBE4] text-[#757575] font-bold mt-6 flex justify-center items-center cursor-not-allowed">
             출석완료

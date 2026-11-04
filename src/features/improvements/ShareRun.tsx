@@ -49,13 +49,14 @@ function loadKakao() {
   return loading;
 }
 interface Props {
+  inline?: boolean;
   title: string;
   path: string;
   location: string;
   date: string;
   imageUrl?: string | null;
 }
-export default function ShareRun({ title, path, location, date, imageUrl }: Props) {
+export default function ShareRun({ title, path, location, date, imageUrl, inline }: Props) {
   const [message, setMessage] = useState('');
   const [ready, setReady] = useState<boolean>();
   const [busy, setBusy] = useState(false);
@@ -139,7 +140,7 @@ export default function ShareRun({ title, path, location, date, imageUrl }: Prop
     }
   }
   return (
-    <div className="mb-3 text-right" data-no-swipe>
+    <div className={inline ? "min-w-0 text-right" : "mb-3 text-right"} data-no-swipe>
       <button
         className="rounded-lg border border-kuDarkGreen px-3 py-1.5 text-sm text-kuDarkGreen"
         disabled={busy || !title || (!!key && ready === undefined)}

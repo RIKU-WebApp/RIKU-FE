@@ -1,3 +1,5 @@
+import { errorMessage } from '../../features/improvements/shared';
+import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
@@ -28,6 +30,7 @@ interface CreatePacerRequest {
 function EventMake() {
   const navigate = useNavigate();
 
+  const limit = useCapacityInput('event');
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
@@ -162,6 +165,7 @@ function EventMake() {
       const token = localStorage.getItem('accessToken') || 'null';
 
       const formData = new FormData();
+      limit.append(formData);
       const eventType = isCustom ? customInput : selected;
       formData.append('eventType', eventType);
       formData.append('title', title);
@@ -186,7 +190,7 @@ function EventMake() {
       }
     } catch (error) {
       console.error('행사 생성 중 오류:', error);
-      alert('행사 생성 중 문제가 발생했습니다.');
+      alert(errorMessage(error));
     }
   };
 
@@ -404,6 +408,8 @@ function EventMake() {
       </div>
 
       <div className="w-full max-w-md px-4">
+        {limit.field}
+        {limit.groupField}
         <div className="my-2">제목</div>
         <input
           className="border rounded-lg w-full p-2"

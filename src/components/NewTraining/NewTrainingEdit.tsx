@@ -1,3 +1,7 @@
+import { useOriginalRunFields } from '../../features/improvements/runEdit';
+import { errorMessage } from '../../features/improvements/shared';
+import { GroupLimit, appendPlans, nextGroup, fromPlan, type PacePlan } from '../../features/improvements/PaceGroups';
+import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
@@ -13,8 +17,10 @@ interface Pacer {
 }
 
 interface PacerGroup {
+  capacity?: string;
   id: string;
   pacer: string;
+  pacerIds?: number[];
   distance: string;
   pace: string;
 }
@@ -23,14 +29,18 @@ function NewTrainingEdit() {
   const navigate = useNavigate();
   const { postId } = useParams();
 
+  const limit = useCapacityInput('training', postId);
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
+  const original = useOriginalRunFields();
   const [dateTime, setDateTime] = useState<{ date: Date | null; time: string }>({
     date: null,
     time: '00:00',
   });
   const [pacerGroups, setPacerGroups] = useState<PacerGroup[]>([]);
+  const [initialGroups, setInitialGroups] = useState<string>();
+  const groupsChanged = initialGroups !== JSON.stringify(pacerGroups);
   const [pacers, setPacers] = useState<Pacer[]>([]);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [bottomSheetType, setBottomSheetType] = useState<'distance' | 'pace' | null>(null);
@@ -65,18 +75,15 @@ function NewTrainingEdit() {
         setContent(result.content);
         setMainPreview(result.postImageUrl);
         setCoursePreviews(result.attachmentUrls || []);
-        setDateTime({
-          date: new Date(result.date),
-          time: new Date(result.date).toTimeString().slice(0, 5),
-        });
-        setPacerGroups(
-          result.pacers.map((p: any) => ({
-            id: p.group,
-            pacer: p.pacerName || '', // pacerName으로 저장
-            distance: p.distance,
-            pace: p.pace,
-          }))
-        );
+        setDateTime(original.load(result.date, result.attachmentUrls));
+        const config = await customAxios.get('/run/training/post/' + postId + '/waitlist');
+        const plans: PacePlan[] = config.data.result.groups ?? [];
+        const assigned = result.pacers as {group:string; pacerId:number; distance:string; pace:string}[];
+        const rows = plans.length ? plans.map(plan => ({...fromPlan(plan), distance: plan.distanceKm + ' km'}))
+          : [...new Map(assigned.map(p => [p.group, {id:p.group,distance:p.distance,pace:p.pace}])).values()];
+        const loaded = rows.map(row => ({...row, pacer:'', pacerIds: assigned.filter(p => p.group === row.id).map(p => p.pacerId)}));
+        setPacerGroups(loaded);
+        setInitialGroups(JSON.stringify(loaded));
 
         setCoursePreviews(result.attachmentUrls || []);
         setOriginalUrls(result.attachmentUrls || []);
@@ -89,7 +96,8 @@ function NewTrainingEdit() {
   }, [postId]);
 
   const addPacerGroup = () => {
-    const nextGroupId = String.fromCharCode(65 + pacerGroups.length);
+    const nextGroupId = nextGroup(pacerGroups);
+    if (!nextGroupId) return;
     setPacerGroups([...pacerGroups, { id: nextGroupId, pacer: '', distance: '', pace: '' }]);
   };
 
@@ -189,27 +197,26 @@ function NewTrainingEdit() {
       !location ||
       !content ||
       !dateTime.date ||
-      pacerGroups.some((g) => !g.pacer || !g.distance || !g.pace)
+      pacerGroups.some((g) => !g.distance || !g.pace)
     ) {
       alert('모든 정보를 입력해주세요.');
       return;
     }
     try {
-      const pad = (n: number) => n.toString().padStart(2, '0');
-      const year = dateTime.date!.getFullYear();
-      const month = pad(dateTime.date!.getMonth() + 1);
-      const day = pad(dateTime.date!.getDate());
-      const time = dateTime.time;
-      const eventDateTime = `${year}-${month}-${day}T${time}:00`;
       const token = localStorage.getItem('accessToken') || 'null';
       const formData = new FormData();
+      limit.append(formData);
+      if (groupsChanged) {
+        appendPlans(formData, pacerGroups);
+        formData.append('replacePacers', 'true');
+      }
       formData.append('title', title);
       formData.append('location', location);
-      formData.append('date', eventDateTime);
+      original.appendDate(formData, dateTime.date!, dateTime.time);
       formData.append('content', content);
       if (mainImage) formData.append('postImage', mainImage);
       let fileIndex = 0;
-      for (const preview of coursePreviews) {
+      if (original.changedPhotos(coursePreviews)) for (const preview of coursePreviews) {
         if (preview.startsWith('http')) {
           const res = await fetch(preview);
           const blob = await res.blob();
@@ -226,18 +233,9 @@ function NewTrainingEdit() {
 
       // attachments가 없으면 아무것도 append 안 함
 
-      pacerGroups.forEach((group, index) => {
-        const matchedPacer = pacers.find(
-          (p) => p.name === group.pacer || p.pacerName === group.pacer
-        );
-
-        if (!matchedPacer) {
-          console.warn(`❗ pacerId 매칭 실패 - group ${group.id}:`, group);
-          throw new Error(`pacer 매칭 실패 - 그룹 ${group.id}`);
-        }
-
+      if (groupsChanged) pacerGroups.flatMap(group => (group.pacerIds ?? []).map(id => ({group,id}))).forEach(({group,id}, index) => {
         formData.append(`pacers[${index}].group`, group.id);
-        formData.append(`pacers[${index}].pacerId`, String(matchedPacer.id));
+        formData.append(`pacers[${index}].pacerId`, String(id));
         formData.append(`pacers[${index}].distance`, group.distance);
         formData.append(`pacers[${index}].pace`, group.pace);
       });
@@ -267,15 +265,11 @@ function NewTrainingEdit() {
       }
     } catch (error) {
       console.error('훈련 수정 중 오류:', error);
-      alert('훈련 수정 중 문제가 발생했습니다.');
+      alert(errorMessage(error));
     }
   };
 
-  const handlePacerChange = (id: string, pacerName: string) => {
-    setPacerGroups((prev) =>
-      prev.map((group) => (group.id === id ? { ...group, pacer: pacerName } : group))
-    );
-  };
+
 
   const removeCourseImage = (index: number) => {
     const toRemove = coursePreviews[index];
@@ -302,6 +296,7 @@ function NewTrainingEdit() {
         </div>
       </div>
       <div className="w-full max-w-md px-4">
+        {limit.field}
         <div className="my-2">제목</div>
         <input
           className="border rounded-lg w-full p-2"
@@ -352,6 +347,7 @@ function NewTrainingEdit() {
                   <th className="p-2 text-gray-700 border-b w-[85px]">페이서</th>
                   <th className="p-2 text-gray-700 border-b w-[85px]">거리</th>
                   <th className="p-2 text-gray-700 border-b w-[70px]">페이스</th>
+                  <th className="border-b">정원</th>
                   <th className="p-2 w-[40px] border-b"></th>
                 </tr>
               </thead>
@@ -360,21 +356,18 @@ function NewTrainingEdit() {
                   <tr key={group.id} className="border-b border-gray-300">
                     <td className="p-2 text-gray-900 text-center w-[50px]">{group.id}</td>
                     <td className="p-2">
-                      <select
-                        value={group.pacer}
-                        onChange={(e) => handlePacerChange(group.id, e.target.value)}
-                        className="w-full text-center border-gray-400 focus:outline-none"
-                      >
-                        <option value="">-</option>
-                        {pacers.map((pacer) => (
-                          <option
-                            key={pacer.name || pacer.pacerName}
-                            value={pacer.name || pacer.pacerName}
-                          >
-                            {pacer.name || pacer.pacerName}
-                          </option>
-                        ))}
-                      </select>
+                      <details>
+                        <summary className="cursor-pointer">{pacers.filter(p => group.pacerIds?.includes(p.id)).map(p => p.name || p.pacerName).join(', ') || '선택'}</summary>
+                        {pacers.map(p => <label key={p.id} className="flex items-center gap-1 py-1">
+                          <input type="checkbox" checked={group.pacerIds?.includes(p.id) ?? false}
+                            onChange={e => {
+                              const ids = group.pacerIds ?? [];
+                              const pacerIds = e.target.checked ? [...ids, p.id] : ids.filter(id => id !== p.id);
+                              setPacerGroups(rows => rows.map(row => row.id === group.id ? {...row, pacerIds} : row));
+                            }} />
+                          {p.name || p.pacerName}
+                        </label>)}
+                      </details>
                     </td>
                     <td className="p-2">
                       <button
@@ -392,6 +385,7 @@ function NewTrainingEdit() {
                         {group.pace || '-'}
                       </button>
                     </td>
+                    <td><GroupLimit row={group} onChange={v => handleInputChange(group.id, 'capacity', v)} /></td>
                     <td className="p-2 w-[40px]">
                       {group.id !== 'A' && (
                         <button
@@ -553,6 +547,7 @@ function NewTrainingEdit() {
         </div>
 
         <button
+          disabled={initialGroups === undefined}
           onClick={handleSubmit}
           className="w-full bg-[#366943] text-white py-3 rounded-lg mt-4"
         >

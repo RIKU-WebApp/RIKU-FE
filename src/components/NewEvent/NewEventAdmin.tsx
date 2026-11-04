@@ -1,3 +1,4 @@
+import { useRunQueue, WaitingNames } from '../../features/improvements/RunWaitlist';
 import ShareRun from '../../features/improvements/ShareRun';
 import React, { useState, useEffect, useRef } from 'react';
 
@@ -72,6 +73,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
 }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'소개' | '명단'>('소개');
+  const waitlist = useRunQueue('event', postId, activeTab);
   const [buttonText, setButtonText] = useState(() => {
     // 로컬 스토리지에서 buttonText 초기값 가져옴
     return (
@@ -185,6 +187,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
       );
 
       if (response.data.isSuccess) {
+        if (waitlist.queue?.capacity != null || waitlist.queue?.groups?.length || response.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
         setUserStatus(response.data.result.status);
         setButtonText('출석하기');
         setError(null);
@@ -412,6 +415,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
       );
 
       if (response.data.isSuccess) {
+        if (waitlist.queue?.capacity != null || waitlist.queue?.groups?.length || response.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
         setUserStatus(''); // 초기 상태로 설정
         setButtonText('참여하기');
         setError(null);
@@ -591,7 +595,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
             </div>
             <div className="flex items-center my-1.5">
               <object data={people} className="w-[24px] h-[24px] mr-2 font-bold font-#366943" />
-              <span className="font-bold text-kuDarkGreen">{currentParticipantsNum}</span>
+              <span className="font-bold text-kuDarkGreen">{currentParticipantsNum}{waitlist.queue?.capacity != null && ' / ' + waitlist.queue.capacity}</span>
             </div>
           </div>
         </div>
@@ -690,7 +694,9 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
         />
       )}
       <div className="">
-        <CommentSection
+        {activeTab === '명단' && <WaitingNames names={waitlist.queue?.waiting} />}
+      {waitlist.error && <p role="alert">{waitlist.error}</p>}
+      <CommentSection
           postId={postId!}
           postType="event"
           userInfo={userInfo}

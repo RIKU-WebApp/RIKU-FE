@@ -1,3 +1,6 @@
+import { useOriginalRunFields } from '../../features/improvements/runEdit';
+import { errorMessage } from '../../features/improvements/shared';
+import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
@@ -10,9 +13,11 @@ function FlashRunEdit() {
   const navigate = useNavigate();
   const { postId } = useParams();
 
+  const limit = useCapacityInput('flash', postId);
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
+  const original = useOriginalRunFields();
   const [dateTime, setDateTime] = useState<{ date: Date | null; time: string }>({
     date: null,
     time: '00:00',
@@ -37,17 +42,12 @@ function FlashRunEdit() {
         setContent(result.content);
         setPostImagePreview(result.postImageUrl);
         setAttachmentPreviews(result.attachmentUrls || []);
-        const utcDate = new Date(result.date); // 서버에서 받은 UTC 날짜
-        const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000); // 9시간 더해 KST로 변환
         setAttachmentPreviews(result.attachmentUrls || []);
         setOriginalAttachmentUrls(result.attachmentUrls || []);
 
-        setDateTime({
-          date: kstDate,
-          time: kstDate.toTimeString().slice(0, 5), // KST 기준 시간 추출
-        });
+        setDateTime(original.load(result.date, result.attachmentUrls));
         console.log(result);
-        console.log(token);
+
       }
     };
     fetchPost();
@@ -148,34 +148,19 @@ function FlashRunEdit() {
     }
 
     try {
-      const [hours, minutes] = dateTime.time.split(':').map(Number);
-      const selected = dateTime.date!;
-
-      const kstDate = new Date(
-        selected.getFullYear(),
-        selected.getMonth(),
-        selected.getDate(),
-        hours,
-        minutes,
-        0
-      );
-
-      const utcDate = new Date(kstDate.getTime() - 9 * 60 * 60 * 1000);
-
-      const pad = (n: number) => n.toString().padStart(2, '0');
-      const eventDateTime = `${utcDate.getFullYear()}-${pad(utcDate.getMonth() + 1)}-${pad(utcDate.getDate())}T${pad(utcDate.getHours())}:${pad(utcDate.getMinutes())}:${pad(utcDate.getSeconds())}`;
 
       const token = localStorage.getItem('accessToken') || 'null';
       const formData = new FormData();
+      limit.append(formData);
 
       if (title) formData.append('title', title);
       if (location) formData.append('location', location);
       if (content) formData.append('content', content);
-      if (dateTime.date) formData.append('date', eventDateTime);
+      original.appendDate(formData, dateTime.date!, dateTime.time);
       if (postImage) formData.append('postImage', postImage);
 
       // 기존 S3 이미지들을 File로 변환해서 append
-      for (let i = 0; i < originalAttachmentUrls.length; i++) {
+      if (original.changedPhotos(attachmentPreviews)) for (let i = 0; i < originalAttachmentUrls.length; i++) {
         const url = originalAttachmentUrls[i];
         const res = await fetch(url);
         const blob = await res.blob();
@@ -215,7 +200,7 @@ function FlashRunEdit() {
       }
     } catch (err) {
       console.error('번개런 수정 중 오류:', err);
-      alert('번개런 수정 중 문제가 발생했습니다.');
+      alert(errorMessage(err));
     }
   };
 
@@ -231,6 +216,8 @@ function FlashRunEdit() {
       </div>
 
       <div className="w-full max-w-md px-4">
+        {limit.field}
+        {limit.groupField}
         <div className="my-2">제목</div>
         <input
           className="border rounded-lg w-full p-2"

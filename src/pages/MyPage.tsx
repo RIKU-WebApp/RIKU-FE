@@ -119,12 +119,11 @@ function MyPage() {
       );
 
       if (response.data.isSuccess === true) {
-        const formattedUserRole = getUserRole(response.data.result.userRole);
         const data = {
           studentId: response.data.result.studentId,
           userName: response.data.result.userName,
           userProfileImgUrl: response.data.result.userProfileImgUrl,
-          userRole: formattedUserRole,
+          userRole: response.data.result.userRole,
           points: response.data.result.points,
           participationCount: response.data.result.participationCount,
           profileAttendanceDates: response.data.result.profileAttendanceDates,
@@ -151,17 +150,7 @@ function MyPage() {
     navigate('/activity-detail');
   }
 
-  //'운영진 페이지' 버튼 클릭시 수행할 함수
-  function handleToAdminPageClick() {
-    if (userInfo.userRole === '운영진') {
-      //회원 정보가 운영진(ADMIN)일 경우
-      alert('운영진으로 확인되셨습니다. 운영진 페이지로 이동합니다');
-      navigate('/admin');
-    } //운영진 페이지에 접근 권한이 없는 사람이라면
-    else {
-      alert('회원님은 운영진이 아니므로 해당 페이지에 접근 권한이 없으십니다!');
-    }
-  }
+
 
   //"출석하기" 버튼 state 활성,비활성 관리
   function isAttendCheckBtnValid() {
@@ -242,7 +231,7 @@ function MyPage() {
           />
           <div className="text-start">
             <p className="text-lg font-semibold text-gray-800">{userInfo.userName}</p>
-            <p className="text-sm text-gray-500">{userInfo.userRole}</p>
+            <p className="text-sm text-gray-500">{getUserRole(userInfo.userRole)}</p>
           </div>
           <button
             className="ml-auto px-4 py-1 text-sm bg-green-600 text-white rounded-lg hover hover:bg-green-900 transition"
@@ -350,10 +339,11 @@ function MyPage() {
         {renderButton("FAQ", rightArrow_Icon, handleNoticeClick)}
       </div> */}
 
-      {/* '운영진 페이지' 버튼 */}
-      <div className="w-full max-w-sm mt-4">
-        {renderButton('운영진 페이지', rightArrow_Icon, handleToAdminPageClick)}
-      </div>
+      {userInfo.userRole === 'ADMIN' && (
+        <div className="w-full max-w-sm mt-4">
+          {renderButton('운영진 페이지', rightArrow_Icon, () => navigate('/admin'))}
+        </div>
+      )}
       <div className="w-full max-w-sm mt-4">
         {renderButton('기록소', rightArrow_Icon, () => navigate('/record/archive'))}
       </div>

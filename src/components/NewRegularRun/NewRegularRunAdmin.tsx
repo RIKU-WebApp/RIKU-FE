@@ -564,16 +564,18 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId, onBack }) => {
                 <object data={time} className="w-[24px] h-[24px] mr-2" />
                 <span>{formatDateTime(date)}</span>
               </div>
-              <div className="flex items-center my-1.5">
-                <object data={people} className="w-[24px] h-[24px] mr-2" />
-                <span className="font-bold text-kuDarkGreen">{participantsNum}</span>
+              <div className="flex w-full items-center justify-between gap-3 my-1.5">
+                <div className="flex items-center">
+                  <object data={people} className="w-[24px] h-[24px] mr-2" />
+                  <span className="font-bold text-kuDarkGreen">{participantsNum}</span>
+                </div>
+                <ShareRun inline title={title} location={location} date={date} imageUrl={postImageUrl} path={`/regular/${postId}`} />
               </div>
             </div>
           </div>
         </div>
 
         <div className="mt-[14px] w-full max-w-[335px]">
-          <ShareRun title={title} location={location} date={date} imageUrl={postImageUrl} path={`/regular/${postId}`} />
           <TabButton activeTab={activeTab} leftLabel="소개" rightLabel="명단" onTabChange={handleTabChange} />
         </div>
 
