@@ -529,7 +529,6 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId, onBack }) => {
             groupedParticipants={groupedParticipants}
             waiting={recruitment?.configured ? recruitment.waiting : undefined}
 
-            canAward={userInfo.userRole === 'ADMIN'}
             // 🔽 편집 모드 관련 props 전달
             isEditMode={isEditMode}
             editedAttendance={editedAttendance}

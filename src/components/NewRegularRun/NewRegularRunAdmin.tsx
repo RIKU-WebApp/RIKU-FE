@@ -644,7 +644,6 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId, onBack }) => {
               groupedParticipants={groupedParticipants}
             waiting={recruitment?.configured ? recruitment.waiting : undefined}
 
-            canAward={userInfo.userRole === 'ADMIN'}
               isEditMode={isEditMode}
               editedAttendance={editedAttendance}
               toggleAttendance={toggleAttendance}
