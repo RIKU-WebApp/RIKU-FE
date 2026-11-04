@@ -1,3 +1,4 @@
+import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
@@ -30,6 +31,7 @@ interface CreatePacerRequest {
 function TrainingMake() {
   const navigate = useNavigate();
 
+  const limit = useCapacityInput('training');
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
@@ -248,6 +250,7 @@ function TrainingMake() {
       const token = localStorage.getItem('accessToken') || 'null';
 
       const formData = new FormData();
+      limit.append(formData);
       const trainingType = isCustom ? customInput : selected;
       formData.append('trainingType', trainingType);
       formData.append('title', title);
@@ -429,6 +432,7 @@ function TrainingMake() {
       </div>
 
       <div className="w-full max-w-md px-4">
+        {limit.field}
         <div className="my-2">제목</div>
         <input
           className="border rounded-lg w-full p-2"

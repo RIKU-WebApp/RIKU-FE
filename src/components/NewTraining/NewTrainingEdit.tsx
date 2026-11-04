@@ -1,3 +1,4 @@
+import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
@@ -23,6 +24,7 @@ function NewTrainingEdit() {
   const navigate = useNavigate();
   const { postId } = useParams();
 
+  const limit = useCapacityInput('training', postId);
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
@@ -203,6 +205,7 @@ function NewTrainingEdit() {
       const eventDateTime = `${year}-${month}-${day}T${time}:00`;
       const token = localStorage.getItem('accessToken') || 'null';
       const formData = new FormData();
+      limit.append(formData);
       formData.append('title', title);
       formData.append('location', location);
       formData.append('date', eventDateTime);
@@ -302,6 +305,7 @@ function NewTrainingEdit() {
         </div>
       </div>
       <div className="w-full max-w-md px-4">
+        {limit.field}
         <div className="my-2">제목</div>
         <input
           className="border rounded-lg w-full p-2"

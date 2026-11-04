@@ -1,3 +1,4 @@
+import { useRunQueue, WaitingNames } from '../../features/improvements/RunWaitlist';
 import ShareRun from '../../features/improvements/ShareRun';
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -48,6 +49,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
   const handleBack = () => navigate(-1);
 
   const [activeTab, setActiveTab] = useState<'소개' | '명단'>('소개');
+  const waitlist = useRunQueue('training', postId, activeTab);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [code, setCode] = useState('');
@@ -641,7 +643,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
             </div>
             <div className="flex items-center my-1.5">
               <object data={people} className="w-[24px] h-[24px] mr-2" />
-              <span className="font-bold text-kuDarkGreen">{participantsNum}</span>
+              <span className="font-bold text-kuDarkGreen">{participantsNum}{waitlist.queue?.capacity != null && ' / ' + waitlist.queue.capacity}</span>
             </div>
           </div>
         </div>
@@ -726,6 +728,8 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
         />
       )}
 
+      {activeTab === '명단' && <WaitingNames names={waitlist.queue?.waiting} />}
+      {waitlist.error && <p role="alert">{waitlist.error}</p>}
       <CommentSection
         postId={postId!}
         postType="training"

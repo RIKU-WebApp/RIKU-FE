@@ -1,3 +1,4 @@
+import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
@@ -29,6 +30,7 @@ function EventEdit() {
   const navigate = useNavigate();
   const { postId } = useParams(); // URL에서 eventId를 가져옴
 
+  const limit = useCapacityInput('event', postId);
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
@@ -121,6 +123,7 @@ function EventEdit() {
 
       const token = localStorage.getItem('accessToken') || 'null';
       const formData = new FormData();
+      limit.append(formData);
 
       // 변경된 필드만 추가
       if (title) formData.append('title', title);
@@ -259,6 +262,7 @@ function EventEdit() {
 
       {/* 행사 제목, 장소, 내용, 날짜 및 시간 */}
       <div className="w-full max-w-md px-4">
+        {limit.field}
         <div className="my-2">제목</div>
         <input
           className="border rounded-lg w-full p-2"

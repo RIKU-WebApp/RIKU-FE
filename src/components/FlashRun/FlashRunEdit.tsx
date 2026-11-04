@@ -1,3 +1,4 @@
+import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
@@ -10,6 +11,7 @@ function FlashRunEdit() {
   const navigate = useNavigate();
   const { postId } = useParams();
 
+  const limit = useCapacityInput('flash', postId);
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
@@ -167,6 +169,7 @@ function FlashRunEdit() {
 
       const token = localStorage.getItem('accessToken') || 'null';
       const formData = new FormData();
+      limit.append(formData);
 
       if (title) formData.append('title', title);
       if (location) formData.append('location', location);
@@ -231,6 +234,7 @@ function FlashRunEdit() {
       </div>
 
       <div className="w-full max-w-md px-4">
+        {limit.field}
         <div className="my-2">제목</div>
         <input
           className="border rounded-lg w-full p-2"

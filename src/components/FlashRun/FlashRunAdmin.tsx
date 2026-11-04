@@ -1,3 +1,4 @@
+import { useRunQueue, WaitingNames } from '../../features/improvements/RunWaitlist';
 import ShareRun from '../../features/improvements/ShareRun';
 import React, { useState, useEffect, useRef } from 'react';
 import FlashRunlogo from '@assets/FlashRunDetail/flashrunlogo.svg';
@@ -58,6 +59,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
   postimgurl,
 }) => {
   const [activeTab, setActiveTab] = useState<'소개' | '명단'>('소개');
+  const waitlist = useRunQueue('flash', postId, activeTab);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [code, setCode] = useState(''); // 출석 코드
   const [isInputDisabled, setIsInputDisabled] = useState(false);
@@ -516,7 +518,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
                   data={people}
                   className="font-bold text-kuDarkGreen w-[24px] h-[24px] mr-2"
                 />
-                <span className="font-bold text-kuDarkGreen">{currentParticipantsNum}</span>
+                <span className="font-bold text-kuDarkGreen">{currentParticipantsNum}{waitlist.queue?.capacity != null && ' / ' + waitlist.queue.capacity}</span>
               </div>
             </div>
           </div>
@@ -612,7 +614,9 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
             onSaveComplete={refetchPost}
           />
         )}
-        <CommentSection
+        {activeTab === '명단' && <WaitingNames names={waitlist.queue?.waiting} />}
+      {waitlist.error && <p role="alert">{waitlist.error}</p>}
+      <CommentSection
           postId={postId!}
           postType="flash"
           userInfo={userInfo}

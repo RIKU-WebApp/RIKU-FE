@@ -1,3 +1,4 @@
+import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
@@ -9,6 +10,7 @@ import imageCompression from 'browser-image-compression';
 
 function FlashRunMake() {
   const navigate = useNavigate();
+  const limit = useCapacityInput('flash');
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
@@ -123,6 +125,7 @@ function FlashRunMake() {
       const token = localStorage.getItem('accessToken') || 'null';
 
       const formData = new FormData();
+      limit.append(formData);
       formData.append('title', title);
       formData.append('location', location);
       formData.append('date', eventDateTime);
@@ -163,6 +166,7 @@ function FlashRunMake() {
       </div>
 
       <div className="w-full max-w-md px-4">
+        {limit.field}
         <div className="my-2">제목</div>
         <input
           className="border rounded-lg w-full p-2"
