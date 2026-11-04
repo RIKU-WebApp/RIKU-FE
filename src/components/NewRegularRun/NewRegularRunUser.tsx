@@ -1,3 +1,4 @@
+import ShareRun from '../../features/improvements/ShareRun';
 import { useRecruitment, RecruitmentActions, groupPacers } from './Recruitment';
 import { useSwipeTabs } from '../../features/improvements/shared';
 import React, { useState, useEffect, useRef } from 'react';
@@ -458,6 +459,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId, onBack }) => {
         </div>
 
         <div className="mt-[14px] w-full max-w-[335px]">
+          <ShareRun title={title} location={location} date={date} imageUrl={postImageUrl} path={`/regular/${postId}`} />
           <TabButton activeTab={activeTab} leftLabel="소개" rightLabel="명단" onTabChange={setActiveTab} />
         </div>
 

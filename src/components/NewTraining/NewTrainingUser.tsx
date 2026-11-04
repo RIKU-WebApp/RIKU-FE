@@ -1,3 +1,4 @@
+import ShareRun from '../../features/improvements/ShareRun';
 import React, { useState, useEffect } from 'react';
 
 import people from '../../assets/FlashRunDetail/people.svg';
@@ -609,6 +610,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
       </div>
 
       <div className="mt-[12px]">
+        <ShareRun title={title} location={location} date={date} imageUrl={postImageUrl} path={`/training/${postId}`} />
         <TabButton leftLabel="소개" rightLabel="명단" onTabChange={handleTabChange} />
       </div>
 

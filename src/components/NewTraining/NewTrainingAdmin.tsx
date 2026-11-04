@@ -1,3 +1,4 @@
+import ShareRun from '../../features/improvements/ShareRun';
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -647,6 +648,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
       </div>
 
       <div className="mt-[135px]">
+        <ShareRun title={title} location={location} date={date} imageUrl={postImageUrl} path={`/training/${postId}`} />
         <TabButton leftLabel="소개" rightLabel="명단" onTabChange={handleTabChange} />
       </div>
 

@@ -1,3 +1,4 @@
+import ShareRun from '../../features/improvements/ShareRun';
 import React, { useState, useEffect, useRef } from 'react';
 
 import people from '@assets/FlashRunDetail/people.svg';
@@ -596,6 +597,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
         </div>
       </div>
       <div className="mt-[70px]">
+        <ShareRun title={title} location={location} date={date} imageUrl={postimgurl} path={`/event/${postId}`} />
         <TabButtonUser leftLabel="소개" rightLabel="명단" onTabChange={handleTabChange} />
       </div>
       {activeTab === '소개' && (
