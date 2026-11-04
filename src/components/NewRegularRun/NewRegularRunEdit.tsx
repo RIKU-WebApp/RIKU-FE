@@ -1,3 +1,4 @@
+import { useOriginalRunFields } from '../../features/improvements/runEdit';
 import { PaceGroups, fromPlan, appendPlans, type GroupRow } from '../../features/improvements/PaceGroups';
 import { errorMessage, utcDate } from '../../features/improvements/shared';
 import { useRecruitment } from './Recruitment';
@@ -33,6 +34,7 @@ function NewRegularRunEdit() {
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
+  const original = useOriginalRunFields();
   const [dateTime, setDateTime] = useState<{ date: Date | null; time: string }>({
     date: null,
     time: '00:00',
@@ -76,8 +78,7 @@ function NewRegularRunEdit() {
         setCoursePreviews(result.attachmentUrls || []);
         setAttachmentUrls(result.attachmentUrls || []);
 
-        const start = utcDate(result.date);
-        setDateTime({ date: start, time: start.toTimeString().slice(0, 5) });
+        setDateTime(original.load(result.date, result.attachmentUrls));
         setPacerGroups(
           result.pacers.map((p: any) => ({
             id: p.group,
@@ -229,19 +230,6 @@ function NewRegularRunEdit() {
       return;
     }
     try {
-      const [hours, minutes] = dateTime.time.split(':').map(Number);
-      const selected = dateTime.date!;
-
-      const kstDate = new Date(
-        selected.getFullYear(),
-        selected.getMonth(),
-        selected.getDate(),
-        hours,
-        minutes,
-        0
-      );
-
-      const eventDateTime = kstDate.toISOString().slice(0, 19);
       const token = localStorage.getItem('accessToken') || 'null';
       const formData = new FormData();
       const optIn = !recruitment.configured && editedCapacity !== undefined && capacity !== "";
@@ -252,13 +240,13 @@ function NewRegularRunEdit() {
       }
       formData.append('title', title);
       formData.append('location', location);
-      formData.append('date', eventDateTime);
+      original.appendDate(formData, dateTime.date!, dateTime.time);
       formData.append('content', content);
       if (mainImage) formData.append('postImage', mainImage);
       const fileIdx = 0;
 
       // 기존 이미지 URL → File 변환 후 attachments에 포함
-      for (let i = 0; i < attachmentUrls.length; i++) {
+      if (original.changedPhotos(coursePreviews)) for (let i = 0; i < attachmentUrls.length; i++) {
         const url = attachmentUrls[i];
         const file = await urlToFile(url, `existing_image_${i}.jpg`);
         formData.append('attachments', file);

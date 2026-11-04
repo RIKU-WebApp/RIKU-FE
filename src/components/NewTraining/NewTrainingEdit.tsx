@@ -1,3 +1,4 @@
+import { useOriginalRunFields } from '../../features/improvements/runEdit';
 import { errorMessage } from '../../features/improvements/shared';
 import { GroupLimit, appendPlans, nextGroup, fromPlan, type PacePlan } from '../../features/improvements/PaceGroups';
 import { useCapacityInput } from '../../features/improvements/RunWaitlist';
@@ -32,11 +33,14 @@ function NewTrainingEdit() {
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
+  const original = useOriginalRunFields();
   const [dateTime, setDateTime] = useState<{ date: Date | null; time: string }>({
     date: null,
     time: '00:00',
   });
   const [pacerGroups, setPacerGroups] = useState<PacerGroup[]>([]);
+  const [initialGroups, setInitialGroups] = useState<string>();
+  const groupsChanged = initialGroups !== JSON.stringify(pacerGroups);
   const [pacers, setPacers] = useState<Pacer[]>([]);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [bottomSheetType, setBottomSheetType] = useState<'distance' | 'pace' | null>(null);
@@ -71,16 +75,15 @@ function NewTrainingEdit() {
         setContent(result.content);
         setMainPreview(result.postImageUrl);
         setCoursePreviews(result.attachmentUrls || []);
-        setDateTime({
-          date: new Date(result.date),
-          time: new Date(result.date).toTimeString().slice(0, 5),
-        });
+        setDateTime(original.load(result.date, result.attachmentUrls));
         const config = await customAxios.get('/run/training/post/' + postId + '/waitlist');
         const plans: PacePlan[] = config.data.result.groups ?? [];
         const assigned = result.pacers as {group:string; pacerId:number; distance:string; pace:string}[];
         const rows = plans.length ? plans.map(plan => ({...fromPlan(plan), distance: plan.distanceKm + ' km'}))
           : [...new Map(assigned.map(p => [p.group, {id:p.group,distance:p.distance,pace:p.pace}])).values()];
-        setPacerGroups(rows.map(row => ({...row, pacer:'', pacerIds: assigned.filter(p => p.group === row.id).map(p => p.pacerId)})));
+        const loaded = rows.map(row => ({...row, pacer:'', pacerIds: assigned.filter(p => p.group === row.id).map(p => p.pacerId)}));
+        setPacerGroups(loaded);
+        setInitialGroups(JSON.stringify(loaded));
 
         setCoursePreviews(result.attachmentUrls || []);
         setOriginalUrls(result.attachmentUrls || []);
@@ -200,24 +203,20 @@ function NewTrainingEdit() {
       return;
     }
     try {
-      const pad = (n: number) => n.toString().padStart(2, '0');
-      const year = dateTime.date!.getFullYear();
-      const month = pad(dateTime.date!.getMonth() + 1);
-      const day = pad(dateTime.date!.getDate());
-      const time = dateTime.time;
-      const eventDateTime = `${year}-${month}-${day}T${time}:00`;
       const token = localStorage.getItem('accessToken') || 'null';
       const formData = new FormData();
       limit.append(formData);
-      appendPlans(formData, pacerGroups);
-      formData.append('replacePacers', 'true');
+      if (groupsChanged) {
+        appendPlans(formData, pacerGroups);
+        formData.append('replacePacers', 'true');
+      }
       formData.append('title', title);
       formData.append('location', location);
-      formData.append('date', eventDateTime);
+      original.appendDate(formData, dateTime.date!, dateTime.time);
       formData.append('content', content);
       if (mainImage) formData.append('postImage', mainImage);
       let fileIndex = 0;
-      for (const preview of coursePreviews) {
+      if (original.changedPhotos(coursePreviews)) for (const preview of coursePreviews) {
         if (preview.startsWith('http')) {
           const res = await fetch(preview);
           const blob = await res.blob();
@@ -234,7 +233,7 @@ function NewTrainingEdit() {
 
       // attachments가 없으면 아무것도 append 안 함
 
-      pacerGroups.flatMap(group => (group.pacerIds ?? []).map(id => ({group,id}))).forEach(({group,id}, index) => {
+      if (groupsChanged) pacerGroups.flatMap(group => (group.pacerIds ?? []).map(id => ({group,id}))).forEach(({group,id}, index) => {
         formData.append(`pacers[${index}].group`, group.id);
         formData.append(`pacers[${index}].pacerId`, String(id));
         formData.append(`pacers[${index}].distance`, group.distance);
@@ -548,6 +547,7 @@ function NewTrainingEdit() {
         </div>
 
         <button
+          disabled={initialGroups === undefined}
           onClick={handleSubmit}
           className="w-full bg-[#366943] text-white py-3 rounded-lg mt-4"
         >

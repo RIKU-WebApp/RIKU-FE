@@ -1,3 +1,4 @@
+import { useOriginalRunFields } from '../../features/improvements/runEdit';
 import { errorMessage } from '../../features/improvements/shared';
 import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useState, useEffect } from 'react';
@@ -35,6 +36,7 @@ function EventEdit() {
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
+  const original = useOriginalRunFields();
   const [dateTime, setDateTime] = useState<{ date: Date | null; time: string }>({
     date: null,
     time: '00:00',
@@ -76,13 +78,8 @@ function EventEdit() {
           setTitle(eventData.title);
           setLocation(eventData.location);
           setContent(eventData.content);
-          const utcDate = new Date(eventData.date); // 서버에서 받은 UTC 날짜
-          const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000); // 9시간 더해 KST로 변환
 
-          setDateTime({
-            date: kstDate,
-            time: kstDate.toTimeString().slice(0, 5), // KST 기준 시간 추출
-          });
+          setDateTime(original.load(eventData.date, eventData.attachmentUrls));
           setPostImagePreview(eventData.postImageUrl);
           setAttachmentPreviews(eventData.attachmentUrls || []);
           setNewAttachmentFiles([]); // File은 새로 업로드할 때만 추가
@@ -105,22 +102,6 @@ function EventEdit() {
     }
 
     try {
-      const [hours, minutes] = dateTime.time.split(':').map(Number);
-      const selected = dateTime.date!;
-
-      const kstDate = new Date(
-        selected.getFullYear(),
-        selected.getMonth(),
-        selected.getDate(),
-        hours,
-        minutes,
-        0
-      );
-
-      const utcDate = new Date(kstDate.getTime() - 9 * 60 * 60 * 1000);
-
-      const pad = (n: number) => n.toString().padStart(2, '0');
-      const eventDateTime = `${utcDate.getFullYear()}-${pad(utcDate.getMonth() + 1)}-${pad(utcDate.getDate())}T${pad(utcDate.getHours())}:${pad(utcDate.getMinutes())}:${pad(utcDate.getSeconds())}`;
 
       const token = localStorage.getItem('accessToken') || 'null';
       const formData = new FormData();
@@ -130,11 +111,11 @@ function EventEdit() {
       if (title) formData.append('title', title);
       if (location) formData.append('location', location);
       if (content) formData.append('content', content);
-      if (eventDateTime) formData.append('date', eventDateTime);
+      original.appendDate(formData, dateTime.date!, dateTime.time);
       if (postImage) formData.append('postImage', postImage);
 
       let fileIndex = 0;
-      for (const preview of attachmentPreviews) {
+      if (original.changedPhotos(attachmentPreviews)) for (const preview of attachmentPreviews) {
         if (preview.startsWith('http')) {
           // 기존 이미지 → fetch해서 file 변환
           const res = await fetch(preview);
