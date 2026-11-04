@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import postLogin from '@features/auth/api/postLogin';
 import { getAccessToken, getRefreshToken, reissueToken } from '@features/auth/api/tokenAuth';
 
 // 로그인 페이지 컴포넌트에 대해 비즈니스 로직을 관리하는 훅
 function useLoginPage() {
+  const location = useLocation();
+  const next = new URLSearchParams(location.search).get('next');
+  const returnTo = next && /^\/(regular|flash|training|event|tab|record|my-achievements)(\/|$|\?)/.test(next) && !next.includes('\\') ? next : '/tab/main';
   const navigate = useNavigate(); //useNavigate 훅을 사용해 navigate 함수 생성
 
   const [id, setID] = useState<string>(''); //ID state
@@ -15,7 +18,7 @@ function useLoginPage() {
 
     const autoLogin = async () => {
       if (getAccessToken()) {
-        navigate('/tab/main', { replace: true });
+        navigate(returnTo, { replace: true });
         return;
       }
 
@@ -26,7 +29,7 @@ function useLoginPage() {
       const isReissued = await reissueToken();
 
       if (isMounted && isReissued) {
-        navigate('/tab/main', { replace: true });
+        navigate(returnTo, { replace: true });
       }
     };
 
@@ -35,7 +38,7 @@ function useLoginPage() {
     return () => {
       isMounted = false;
     };
-  }, [navigate]);
+  }, [navigate, returnTo]);
 
   //로그인 버튼 활성,비활성 관리
   const isLoginBtnValid = () => {
@@ -73,7 +76,7 @@ function useLoginPage() {
     const isLoginSuccess = await postLogin(id, password); // api 함수인 postLogin 호출
     if (isLoginSuccess) {
       // 로그인 성공 시, 메인 화면으로 이동
-      navigate('/tab/main');
+      navigate(returnTo, { replace: true });
     } else {
       return;
     }

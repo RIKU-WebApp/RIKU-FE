@@ -1,9 +1,14 @@
-import React from 'react';
+import type { Enrollment } from './Recruitment';
+import { previewFeaturesEnabled } from '../../shared/config/features';
+import React, { useState } from 'react';
+import { ProfileDialog } from '../../features/improvements/shared';
 import peopleimg from '../../assets/people_darkgreen.svg';
 import checkicon from '../../assets/checkedicon.svg';
 
 interface Participant {
   userId: number;
+  pacer?: boolean;
+  isPacer?: boolean;
   userName: string;
   userProfileImg?: string | null;
   status: 'ATTENDED' | 'PENDING' | string;
@@ -21,14 +26,12 @@ interface AttendanceListProps {
   toggleAttendance?: (userId: number, originalStatus: string) => void;
   onSaveAttendance?: () => void;
   onToggleEditMode?: () => void;
-  userInfoName: string;
-  postCreatorName: string;
   canEdit?: boolean;
+  canAward?: boolean;
+  waiting?: Enrollment[];
 }
 
 const AttendanceList: React.FC<AttendanceListProps> = ({
-  userInfoName,
-  postCreatorName,
   groupedParticipants,
   isEditMode = false,
   editedAttendance = {},
@@ -36,7 +39,10 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
   onSaveAttendance = () => {},
   onToggleEditMode = () => {},
   canEdit = false,
+  canAward = false,
+  waiting,
 }) => {
+  const [profileId, setProfileId] = useState<number>();
   const allParticipants = groupedParticipants.flatMap((group) => group.participants);
 
   const validParticipants = allParticipants.filter(
@@ -71,8 +77,7 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
           )}
         </div>
 
-        {/*  작성자인 경우에만 명단 수정/저장 버튼 노출 */}
-        {(userInfoName === postCreatorName || canEdit) && (
+        {canEdit && (
           <button
             className={`text-[12px] w-[72px] h-[24px] font-semibold rounded-[10px] ${
               isEditMode ? 'bg-kuDarkGreen text-white' : 'bg-kuLightGray text-kuDarkGray'
@@ -133,7 +138,7 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
                     </div>
                   </div>
 
-                  <div className="flex-1 ml-1 text-left text-[16px]">{user.userName}</div>
+                  <button className="flex-1 ml-1 text-left text-[16px] disabled:cursor-default" disabled={!previewFeaturesEnabled} onClick={() => setProfileId(user.userId)}>{user.userName}{(user.pacer || user.isPacer) && <span className="role-pill pacer ml-2">페이서</span>}</button>
 
                   {isEditMode ? (
                     <div
@@ -159,6 +164,19 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
           })
         )
       )}
+      {!!waiting?.length && <>
+        <h3 className="text-left font-semibold mt-4">대기명단</h3>
+        {waiting.map(entry => (
+          <div key={entry.userId} className="flex items-center gap-2 text-left rounded-lg bg-kuLightGray px-4 py-3">
+            <span className="text-sm">{entry.group}</span>
+            <button className="flex-1 text-left" onClick={() => setProfileId(entry.userId)}>
+              {entry.name}
+              {entry.role === 'PACER' && <span className="role-pill pacer ml-2">페이서</span>}
+            </button>
+          </div>
+        ))}
+      </>}
+      {profileId !== undefined && <ProfileDialog canAward={canAward} userId={profileId} onClose={() => setProfileId(undefined)} />}
     </div>
   );
 };

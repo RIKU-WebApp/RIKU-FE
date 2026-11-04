@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { getAccessToken, getRefreshToken, reissueToken } from '@features/auth/api/tokenAuth';
 
 //인증 여부를 확인하고 라우팅을 제어하는 보호 Route Component
 const ProtectedRoute = () => {
+  const location = useLocation();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -48,7 +49,7 @@ const ProtectedRoute = () => {
 
   //localStorage에 accessToken이 저장되어 있지 않은 경우, 로그인 페이지로 redirect 시킨다
   if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={`/login?next=${encodeURIComponent(location.pathname + location.search)}`} replace />;
   }
 
   //localStorage에 accessToken이 저장되어 있는 경우, 하위 Route 렌더링
