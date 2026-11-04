@@ -11,6 +11,7 @@ export default function RecordArchive() {
       <Header title="기록소" />
       <section className="m-4 divide-y divide-kuLightGray rounded-lg border border-kuLightGray">
         <Link className={row} to="/record">기록증 만들기</Link>
+        {previewFeaturesEnabled && <Link className={row} to="/record/saved">내 기록</Link>}
         {previewFeaturesEnabled
           ? <Link className={row} to="/my-achievements">{badgeLabel}</Link>
           : <div className={row}>{badgeLabel}</div>}

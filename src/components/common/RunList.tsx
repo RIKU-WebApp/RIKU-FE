@@ -13,7 +13,6 @@ import customAxios from '@/shared/lib/customAxios';
 import ListEventCard from './ListEventCard';
 import TodayRun from './TodayRun';
 import PastRuns from './PastRuns';
-import NavBar from '@shared/ui/NavBar';
 import { RunCategory } from '@shared/types';
 
 interface RunData {
@@ -205,7 +204,7 @@ const RunList: React.FC = () => {
         </div>
       </div>
 
-      <NavBar />
+
     </div>
   );
 };

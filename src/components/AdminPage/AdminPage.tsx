@@ -289,7 +289,7 @@ function AdminPage() {
           onClick={handleToMyPage}
           className="bg-kuLightGreen text-black px-4 py-2 rounded hover:bg-gray-400"
         >
-          마이 페이지로 돌아가기
+          마이페이지로 돌아가기
         </button>
         <button
           onClick={handleReset}

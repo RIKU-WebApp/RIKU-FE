@@ -1,5 +1,8 @@
+import { SavedCertificates, CertificateImage } from '../features/improvements/SavedCertificates';
 import RecordArchive from '../features/improvements/RecordArchive';
 import AchievementsPage from '../features/improvements/AchievementsPage';
+import { AdminOnly } from '../components/AdminPage/AdminMenu';
+import FeedbackPage from '../features/improvements/FeedbackPage';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { previewFeaturesEnabled } from '@/shared/config/features';
 import SchedulePage from '../pages/SchedulePage';
@@ -79,13 +82,21 @@ function App() {
             <Route path="/activity-detail" element={<ActivityDetailPage />} />
             <Route path="/flash/:postId" element={<FlashRunDetail />} />
             <Route path="/regular/:postId" element={<NewRegularRunDetail />} />
+            <Route path="/regular/manage/:postId" element={<NewRegularRunDetail />} />
             <Route path="/my-achievements" element={previewFeaturesEnabled ? <AchievementsPage /> : <Navigate to="/tab/my-page" replace />} />
+            <Route path="/feedback" element={previewFeaturesEnabled ? <FeedbackPage /> : <Navigate to="/tab/my-page" replace />} />
             <Route path="/training/:postId" element={<NewTrainingDetail />} />
             <Route path="/event/:postId" element={<NewEventDetail />} />
+            {previewFeaturesEnabled && <Route path="/record/saved" element={<SavedCertificates />} />}
+            {previewFeaturesEnabled && <Route path="/record/saved/:id" element={<CertificateImage />} />}
             <Route path="/record/archive" element={<RecordArchive />} />
             <Route path="/record" element={<RecordPage />} />
 
-            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/admin" element={<AdminOnly />}>
+              <Route index element={<Navigate to="members" replace />} />
+              <Route path="members" element={<AdminPage />} />
+              {previewFeaturesEnabled && <Route path="feedback" element={<FeedbackPage admin />} />}
+            </Route>
 
             <Route path="/make/flash" element={<FlashRunMake />} />
             <Route path="/make/regular" element={<NewRegularRunMake />} />

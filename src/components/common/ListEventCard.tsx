@@ -42,7 +42,7 @@ const ListEventCard: React.FC<EventCardProps> = ({
 
   return (
     <div
-      className={`flex flex-col relative w-[335px] ${compact ? "h-[262px]" : "h-[322px]"} bg-kuLightGray rounded-lg cursor-pointer`}
+      className={`flex flex-col relative w-[335px] max-w-full ${compact ? "h-[262px]" : "h-[322px]"} bg-kuLightGray rounded-lg cursor-pointer`}
       onClick={onClick}
     >
       {/* 상태 뱃지 */}

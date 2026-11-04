@@ -1,3 +1,5 @@
+import { request, errorMessage } from '../features/improvements/shared';
+import { previewFeaturesEnabled } from '../shared/config/features';
 import React, { useMemo, useRef, useState, useEffect, useLayoutEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DayPicker } from 'react-day-picker';
@@ -220,38 +222,60 @@ const RecordPage: React.FC = () => {
   const EXPORT_SIZE = 640;
   const DPR = 3;
 
-  const handleDownload = async () => {
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState('');
+  const handleExport = async (save: boolean) => {
+    if (exporting) return;
     if (!canvasRef.current) return;
     if (run.photoPreview && !imageReady) return alert('이미지 로딩 중입니다.');
 
-    // 해상도 업스케일
-    const blob = await domToBlob(canvasRef.current!, {
-      width: EXPORT_SIZE,
-      height: EXPORT_SIZE,
-      backgroundColor: '#ffffff',
-      scale: DPR,
-      style: {
-        width: `${EXPORT_SIZE}px`,
-        height: `${EXPORT_SIZE}px`,
-        transform: 'none',
-        transformOrigin: 'top left',
-      },
-    });
+    setExporting(true);
+    setExportError('');
+    try {
+      // 해상도 업스케일
+      const blob = await domToBlob(canvasRef.current!, {
+        width: EXPORT_SIZE,
+        height: EXPORT_SIZE,
+        backgroundColor: '#ffffff',
+        scale: save ? 2 : DPR,
+        type: save ? 'image/jpeg' : 'image/png',
+        quality: 0.9,
+        style: {
+          width: `${EXPORT_SIZE}px`,
+          height: `${EXPORT_SIZE}px`,
+          transform: 'none',
+          transformOrigin: 'top left',
+        },
+      });
 
-    if (!blob) return;
+      if (!blob) throw new Error('기록증을 만들지 못했습니다.');
+      if (save) {
+        const form = new FormData();
+        form.append('title', run.title);
+        form.append('date', run.date);
+        form.append('image', blob, 'certificate.jpg');
+        const id = await request<number>('post', '/user/certificates', form);
+        navigate('/record/saved/' + id);
+        return;
+      }
 
-    const fileName = `riku-record-${run.date || 'run'}.png`;
-    const url = URL.createObjectURL(blob);
+      const fileName = `riku-record-${run.date || 'run'}.png`;
+      const url = URL.createObjectURL(blob);
 
-    // 바로 다운로드
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+      // 바로 다운로드
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
 
-    URL.revokeObjectURL(url);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setExportError(errorMessage(e));
+    } finally {
+      setExporting(false);
+    }
   };
 
   // 미리보기 자동 스케일
@@ -728,13 +752,15 @@ const RecordPage: React.FC = () => {
           )}
 
           {/* 하단 버튼 */}
-          <div className="flex items-center justify-between">
+          {exportError && <p role="alert">{exportError}</p>}
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <button onClick={goPrev} className="rounded-2xl border px-5 py-3 hover:bg-gray-50">
               이전 (데이터 수정)
             </button>
+            {previewFeaturesEnabled && <button className="rounded-2xl bg-kuDarkGreen px-5 py-3 text-white" disabled={exporting || !imageReady} onClick={() => handleExport(true)}>기록소에 저장</button>}
             <button
-              onClick={handleDownload}
-              disabled={run.photoPreview ? !imageReady : false}
+              onClick={() => handleExport(false)}
+              disabled={exporting || !imageReady}
               className={`rounded-2xl px-5 py-3 text-white ${run.photoPreview && !imageReady ? 'bg-gray-400 cursor-not-allowed' : 'bg-kuDarkGreen hover:bg-kuDarkGreen/90'} transition`}
             >
               다운로드
