@@ -15,8 +15,8 @@ const TabButtonUser: React.FC<TabButtonProps> = ({ leftLabel, rightLabel, onTabC
   };
 
   return (
-    <div className="flex flex-col items-center max-w-[380px] mt-[94px]">
-      <div className="w-[370px] max-w-full px-4">
+    <div className="flex flex-col items-center w-full max-w-[430px] mx-auto mt-3">
+      <div className="w-full max-w-[370px] px-4">
         {/* 탭 버튼 */}
         <div className="flex w-full">
           <button
