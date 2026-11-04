@@ -78,10 +78,13 @@ customAxios.interceptors.response.use(
 
       message = '인증이 만료되었습니다. 다시 로그인해주세요.';
       clearAuthStorage();
-      window.location.href = '/';
+      if (window.location.pathname !== '/login') {
+        const next = window.location.pathname + window.location.search;
+        window.location.replace(`/login?next=${encodeURIComponent(next)}`);
+      }
     } else {
       // 그 외의 서버 응답 에러
-      message = error.response.data?.message || '서버 오류가 발생했습니다.';
+      message = error.response.data?.responseMessage || error.response.data?.message || '서버 오류가 발생했습니다.';
     }
 
     // error 객체를 정제해서 reject

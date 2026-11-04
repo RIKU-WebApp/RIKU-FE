@@ -1,3 +1,5 @@
+import { useRecruitment, RecruitmentActions, groupPacers } from './Recruitment';
+import { useSwipeTabs } from '../../features/improvements/shared';
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
@@ -23,15 +25,18 @@ import checkedicon from '../../assets/checkedicon.svg';
 
 interface FlashRunUserData {
   postId?: string;
+  onBack: () => void;
 }
 
 type ParticipantGroup = React.ComponentProps<typeof AttendanceList>['groupedParticipants'][number];
 
-const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
+const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId, onBack }) => {
   const navigate = useNavigate();
-  const handleBack = () => navigate(-1);
+  const { data: recruitment, reload: reloadRecruitment, error: recruitmentError } = useRecruitment(postId);
 
   const [activeTab, setActiveTab] = useState<'소개' | '명단'>('소개');
+  useEffect(() => { if (activeTab === '명단') void reloadRecruitment(); }, [activeTab]);
+  const swipeTabs = useSwipeTabs(direction => setActiveTab(direction === 'left' ? '명단' : '소개'));
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [date, setDate] = useState('');
@@ -46,6 +51,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
     userName: '',
     userProfileImg: '',
     userRole: '',
+    canApplyAsPacer: false,
   });
   const [postCreatorName, setPostCreatorName] = useState('');
   const [postCreatorImg, setPostCreatorImg] = useState<string | null>(null);
@@ -113,6 +119,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
             userName: result.userInfo?.userName || '',
             userProfileImg: result.userInfo?.userProfileImg || '',
             userRole: result.userInfo?.userRole || '',
+            canApplyAsPacer: result.userInfo?.canApplyAsPacer === true,
           });
           setPostCreatorName(result.postCreatorInfo.userName);
           setPostCreatorImg(result.postCreatorInfo.userProfileImg || null);
@@ -251,6 +258,8 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
         { headers: { Authorization: `${token}` } }
       );
       if (response.data.isSuccess) {
+        await reloadRecruitment();
+        await fetchParticipantsInfo();
         setUserStatus('ATTENDED');
         setButtonText('출석완료');
         setIsModalOpen(false);
@@ -335,14 +344,13 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-white overflow-y-auto overflow-x-hidden">
+    <div {...swipeTabs} className="w-full min-h-screen bg-white overflow-y-auto overflow-x-hidden">
       <div className="flex flex-col items-center text-center justify-center w-full max-w-[430px] mx-auto">
         <div className="relative flex bg-kuDarkGreen w-full h-[56px] text-white text-xl font-semibold justify-center items-center">
-          <img
-            src={BackBtnimg}
-            className="absolute left-[24px] cursor-pointer"
-            onClick={handleBack}
-          />
+          <button type="button" aria-label="정규런 목록으로" onClick={onBack}
+            className="absolute left-2.5 flex h-11 w-11 items-center justify-center">
+            <img src={BackBtnimg} alt="" />
+          </button>
           정규런
           {userInfo.userRole === 'ADMIN' && (
             <div
@@ -412,7 +420,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
           )}
         </div>
 
-        <div className="relative w-full pb-[90px]">
+        <div className="relative w-full">
           <div className="relative w-full h-[250px] overflow-hidden">
             <img
               src={postImageUrl || flashrunimage}
@@ -427,7 +435,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
             )}
           </div>
 
-          <div className="absolute top-[230px] w-full px-5 rounded-t-[20px] bg-white">
+          <div className="relative -mt-[20px] w-full px-5 rounded-t-[20px] bg-white">
             <div className="flex flex-col items-center mt-[14px]">
               <object data={RegularRunlogo} className="w-[60px] h-[24px]" />
               <div className="text-lg font-semibold mt-2 text-[24px]">{title}</div>
@@ -449,9 +457,11 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
           </div>
         </div>
 
-        <div className="mt-[70px]">
-          <TabButton leftLabel="소개" rightLabel="명단" onTabChange={setActiveTab} />
+        <div className="mt-[14px] w-full max-w-[335px]">
+          <TabButton activeTab={activeTab} leftLabel="소개" rightLabel="명단" onTabChange={setActiveTab} />
         </div>
+
+        {recruitmentError && <p role="alert" className="text-sm text-red-500">{recruitmentError}</p>}
 
         {activeTab === '소개' && (
           <>
@@ -459,7 +469,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
               <img src={pacermark} />
               <div className="m-1">PACER</div>
             </div>
-            <PacerCard pacers={pacers} />
+            <PacerCard pacers={groupPacers(recruitment, pacers)} />
             {attachmentUrls.length > 0 && (
               <div className="mt-5 w-[327px]">
                 <div className="text-left text-[16px] mb-[16px]">코스 사진</div>
@@ -515,6 +525,9 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
           <AttendanceList
             key={JSON.stringify(groupedParticipants)}
             groupedParticipants={groupedParticipants}
+            waiting={recruitment?.configured ? recruitment.waiting : undefined}
+
+            canAward={userInfo.userRole === 'ADMIN'}
             // 🔽 편집 모드 관련 props 전달
             isEditMode={isEditMode}
             editedAttendance={editedAttendance}
@@ -522,8 +535,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
             onSaveAttendance={saveAttendanceChanges}
             onToggleEditMode={handleEditAttempt}
             // 표시용
-            userInfoName={userInfo.userName}
-            postCreatorName={postCreatorName}
+
             // 🔽 ADMIN이면 버튼 노출
             canEdit={userInfo.userRole === 'ADMIN'}
           />
@@ -538,7 +550,8 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
 
         {/* 참여 상태에 따른 버튼 렌더링 */}
 
-        <div key={buttonRefreshKey} className="mb-[100px]">
+        {recruitment?.configured ? <RecruitmentActions data={recruitment} postId={postId!} date={date} postStatus={postStatus} canApplyAsPacer={userInfo.canApplyAsPacer} onChange={async () => { await reloadRecruitment(); await fetchParticipantsInfo(); }} onAttend={() => setIsModalOpen(true)}/> : recruitment ? (
+<div key={buttonRefreshKey} className="mb-[100px]">
           {postStatus === 'CANCELED' || postStatus === 'CLOSED' ? (
             <div className="w-[327px] h-14 rounded-lg bg-[#ECEBE4] text-[#757575] font-bold mt-6 flex justify-center items-center cursor-not-allowed">
               모집 종료
@@ -578,6 +591,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId }) => {
             </button>
           )}
         </div>
+        ) : null}
 
         {isGroupModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-10">

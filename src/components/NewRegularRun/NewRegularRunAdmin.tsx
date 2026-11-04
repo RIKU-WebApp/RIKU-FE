@@ -1,3 +1,5 @@
+import { useRecruitment, RecruitmentActions, groupPacers } from './Recruitment';
+import { useSwipeTabs } from '../../features/improvements/shared';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
@@ -39,13 +41,16 @@ interface Pacer {
 
 interface Props {
   postId?: string;
+  onBack: () => void;
 }
 
-const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
+const NewRegularRunAdmin: React.FC<Props> = ({ postId, onBack }) => {
   const navigate = useNavigate();
-  const handleBack = () => navigate(-1);
+  const { data: recruitment, reload: reloadRecruitment, error: recruitmentError } = useRecruitment(postId);
 
   const [activeTab, setActiveTab] = useState<'소개' | '명단'>('소개');
+  useEffect(() => { if (activeTab === '명단') void reloadRecruitment(); }, [activeTab]);
+  const swipeTabs = useSwipeTabs(direction => setActiveTab(direction === 'left' ? '명단' : '소개'));
   const [code, setCode] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
@@ -66,11 +71,13 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
     userName: string;
     userProfileImg: string;
     userRole: string;
+    canApplyAsPacer: boolean;
   }>({
     userId: 0,
     userName: '',
     userProfileImg: '',
     userRole: '',
+    canApplyAsPacer: false,
   });
   const [buttonText, setButtonText] = useState('시작하기');
   const handleCloseModal = () => setIsModalOpen(false);
@@ -101,6 +108,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
           userName: result.userInfo?.userName || '',
           userProfileImg: result.userInfo?.userProfileImg || '',
           userRole: result.userInfo?.userRole || '',
+            canApplyAsPacer: result.userInfo?.canApplyAsPacer === true,
         });
         setPostCreatorImg(result.postCreatorInfo.userProfileImg || null);
         setGroupedParticipants(result.groupedParticipants || []);
@@ -130,7 +138,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
   };
 
   const handleStartClick = async () => {
-    if (!code) {
+    if (!code || recruitment?.configured) {
       try {
         const token = localStorage.getItem('accessToken') || 'null';
         const response = await customAxios.post(
@@ -143,6 +151,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
         console.log('응답', response.data);
         if (response.data.isSuccess) {
           setCode(response.data.result.code);
+          if (recruitment?.configured) await reloadRecruitment();
         } else {
           setError(response.data.responseMessage);
         }
@@ -228,6 +237,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
           userName: result.userInfo?.userName || '',
           userProfileImg: result.userInfo?.userProfileImg || '',
           userRole: result.userInfo?.userRole || '',
+            canApplyAsPacer: result.userInfo?.canApplyAsPacer === true,
         });
 
         // 댓글도 항상 최신화
@@ -386,14 +396,13 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
   }, [isModalOpen]);
 
   return (
-    <div className="w-full max-w-[430px] mx-auto min-h-screen bg-white overflow-x-hidden">
+    <div {...swipeTabs} className="w-full max-w-[430px] mx-auto min-h-screen bg-white overflow-x-hidden">
       <div className="w-full max-w-[430px] mx-auto flex flex-col items-center text-center justify-center">
         <div className="relative flex bg-kuDarkGreen w-full h-[56px] z-50 text-white text-xl font-semibold justify-center items-center">
-          <img
-            src={BackBtnimg}
-            className="absolute left-[24px] cursor-pointer"
-            onClick={handleBack}
-          />
+          <button type="button" aria-label="정규런 목록으로" onClick={onBack}
+            className="absolute left-2.5 flex h-11 w-11 items-center justify-center">
+            <img src={BackBtnimg} alt="" />
+          </button>
           정규런
           <div
             ref={dotButtonRef}
@@ -521,7 +530,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
           )}
         </div>
 
-        <div className="relative w-full max-w-[430px] pb-[90px]">
+        <div className="relative w-full max-w-[430px]">
           <div className="relative w-full overflow-hidden">
             <img
               src={postImageUrl || flashrunimage}
@@ -540,7 +549,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
             )}
           </div>
 
-          <div className="absolute top-[230px] w-full max-w-[430px] rounded-t-[20px] bg-white">
+          <div className="relative -mt-[78px] w-full max-w-[430px] rounded-t-[20px] bg-white">
             <div className="flex flex-col items-center mt-[14px]">
               <object data={RegularRunlogo} className="w-[60px] h-[24px]" />
               <div className="text-lg font-semibold mt-2 text-[24px]">{title}</div>
@@ -562,9 +571,11 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
           </div>
         </div>
 
-        <div className="mt-[14px]">
-          <TabButton leftLabel="소개" rightLabel="명단" onTabChange={handleTabChange} />
+        <div className="mt-[14px] w-full max-w-[335px]">
+          <TabButton activeTab={activeTab} leftLabel="소개" rightLabel="명단" onTabChange={handleTabChange} />
         </div>
+
+        {recruitmentError && <p role="alert" className="text-sm text-red-500">{recruitmentError}</p>}
 
         {activeTab === '소개' && (
           <>
@@ -572,7 +583,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
               <img src={pacermark} />
               <div className="m-1">PACER</div>
             </div>
-            <PacerCard pacers={pacers} />
+            <PacerCard pacers={groupPacers(recruitment, pacers)} />
             {attachmentUrls.length > 0 && (
               <div className="mt-5 w-[327px]">
                 <div className="text-left text-[16px] mb-2">코스 사진</div>
@@ -629,14 +640,17 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
           <>
             <AttendanceList
               groupedParticipants={groupedParticipants}
+            waiting={recruitment?.configured ? recruitment.waiting : undefined}
+
+            canAward={userInfo.userRole === 'ADMIN'}
               isEditMode={isEditMode}
               editedAttendance={editedAttendance}
               toggleAttendance={toggleAttendance}
               onSaveAttendance={saveAttendanceChanges}
               onToggleEditMode={handleEditAttempt}
-              userInfoName={userInfo.userName}
-              postCreatorName={postCreatorName}
-              canEdit={userInfo.userRole === 'ADMIN' || userInfo.userName === postCreatorName}
+
+
+              canEdit={userInfo.userRole === 'ADMIN'}
             />
           </>
         )}
@@ -647,6 +661,8 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId }) => {
           userInfo={userInfo}
           refreshTrigger={refreshComments}
         />
+
+        {recruitment?.configured && <RecruitmentActions data={recruitment} postId={postId!} date={date} postStatus={postStatus} canApplyAsPacer={userInfo.canApplyAsPacer} onChange={async () => { await reloadRecruitment(); await fetchPostData(); }}/>}
 
         {/* 시작하기 버튼 */}
         <button

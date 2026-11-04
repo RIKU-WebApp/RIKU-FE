@@ -6,6 +6,7 @@ import peopleimg from '../../assets/people_darkgreen.svg';
 import defaultimg from '../../assets/CardDefaultImg.svg';
 
 interface EventCardProps {
+  compact?: boolean;
   location: string;
   postimg?: string;
   runState: 'NOW' | 'CANCELED' | 'CLOSED';
@@ -16,6 +17,7 @@ interface EventCardProps {
 }
 
 const ListEventCard: React.FC<EventCardProps> = ({
+  compact = false,
   location,
   postimg,
   runState,
@@ -40,7 +42,7 @@ const ListEventCard: React.FC<EventCardProps> = ({
 
   return (
     <div
-      className="flex flex-col relative w-[335px] h-[322px] bg-kuLightGray rounded-lg cursor-pointer"
+      className={`flex flex-col relative w-[335px] ${compact ? "h-[262px]" : "h-[322px]"} bg-kuLightGray rounded-lg cursor-pointer`}
       onClick={onClick}
     >
       {/* 상태 뱃지 */}
@@ -64,9 +66,9 @@ const ListEventCard: React.FC<EventCardProps> = ({
 
       {/* 러닝 이미지 */}
       <div className="absolute top-[106px] left-[16px] justify-center">
-        <div className="w-[303px] h-[200px] overflow-hidden">
+        <div className={`w-[303px] ${compact ? "h-[140px]" : "h-[200px]"} overflow-hidden`}>
           <img
-            className="w-full h-full object-cover rounded-[8px]"
+            className={`w-full h-full rounded-[8px] ${compact ? 'object-contain bg-white' : 'object-cover'}`}
             src={postimg ? postimg : defaultimg}
           />
         </div>

@@ -1,3 +1,4 @@
+import { useRecruitment } from './Recruitment';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
@@ -23,6 +24,7 @@ interface PacerGroup {
 function NewRegularRunEdit() {
   const navigate = useNavigate();
   const { postId } = useParams();
+  const {data: recruitment} = useRecruitment(postId);
 
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
@@ -215,7 +217,7 @@ function NewRegularRunEdit() {
       !location ||
       !content ||
       !dateTime.date ||
-      pacerGroups.some((g) => !g.pacer || !g.distance || !g.pace)
+      !recruitment || (!recruitment.configured && pacerGroups.some((g) => !g.pacer || !g.distance || !g.pace))
     ) {
       alert('모든 정보를 입력해주세요.');
       return;
@@ -258,7 +260,7 @@ function NewRegularRunEdit() {
         formData.append('attachments', file);
       });
 
-      pacerGroups.forEach((group, index) => {
+      if (!recruitment?.configured) pacerGroups.forEach((group, index) => {
         const matchedPacer = pacers.find(
           (p) => p.name === group.pacer || p.pacerName === group.pacer
         );
@@ -336,6 +338,7 @@ function NewRegularRunEdit() {
           onChange={(e) => setContent(e.target.value)}
         ></textarea>
 
+        <fieldset disabled={recruitment?.configured}>
         {/* 페이서 그룹 입력 UI */}
         <div className="flex flex-col items-center w-full max-w-md p-4 bg-white rounded-lg relative">
           {isBottomSheetOpen && (
@@ -476,6 +479,7 @@ function NewRegularRunEdit() {
           )}
         </div>
 
+        </fieldset>
         {/* 대표 이미지 */}
         <div className="my-4">
           <h2 className="mb-2">대표 게시글 사진</h2>

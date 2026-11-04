@@ -1,0 +1,20 @@
+.riku-page{max-width:430px;margin:auto;background:#fff;min-height:100vh;padding-bottom:92px;color:#000;font-family:inherit}
+.riku-header{height:56px;display:flex;align-items:center;justify-content:center;padding:0 20px;background:#366943;color:white;position:relative}
+.riku-header button{position:absolute;left:16px;padding:4px}.riku-header h1{font-size:20px;font-weight:600}
+.riku-section{padding:20px}.riku-section h2{font-size:18px;font-weight:600;margin:16px 0 12px}
+.riku-muted{color:#686f75;font-size:13px;line-height:1.5;margin:8px 0}
+.riku-card{background:white;border:1px solid #ecebe4;border-radius:8px;padding:16px;margin:16px 0}
+.riku-primary,.riku-secondary{padding:12px 16px;border-radius:8px;font-weight:600;font-size:14px;min-height:44px}
+.riku-primary{background:#366943;color:#fff}.riku-secondary{background:#ecebe4;color:#000}
+.riku-primary:disabled,.riku-secondary:disabled{opacity:.45;cursor:not-allowed}
+.riku-form{display:grid;gap:16px}.riku-form label{display:grid;gap:8px;font-size:14px}
+.riku-form input,.riku-form textarea,.riku-form select{width:100%;border:1px solid #d1d5db;border-radius:8px;padding:8px;background:#fff;color:#000;font:inherit;min-height:40px}
+.riku-form textarea{min-height:120px;resize:vertical}.riku-row{display:flex;gap:12px;align-items:center}.riku-row>*{flex:1;min-width:0}
+.riku-error{color:#d7260d;font-size:13px;margin:12px 0}.riku-success{color:#366943;font-size:13px;margin:12px 0}
+.role-pill{font-size:11px;padding:2px 6px;border-radius:4px;background:#ecebe4;color:#686f75}.role-pill.pacer{background:#f0f4dd;color:#366943}
+.riku-stats{display:flex;gap:12px;margin-bottom:20px}.riku-stats>div{flex:1;padding:16px;background:#f5f5f5;border-radius:8px}.riku-stats strong{display:block;font-size:22px;font-weight:600}.riku-stats small{font-size:12px;color:#686f75}
+.riku-dialog{border:0;border-radius:8px;padding:24px;max-width:360px;width:calc(100% - 32px);max-height:85vh;overflow:auto;color:#000}.riku-dialog::backdrop{background:#0008}.dialog-close{position:absolute;right:10px;top:4px;font-size:24px;padding:4px 8px}.riku-dialog h2{font-size:18px;font-weight:600}
+.badge-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:16px 0}.badge-tile{padding:16px 8px;text-align:center;background:#f0f4dd;border-radius:8px;display:flex;flex-direction:column;gap:6px}.badge-tile strong{font-size:13px;font-weight:600}.badge-tile small{font-size:11px;color:#686f75}
+
+.riku-card h3{font-weight:600;font-size:16px;margin-bottom:8px}.riku-card p{white-space:pre-wrap;font-size:14px;line-height:1.6;overflow-wrap:anywhere}
+.riku-link{color:#366943;text-decoration:underline;font-size:13px;padding:8px 0;display:inline-block}.riku-inline-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}

@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState, useEffect, useLayoutEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { DayPicker } from 'react-day-picker';
 import { ko } from 'date-fns/locale';
 import { domToBlob } from 'modern-screenshot';
@@ -146,18 +146,20 @@ const toYMD = (d: Date): string => {
 /* ===== 메인 ===== */
 const RecordPage: React.FC = () => {
   const navigate = useNavigate();
+  const saved = useLocation().state?.record as {title:string;date:string;distanceKm:number;minutes:number} | undefined;
+  const savedPace = saved && saved.distanceKm > 0 ? Math.round(saved.minutes * 60 / saved.distanceKm) : 0;
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   // 입력 데이터 상태
   const [run, setRun] = useState<RunData>({
-    title: '',
-    date: '',
-    timeHH: '',
-    timeMM: '',
-    timeSS: '',
-    paceMM: '',
-    paceSS: '',
-    distanceKm: 0,
+    title: saved?.title || '',
+    date: saved?.date || '',
+    timeHH: saved ? String(Math.floor(saved.minutes / 60)) : '',
+    timeMM: saved ? String(saved.minutes % 60) : '',
+    timeSS: saved ? '0' : '',
+    paceMM: saved ? String(Math.floor(savedPace / 60)) : '',
+    paceSS: saved ? String(savedPace % 60).padStart(2, '0') : '',
+    distanceKm: saved?.distanceKm || 0,
     photo: null,
     photoPreview: undefined,
   });

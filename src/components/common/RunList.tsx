@@ -45,6 +45,9 @@ const RunList: React.FC = () => {
   const [pastRuns, setPastRuns] = useState<RunData[]>([]);
 
   const current = config[runType];
+  const openRun = (id: number) => navigate(`/${current.path}/${id}`, {
+    state: { fromRunList: `/tab/${runType}` },
+  });
 
   // 조사 분기 함수 => 이 / 가
   const getSubjectParticle = (word: string) => {
@@ -122,7 +125,7 @@ const RunList: React.FC = () => {
                         participants={run.participants}
                         date={formattedDate}
                         time={formattedTime}
-                        onClick={() => navigate(`/${current.path}/${run.id}`)}
+                        onClick={() => openRun(run.id)}
                       />
                     </SwiperSlide>
                   );
@@ -157,6 +160,7 @@ const RunList: React.FC = () => {
             const { formattedDate, formattedTime } = toKST(run.date);
             return (
               <ListEventCard
+                compact={runType === 'regular'}
                 key={run.id}
                 location={run.title}
                 postimg={run.postImageUrl}
@@ -164,7 +168,7 @@ const RunList: React.FC = () => {
                 participants={run.participants}
                 date={formattedDate}
                 time={formattedTime}
-                onClick={() => navigate(`/${current.path}/${run.id}`)}
+                onClick={() => openRun(run.id)}
               />
             );
           })}
@@ -193,7 +197,7 @@ const RunList: React.FC = () => {
                     location=""
                     runDate=""
                     runState=""
-                    onClick={() => navigate(`/${current.path}/${run.id}`)}
+                    onClick={() => openRun(run.id)}
                   />
                 </div>
               );
