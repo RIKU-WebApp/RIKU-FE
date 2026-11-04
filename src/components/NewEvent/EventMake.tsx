@@ -1,3 +1,4 @@
+import { errorMessage } from '../../features/improvements/shared';
 import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -189,7 +190,7 @@ function EventMake() {
       }
     } catch (error) {
       console.error('행사 생성 중 오류:', error);
-      alert('행사 생성 중 문제가 발생했습니다.');
+      alert(errorMessage(error));
     }
   };
 
@@ -408,6 +409,7 @@ function EventMake() {
 
       <div className="w-full max-w-md px-4">
         {limit.field}
+        {limit.groupField}
         <div className="my-2">제목</div>
         <input
           className="border rounded-lg w-full p-2"

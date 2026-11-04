@@ -70,6 +70,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
 }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'소개' | '명단'>('소개');
+  const [joinGroup, setJoinGroup] = useState('');
   const waitlist = useRunQueue('flash', postId, activeTab);
   const [code, setCode] = useState(''); // 출석 코드
   const [currentParticipants, setCurrentParticipants] = useState<AttendanceUser[]>(() =>
@@ -88,7 +89,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
     try {
       const token = localStorage.getItem('accessToken') || 'null';
       const response = await customAxios.patch(
-        `/run/flash/post/${postId}/join`,
+        `/run/flash/post/${postId}/join${joinGroup ? '?group=' + encodeURIComponent(joinGroup) : ''}`,
         {},
         {
           headers: {
@@ -98,7 +99,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
       );
 
       if (response.data.isSuccess) {
-        if (waitlist.queue?.capacity != null || response.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
+        if (waitlist.queue?.capacity != null || waitlist.queue?.groups?.length || response.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
         const newStatus = response.data.result.status; // API에서 받은 상태값 사용
         setUserStatus(newStatus); // 상태 업데이트
         setButtonText(newStatus === 'PENDING' ? '출석하기' : '참여하기'); // 상태에 맞는 버튼 텍스트 설정
@@ -292,7 +293,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
       );
 
       if (response.data.isSuccess) {
-        if (waitlist.queue?.capacity != null || response.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
+        if (waitlist.queue?.capacity != null || waitlist.queue?.groups?.length || response.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
         setUserStatus(''); //  초기 상태로 설정
         setButtonText('참여하기');
         setError(null);
@@ -579,12 +580,18 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
             </div>
           </div>
         ) : userStatus === '' ? (
+          <div>
+          {!!waitlist.queue?.groups?.length && <select aria-label="신청 그룹" className="block w-full rounded border p-2" value={joinGroup} onChange={e => setJoinGroup(e.target.value)}>
+            <option value="">그룹 선택</option>
+            {waitlist.queue.groups.map(g => <option key={g.name} value={g.name}>{g.name}　{g.pace}{g.capacity != null ? '　' + g.capacity + '명' : ''}</option>)}
+          </select>}
           <button
             className="flex justify-center items-center w-[327px] h-14 rounded-lg bg-kuGreen text-white text-lg font-bold mt-20 mb-2"
-            onClick={handleStartClick}
+            onClick={handleStartClick} disabled={!!waitlist.queue?.groups?.length && !joinGroup}
           >
             참여하기
           </button>
+          </div>
         ) : (
           <button
             className="flex justify-center items-center w-[327px] h-14 rounded-lg bg-[#ECEBE4] text-[#757575] text-lg font-bold mt-20 mb-2 cursor-not-allowed"

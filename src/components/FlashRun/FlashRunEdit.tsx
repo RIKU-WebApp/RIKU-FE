@@ -1,3 +1,4 @@
+import { errorMessage } from '../../features/improvements/shared';
 import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -218,7 +219,7 @@ function FlashRunEdit() {
       }
     } catch (err) {
       console.error('번개런 수정 중 오류:', err);
-      alert('번개런 수정 중 문제가 발생했습니다.');
+      alert(errorMessage(err));
     }
   };
 
@@ -235,6 +236,7 @@ function FlashRunEdit() {
 
       <div className="w-full max-w-md px-4">
         {limit.field}
+        {limit.groupField}
         <div className="my-2">제목</div>
         <input
           className="border rounded-lg w-full p-2"

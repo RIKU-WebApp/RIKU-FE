@@ -1,3 +1,4 @@
+import { errorMessage } from '../../features/improvements/shared';
 import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -148,7 +149,7 @@ function FlashRunMake() {
       }
     } catch (error) {
       console.error('번개런 생성 중 오류:', error);
-      alert('번개런 생성 중 문제가 발생했습니다.');
+      alert(errorMessage(error));
     }
   };
 
@@ -167,6 +168,7 @@ function FlashRunMake() {
 
       <div className="w-full max-w-md px-4">
         {limit.field}
+        {limit.groupField}
         <div className="my-2">제목</div>
         <input
           className="border rounded-lg w-full p-2"

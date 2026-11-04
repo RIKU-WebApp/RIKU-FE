@@ -10,7 +10,7 @@ export async function request<T>(method: string, url: string, data?: unknown): P
   return response.data.result as T;
 }
 export function errorMessage(error: unknown) {
-  return (error as { message?: string })?.message || '요청을 처리하지 못했습니다. 다시 시도해주세요.';
+  return (error as {response?: {data?: {responseMessage?: string}}})?.response?.data?.responseMessage || (error as { message?: string })?.message || '요청을 처리하지 못했습니다. 다시 시도해주세요.';
 }
 export function utcDate(value: string) { return new Date(/[Zz]|[+-]\d\d:\d\d$/.test(value) ? value : value + 'Z'); }
 export function Header({ title, back = '/tab/my-page' }: { title: string; back?: string }) {

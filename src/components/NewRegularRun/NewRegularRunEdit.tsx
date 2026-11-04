@@ -1,3 +1,4 @@
+import { PaceGroups, fromPlan, appendPlans, type GroupRow } from '../../features/improvements/PaceGroups';
 import { errorMessage, utcDate } from '../../features/improvements/shared';
 import { useRecruitment } from './Recruitment';
 import React, { useEffect, useState } from 'react';
@@ -37,6 +38,8 @@ function NewRegularRunEdit() {
     time: '00:00',
   });
   const [pacerGroups, setPacerGroups] = useState<PacerGroup[]>([]);
+  const [editedGroups, setEditedGroups] = useState<GroupRow[]>();
+  const plans = editedGroups ?? (recruitment?.configured ? recruitment.groups.map(fromPlan) : [...new Map(pacerGroups.map(g => [g.id, {...g, distance:String(parseFloat(g.distance) || '')}])).values()]);
   const [pacers, setPacers] = useState<Pacer[]>([]);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [bottomSheetType, setBottomSheetType] = useState<'distance' | 'pace' | null>(null);
@@ -215,12 +218,12 @@ function NewRegularRunEdit() {
       !location ||
       !content ||
       !dateTime.date ||
-      !recruitment || (!recruitment.configured && pacerGroups.some((g) => !g.pacer || !g.distance || !g.pace))
+      !recruitment || (!recruitment.configured && !editedGroups && editedCapacity === undefined && pacerGroups.some((g) => !g.pacer || !g.distance || !g.pace))
     ) {
       alert('모든 정보를 입력해주세요.');
       return;
     }
-    if (recruitment.configured && capacity !== '' &&
+    if (capacity !== '' &&
         (!Number.isInteger(Number(capacity)) || Number(capacity) < 1 || Number(capacity) > 1000)) {
       alert('총정원은 1~1000명으로 입력해주세요.');
       return;
@@ -241,7 +244,9 @@ function NewRegularRunEdit() {
       const eventDateTime = kstDate.toISOString().slice(0, 19);
       const token = localStorage.getItem('accessToken') || 'null';
       const formData = new FormData();
-      if (recruitment.configured && editedCapacity !== undefined && capacity !== String(recruitment.capacity ?? '')) {
+      const optIn = !recruitment.configured && editedCapacity !== undefined && capacity !== "";
+      if (editedGroups || optIn) appendPlans(formData, plans);
+      if ((recruitment.configured || editedGroups || optIn) && editedCapacity !== undefined && capacity !== String(recruitment.capacity ?? '')) {
         if (capacity === '') formData.append('clearCapacity', 'true');
         else formData.append('capacity', capacity);
       }
@@ -264,7 +269,7 @@ function NewRegularRunEdit() {
         formData.append('attachments', file);
       });
 
-      if (!recruitment?.configured) pacerGroups.forEach((group, index) => {
+      if (!recruitment?.configured && !editedGroups && !optIn) pacerGroups.forEach((group, index) => {
         const matchedPacer = pacers.find(
           (p) => p.name === group.pacer || p.pacerName === group.pacer
         );
@@ -342,13 +347,14 @@ function NewRegularRunEdit() {
           onChange={(e) => setContent(e.target.value)}
         ></textarea>
 
-        {recruitment?.configured && (
+        {recruitment && (
           <label className="my-4 block text-sm">총정원
             <input type="number" min={1} max={1000} placeholder="제한 없음" value={capacity}
               className="mt-2 w-full rounded-lg border p-2" onChange={e => setEditedCapacity(e.target.value)} />
           </label>
         )}
-        <fieldset disabled={recruitment?.configured}>
+        <PaceGroups rows={plans} onChange={setEditedGroups} />
+        {!recruitment?.configured && !editedGroups && <fieldset>
         {/* 페이서 그룹 입력 UI */}
         <div className="flex flex-col items-center w-full max-w-md p-4 bg-white rounded-lg relative">
           {isBottomSheetOpen && (
@@ -489,7 +495,7 @@ function NewRegularRunEdit() {
           )}
         </div>
 
-        </fieldset>
+        </fieldset>}
         {/* 대표 이미지 */}
         <div className="my-4">
           <h2 className="mb-2">대표 게시글 사진</h2>

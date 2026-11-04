@@ -266,6 +266,10 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
 
   const handleOpenGroupModal = async () => {
     setIsGroupModalOpen(true);
+    if (waitlist.queue?.groups?.length) {
+      setGroupList(waitlist.queue.groups.map(g => ({group:g.name, pace:g.pace + (g.capacity == null ? '' : '　' + g.capacity + '명')})));
+      return;
+    }
     try {
       const token = localStorage.getItem('accessToken') || 'null';
       const res = await customAxios.get(`/run/training/post/${postId}/group`, {
@@ -289,7 +293,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
       );
 
       if (res.data.isSuccess) {
-        if (waitlist.queue?.capacity != null || res.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
+        if (waitlist.queue?.capacity != null || waitlist.queue?.groups?.length || res.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
         const result = res.data.result;
 
         const myInfo = result.userInfo;
@@ -332,7 +336,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
         }
       );
       if (response.data.isSuccess) {
-        if (waitlist.queue?.capacity != null || response.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
+        if (waitlist.queue?.capacity != null || waitlist.queue?.groups?.length || response.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
         setUserStatus(response.data.result.status);
         setButtonText('출석하기');
         setError(null);

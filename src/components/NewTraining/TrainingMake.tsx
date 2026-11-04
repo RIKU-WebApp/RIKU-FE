@@ -1,3 +1,5 @@
+import { errorMessage } from '../../features/improvements/shared';
+import { GroupLimit, appendPlans, nextGroup } from '../../features/improvements/PaceGroups';
 import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +17,7 @@ interface Pacer {
 }
 
 interface PacerGroup {
+  capacity?: string;
   id: string;
   pacer: string;
   distance: string;
@@ -143,7 +146,8 @@ function TrainingMake() {
   }, []);
 
   const addPacerGroup = () => {
-    const nextGroupId = String.fromCharCode(65 + pacerGroups.length);
+    const nextGroupId = nextGroup(pacerGroups);
+    if (!nextGroupId) return;
     setPacerGroups([...pacerGroups, { id: nextGroupId, pacer: '', distance: '', pace: '' }]);
   };
 
@@ -219,15 +223,11 @@ function TrainingMake() {
       !location ||
       !content ||
       !dateTime.date ||
-      pacerGroups.some((g) => !g.pacer || !g.distance || !g.pace)
+      pacerGroups.some((g) => !g.distance || !g.pace)
     ) {
       alert('모든 정보를 입력해주세요.');
       return;
     }
-    console.log(pacerGroups);
-    const hasIncompleteGroup = pacerGroups.some(
-      (group) => !group.pacer || !group.distance || !group.pace
-    );
 
     try {
       const [hours, minutes] = dateTime.time.split(':').map(Number);
@@ -251,6 +251,8 @@ function TrainingMake() {
 
       const formData = new FormData();
       limit.append(formData);
+      appendPlans(formData, pacerGroups);
+      formData.append('replacePacers', 'true');
       const trainingType = isCustom ? customInput : selected;
       formData.append('trainingType', trainingType);
       formData.append('title', title);
@@ -261,7 +263,7 @@ function TrainingMake() {
       if (mainImage) formData.append('postImage', mainImage);
       courseImages.forEach((file) => formData.append('attachments', file));
 
-      pacerGroups.forEach((group, index) => {
+      pacerGroups.filter(g => g.pacer).forEach((group, index) => {
         formData.append(`pacers[${index}].group`, group.id);
         formData.append(`pacers[${index}].pacerId`, String(group.pacer));
         formData.append(`pacers[${index}].distance`, group.distance);
@@ -283,7 +285,7 @@ function TrainingMake() {
       }
     } catch (error) {
       console.error('훈련 생성 중 오류:', error);
-      alert('훈련 생성 중 문제가 발생했습니다.');
+      alert(errorMessage(error));
     }
   };
   const eventTypes = ['조깅', '인터벌', 'LSD', '기타 (직접입력)'];
@@ -476,6 +478,7 @@ function TrainingMake() {
                   <th className="p-2 text-gray-700 border-b w-[85px]">페이서</th>
                   <th className="p-2 text-gray-700 border-b w-[85px]">거리</th>
                   <th className="p-2 text-gray-700 border-b w-[70px]">페이스</th>
+                  <th className="border-b">정원</th>
                   <th className="p-2 w-[40px] border-b"></th>
                 </tr>
               </thead>
@@ -514,6 +517,7 @@ function TrainingMake() {
                         {group.pace || '-'}
                       </button>
                     </td>
+                    <td><GroupLimit row={group} onChange={v => handleInputChange(group.id, 'capacity', v)} /></td>
                     <td className="p-2 w-[40px]">
                       {group.id !== 'A' && (
                         <button

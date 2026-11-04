@@ -187,7 +187,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
       );
 
       if (response.data.isSuccess) {
-        if (waitlist.queue?.capacity != null || response.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
+        if (waitlist.queue?.capacity != null || waitlist.queue?.groups?.length || response.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
         setUserStatus(response.data.result.status);
         setButtonText('출석하기');
         setError(null);
@@ -415,7 +415,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
       );
 
       if (response.data.isSuccess) {
-        if (waitlist.queue?.capacity != null || response.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
+        if (waitlist.queue?.capacity != null || waitlist.queue?.groups?.length || response.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
         setUserStatus(''); // 초기 상태로 설정
         setButtonText('참여하기');
         setError(null);

@@ -1,3 +1,4 @@
+import { errorMessage } from '../../features/improvements/shared';
 import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -167,7 +168,7 @@ function EventEdit() {
       }
     } catch (error) {
       console.error('행사 수정 중 오류:', error);
-      alert('행사 수정 중 문제가 발생했습니다.');
+      alert(errorMessage(error));
     }
   };
 
@@ -263,6 +264,7 @@ function EventEdit() {
       {/* 행사 제목, 장소, 내용, 날짜 및 시간 */}
       <div className="w-full max-w-md px-4">
         {limit.field}
+        {limit.groupField}
         <div className="my-2">제목</div>
         <input
           className="border rounded-lg w-full p-2"
