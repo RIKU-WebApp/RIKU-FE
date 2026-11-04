@@ -552,7 +552,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
         )}
       </div>
 
-      <div className="relative w-full pb-[125px]">
+      <div className="relative w-full">
         <div className="relative w-full h-[308px] overflow-hidden">
           <img
             src={postImageUrl || flashrunimage}
@@ -568,7 +568,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
             </div>
           )}
         </div>
-        <div className="absolute top-[243px] w-full rounded-t-[20px] bg-white">
+        <div className="relative flow-root -mt-[65px] w-full rounded-t-[20px] bg-white">
           <div className="flex flex-col items-center mt-[8px]">
             {/* 상단 전체를 relative로 감싸기 */}
             <div className="relative w-full max-w-[430px]  flex flex-col items-center mt-[4px]">
@@ -609,16 +609,18 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
               <object data={time} className="w-[24px] h-[24px] mr-2" />
               <span>{formatDateTime(date)}</span>
             </div>
-            <div className="flex items-center my-1.5">
-              <object data={people} className="w-[24px] h-[24px] mr-2" />
-              <span className="font-bold text-kuDarkGreen">{participantsNum}{waitlist.queue?.capacity != null && ' / ' + waitlist.queue.capacity}</span>
+            <div className="flex w-full items-center justify-between gap-3 my-1.5">
+              <div className="flex items-center shrink-0">
+                <object data={people} className="w-[24px] h-[24px] mr-2" />
+                <span className="font-bold text-kuDarkGreen">{participantsNum}{waitlist.queue?.capacity != null && ' / ' + waitlist.queue.capacity}</span>
+              </div>
+              <ShareRun inline title={title} location={location} date={date} imageUrl={postImageUrl} path={`/training/${postId}`} />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mt-[12px]">
-        <ShareRun title={title} location={location} date={date} imageUrl={postImageUrl} path={`/training/${postId}`} />
+      <div className="w-full">
         <TabButton leftLabel="소개" rightLabel="명단" onTabChange={handleTabChange} />
       </div>
 

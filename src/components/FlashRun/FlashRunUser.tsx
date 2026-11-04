@@ -415,7 +415,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
       </div>
 
       {/* 러닝 포스팅 사진 */}
-      <div className="relative w-full pb-[50px]">
+      <div className="relative w-full">
         <div className="relative w-full h-[250px] overflow-hidden">
           <img
             src={postimgurl || flashrunimage}
@@ -430,7 +430,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
           )}
         </div>
         {/* 번개런 정보 */}
-        <div className="absolute top-[230px] w-full px-5 rounded-t-[20px] bg-white">
+        <div className="relative flow-root -mt-[20px] w-full px-5 rounded-t-[20px] bg-white">
           <div className="flex flex-col items-center mt-[14px]">
             <object data={FlashRunlogo} className="w-[60px] h-[24px]" />
             <div className="text-lg font-semibold mt-2 text-[24px]">{title}</div>
@@ -444,15 +444,17 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
               <object data={time} className="w-[24px] h-[24px] mr-2" />
               <span>{formatDateTime(date)}</span>
             </div>
-            <div className="flex items-center my-1.5">
-              <object data={people} className="w-[24px] h-[24px] mr-2 font-bold font-#366943" />
-              <span className="font-bold text-kuDarkGreen">{currentParticipantsNum}{waitlist.queue?.capacity != null && ' / ' + waitlist.queue.capacity}</span>
+            <div className="flex w-full items-center justify-between gap-3 my-1.5">
+              <div className="flex items-center shrink-0">
+                <object data={people} className="w-[24px] h-[24px] mr-2 font-bold font-#366943" />
+                <span className="font-bold text-kuDarkGreen">{currentParticipantsNum}{waitlist.queue?.capacity != null && ' / ' + waitlist.queue.capacity}</span>
+              </div>
+              <ShareRun inline title={title} location={location} date={date} imageUrl={postimgurl} path={`/flash/${postId}`} />
             </div>
           </div>
         </div>
       </div>
-      <div className="mt-[15px]">
-        <ShareRun title={title} location={location} date={date} imageUrl={postimgurl} path={`/flash/${postId}`} />
+      <div className="w-full">
         <TabButton leftLabel="소개" rightLabel="명단" onTabChange={handleTabChange} />
       </div>
       {activeTab === '소개' && (
