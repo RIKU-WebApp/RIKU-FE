@@ -4,6 +4,7 @@ import profile_Img from '@assets/default_profile.png'; //이미지 불러오기
 import rightArrow_Icon from '@assets/right_arrow.svg'; //라이쿠 로고 불러오기
 import customAxios from '@/shared/lib/customAxios';
 import { logout } from '@features/auth/api/tokenAuth';
+import { previewFeaturesEnabled } from '../shared/config/features';
 
 import {
   format,
@@ -18,9 +19,9 @@ import {
 // 재사용 가능한 버튼 컴포넌트
 function renderButton(text: string, iconSrc: string, onClick: () => void) {
   return (
-    <button onClick={onClick} className="w-full flex justify-between items-center p-2">
+    <button onClick={onClick} className="w-full min-h-[56px] flex justify-between items-center px-4 py-3 text-left">
       <span className="text-xl font-normal text-gray-800">{text}</span>
-      <img src={iconSrc} alt="Right Arrow Icon" className="h-5 w-5" />
+      <img src={iconSrc} alt="" className="h-5 w-5" />
     </button>
   );
 }
@@ -35,7 +36,7 @@ function getUserRole(role: string) {
   } else if (role === 'PACER') {
     return '페이서';
   } else {
-    return '살려주세요';
+    return '';
   }
 }
 
@@ -150,8 +151,6 @@ function MyPage() {
     navigate('/activity-detail');
   }
 
-
-
   //"출석하기" 버튼 state 활성,비활성 관리
   function isAttendCheckBtnValid() {
     return attendChecked;
@@ -230,11 +229,11 @@ function MyPage() {
             className="w-16 h-16 rounded-full mr-4"
           />
           <div className="text-start">
-            <p className="text-lg font-semibold text-gray-800">{userInfo.userName}</p>
-            <p className="text-sm text-gray-500">{getUserRole(userInfo.userRole)}</p>
+            <p className="text-xl font-semibold text-gray-800">{userInfo.userName}</p>
+            <p className="text-base text-gray-500">{getUserRole(userInfo.userRole)}</p>
           </div>
           <button
-            className="ml-auto px-4 py-1 text-sm bg-green-600 text-white rounded-lg hover hover:bg-green-900 transition"
+            className="ml-auto px-4 py-1 text-base bg-green-600 text-white rounded-lg hover hover:bg-green-900 transition"
             onClick={handleProfileFixBtnClick}
           >
             프로필 수정
@@ -245,7 +244,7 @@ function MyPage() {
         <div className="flex justify-around mt-6 pt-4 border-t-2">
           <div className="text-center" onClick={handleParticipationCountClick}>
             <p className="text-2xl font-bold text-gray-800">{userInfo.points}</p>
-            <p className="text-sm text-gray-500">포인트</p>
+            <p className="text-base text-gray-500">포인트</p>
           </div>
           <div className="text-center" onClick={handleParticipationCountClick}>
             {
@@ -256,15 +255,15 @@ function MyPage() {
                 <p className="text-2xl font-bold text-gray-800">{userInfo.participationCount}</p>
               )
             }
-            <p className="text-sm text-gray-500">활동 내역</p>
+            <p className="text-base text-gray-500">활동 내역</p>
           </div>
         </div>
       </div>
 
       {/* 오늘의 출석 세션 */}
       <div className="bg-whiteSmoke p-4 rounded-xl w-full max-w-sm text-center items-center">
-        <p className="text-lg font-extrabold text-gray-800">오늘의 출석</p>
-        <p className="text-sm text-gray-500">출석하면 +1P!</p>
+        <p className="text-xl font-extrabold text-gray-800">오늘의 출석</p>
+        <p className="text-base text-gray-500">출석하면 +1P!</p>
 
         {/* 중첩 map 함수를 사용해서 출석체크 달력을 출력할 것이다(캘린더 렌더링) */}
         {weeks.map((week, index) => (
@@ -285,14 +284,14 @@ function MyPage() {
                     {/* 오늘 날짜에 대한 Marker 표시(출석 안했을 때만 표시) */}
                     {!attendChecked && isToday ? (
                       <>
-                        <span className="text-base font-normal z-10 text-white">
+                        <span className="text-lg font-normal z-10 text-white">
                           {day.getDate()}
                         </span>
                         <div className="absolute w-10 h-10 rounded-full bg-kuDarkGreen z-0" />
                       </>
                     ) : (
                       <>
-                        <span className={`text-base font-normal z-10 ${style}`}>
+                        <span className={`text-lg font-normal z-10 ${style}`}>
                           {day.getDate()}
                         </span>
                         {/* 출석한 날짜에 대한 Marker 표시 */}
@@ -316,7 +315,7 @@ function MyPage() {
             !isAttendCheckBtnValid()
               ? 'bg-kuDarkGreen hover:bg-kuGreen text-white'
               : 'bg-kuLightGray text-gray-900 cursor-not-allowed'
-          } font-bold rounded-md transition-colors`}
+          } text-lg font-bold rounded-md transition-colors`}
           onClick={handleAttendCheckBtn}
           disabled={isAttendCheckBtnValid()}
         >
@@ -339,18 +338,23 @@ function MyPage() {
         {renderButton("FAQ", rightArrow_Icon, handleNoticeClick)}
       </div> */}
 
-      {userInfo.userRole === 'ADMIN' && (
-        <div className="w-full max-w-sm mt-4">
-          {renderButton('운영진 페이지', rightArrow_Icon, () => navigate('/admin'))}
-        </div>
-      )}
-      <div className="w-full max-w-sm mt-4">
+      <div className="w-full max-w-sm mt-6 rounded-lg border border-kuLightGray divide-y divide-kuLightGray">
         {renderButton('기록소', rightArrow_Icon, () => navigate('/record/archive'))}
+        {previewFeaturesEnabled && renderButton('건의사항', rightArrow_Icon, () => navigate('/feedback'))}
       </div>
+      {userInfo.userRole === 'ADMIN' && (
+        <section aria-labelledby="admin-menu-title" className="w-full max-w-sm mt-6 overflow-hidden rounded-lg border border-kuDarkGreen">
+          <h2 id="admin-menu-title" className="bg-kuDarkGreen px-4 py-3 text-lg font-semibold text-white">관리자 메뉴</h2>
+          <div className="divide-y divide-kuLightGray">
+            {renderButton('회원 관리', rightArrow_Icon, () => navigate('/admin/members'))}
+            {previewFeaturesEnabled && renderButton('건의사항 관리', rightArrow_Icon, () => navigate('/admin/feedback'))}
+          </div>
+        </section>
+      )}
 
       <div className="flex w-full max-w-sm mt-8 mb-8 justify-center">
         <span
-          className="text-lg font-normal underline underline-offset-2 text-kuDarkGray"
+          className="text-xl font-normal underline underline-offset-2 text-kuDarkGray"
           onClick={handleLogout}
         >
           로그아웃

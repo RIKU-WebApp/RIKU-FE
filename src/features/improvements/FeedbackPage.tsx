@@ -1,0 +1,18 @@
+import { useEffect, useState } from 'react';
+import { Header, errorMessage, request } from './shared';
+interface Feedback {id:number;category:string;title:string;content:string;status:'RECEIVED'|'REVIEWING'|'COMPLETED';answer:string|null;createdAt:string}
+interface Page {content:Feedback[];last:boolean;first:boolean}
+const statuses={RECEIVED:'접수 완료',REVIEWING:'검토 중',COMPLETED:'답변 완료'};
+const categories:Record<string,string>={SUGGESTION:'건의',BUG:'오류 신고',FEATURE:'기능 제안'};
+export default function FeedbackPage({admin=false}:{admin?:boolean}) {
+  const [data,setData]=useState<Page>();const [page,setPage]=useState(0);const [error,setError]=useState('');const [busy,setBusy]=useState(false);const [sent,setSent]=useState(false);
+  const url=admin?'/admin/feedback':'/user/feedback';
+  const load=()=>request<Page>('get',`${url}?page=${page}`).then(setData);
+  useEffect(()=>{void load().catch(e=>setError(errorMessage(e)));},[admin,page]);
+  return <main className="riku-page"><Header title={admin?'건의사항 관리':'건의사항'}/><section className="riku-section">
+    {!admin&&<form className="riku-form riku-card" onSubmit={async e=>{e.preventDefault();const form=e.currentTarget;const values=new FormData(form);setBusy(true);setError('');setSent(false);try{await request('post','/user/feedback',{category:values.get('category'),title:values.get('title'),content:values.get('content')});form.reset();setSent(true);if(page===0)await load();else setPage(0);}catch(e){setError(errorMessage(e));}finally{setBusy(false);}}}><label>분류<select name="category"><option value="SUGGESTION">건의사항</option><option value="BUG">오류 신고</option><option value="FEATURE">새 기능 제안</option></select></label><label>제목<input name="title" maxLength={100} required placeholder=""/></label><label>내용<textarea name="content" maxLength={3000} required placeholder=""/></label><button className="riku-primary" disabled={busy}>{busy?'접수 중…':'의견 보내기'}</button></form>}
+    {sent&&<p className="riku-success" role="status">접수되었습니다.</p>}{error&&<p className="riku-error" role="alert">{error}</p>}
+    <div className="riku-list-title">{admin?'접수된 의견':'내가 보낸 의견'}</div>{data?.content.length===0&&<p className="riku-muted">아직 접수된 의견이 없습니다.</p>}{data?.content.map(f=><article className="riku-card" key={f.id}><div className="feedback-meta"><span>{categories[f.category]} {new Date(f.createdAt).toLocaleDateString('ko-KR')}</span><span className="role-pill">{statuses[f.status]}</span></div><h3>{f.title}</h3><p>{f.content}</p>{f.answer&&<div className="riku-group mt-4"><small>운영진 답변</small><p>{f.answer}</p></div>}{admin&&<form className="riku-form mt-4" onSubmit={async e=>{e.preventDefault();const values=new FormData(e.currentTarget);setBusy(true);setError('');try{await request('patch',`/admin/feedback/${f.id}`,{status:values.get('status'),answer:values.get('answer')});await load();}catch(e){setError(errorMessage(e));}finally{setBusy(false);}}}><label>처리 상태<select name="status" defaultValue={f.status}><option value="RECEIVED">접수 완료</option><option value="REVIEWING">검토 중</option><option value="COMPLETED">답변 완료</option></select></label><label>답변<textarea name="answer" defaultValue={f.answer||''} maxLength={2000}/></label><button className="riku-secondary" disabled={busy}>상태 및 답변 저장</button></form>}</article>)}
+    {data&&!(data.first&&data.last)&&<div className="riku-row mt-4"><button className="riku-secondary" disabled={data.first||busy} onClick={()=>setPage(page-1)}>이전</button><span className="text-center text-sm">{page+1}페이지</span><button className="riku-secondary" disabled={data.last||busy} onClick={()=>setPage(page+1)}>다음</button></div>}
+  </section></main>;
+}
