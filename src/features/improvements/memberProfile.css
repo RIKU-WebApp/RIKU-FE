@@ -12,4 +12,4 @@
 .profile-shelf .patch-art { width: min(100%, 72px); height: auto; }
 .profile-shelf .honor-card { width: 100%; }
 .profile-more { width: 100%; margin-top: 12px; padding: 8px; font-size: 14px; }
-.profile-detail { border-top: 1px solid #d8d9cb; margin-top: 12px; padding: 12px 0 0; font-size: 14px; }
+.profile-detail { grid-column: 1 / -1; border-radius: 8px; background: #eeede3; padding: 10px 12px; font-size: 14px; }

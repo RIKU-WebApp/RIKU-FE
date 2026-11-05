@@ -80,11 +80,15 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
             <button key={item.key} aria-label={item.title} aria-pressed={selected === item.key}
               onClick={() => select(selected === item.key ? undefined : item.key)}>
               {item.art}{!item.key.startsWith('MONTH') && !item.key.startsWith('SEMESTER') && <span>{item.title}</span>}
-            </button>)}</div>
+            </button>)}
+            {picked && <div className="profile-detail" role="status"
+              style={{ gridRow: Math.floor(items.indexOf(picked) / 3) + 2 }}>
+              <strong>{picked.title}</strong><p>{picked.detail}</p>
+            </div>}
+          </div>
           {items.length > 6 && <button className="profile-more" onClick={() => { expand(!expanded); select(undefined); }}>
             {expanded ? '접기' : '배지 모두 보기 (' + items.length + ')'}
           </button>}
-          {picked && <div className="profile-detail" role="status"><strong>{picked.title}</strong><p>{picked.detail}</p></div>}
         </>}
     </div>
   </dialog>;
