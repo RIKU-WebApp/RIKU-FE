@@ -1,3 +1,4 @@
+import { ProfileName } from '../../features/improvements/MemberProfile';
 import React from 'react';
 import peopleimg from '../../assets/people_darkgreen.svg';
 import checkicon from '../../assets/checkedicon.svg';
@@ -118,7 +119,7 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
                 )}
 
                 <div
-                  className={`flex items-center gap-2.5 w-[288px] h-[52px] px-4 py-2.5 rounded-lg text-base font-medium ${backgroundColor}`}
+                  className={`profile-roster-row flex items-center gap-2.5 w-[288px] h-[52px] px-4 py-2.5 rounded-lg text-base font-medium ${backgroundColor}`}
                 >
                   <div className="flex items-center gap-2 ">
                     <div className="w-[36px] h-[36px] text-[14.4px] rounded-full overflow-hidden flex justify-center items-center bg-gray-400 text-white font-bold">
@@ -134,7 +135,7 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
                     </div>
                   </div>
 
-                  <div className="flex-1 ml-1 text-left text-[16px]">{user.userName}</div>
+                  <div className="flex-1 ml-1 text-left text-[16px]"><ProfileName userId={user.userId} name={user.userName} editing={isEditMode} /></div>
 
                   {isEditMode ? (
                     <div
