@@ -6,7 +6,6 @@ import trainImage from '@assets/defalut_trainingRun.jpeg';
 import regularImg from '@assets/default_regular.jpeg';
 import eventImg from '@assets/default_event.jpeg';
 import plusBtn from '@assets/plus_Icon.svg';
-import img1 from '@assets/main_new.jpg';
 import img2 from '@assets/Main-img/main-moving-images/1.png';
 import img3 from '@assets/Main-img/main-moving-images/2.png';
 import img4 from '@assets/Main-img/main-moving-images/3.jpg';
@@ -92,7 +91,7 @@ const NewMain: React.FC = () => {
   const [userRole, setUserRole] = useState<string | null>(null);
 
   const navigate = useNavigate();
-  const images = [img1, img2, img3, img4];
+  const images = ['/share-cover.jpg', img2, img3, img4];
 
   const formatDate = (isoDateString?: string): string => {
     if (!isoDateString) return '-';

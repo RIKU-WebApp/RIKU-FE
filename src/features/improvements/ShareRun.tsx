@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import homeBanner from '../../assets/main_new.jpg';
 import { utcDate } from './shared';
 import imageCompression from 'browser-image-compression';
 
@@ -14,7 +13,7 @@ type KakaoSDK = {
 };
 // Public RIKU home banner for posts without a cover.
 const defaultCover = import.meta.env.PROD
-  ? new URL(homeBanner, window.location.origin).href
+  ? new URL('/share-cover.jpg', window.location.origin).href
   : 'https://www.riku.run/assets/main_new-B9hdEni2.jpg';
 const schedule = new Intl.DateTimeFormat('ko-KR', {
   timeZone: 'Asia/Seoul',
