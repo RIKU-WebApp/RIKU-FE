@@ -83,7 +83,7 @@ function App() {
             <Route path="/flash/:postId" element={<FlashRunDetail />} />
             <Route path="/regular/:postId" element={<NewRegularRunDetail />} />
             <Route path="/regular/manage/:postId" element={<NewRegularRunDetail />} />
-            <Route path="/my-achievements" element={previewFeaturesEnabled ? <AchievementsPage /> : <Navigate to="/tab/my-page" replace />} />
+            <Route path="/my-achievements" element={<AchievementsPage />} />
             <Route path="/feedback" element={previewFeaturesEnabled ? <FeedbackPage /> : <Navigate to="/tab/my-page" replace />} />
             <Route path="/training/:postId" element={<NewTrainingDetail />} />
             <Route path="/event/:postId" element={<NewEventDetail />} />

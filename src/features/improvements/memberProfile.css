@@ -1,0 +1,15 @@
+.profile-roster-row { position: relative; }
+.profile-roster-row .profile-trigger::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.profile-trigger { min-height: 44px; text-align: left; }
+.member-profile.riku-dialog { padding: 0; margin: auto; border-radius: 16px; background: #faf9f4; color: #26392f; }
+.profile-body { position: relative; padding: 22px 18px; }
+.profile-body h2 { padding-right: 32px; }
+.profile-body h3 { margin: 18px 0 8px; font-size: 14px; font-weight: 600; }
+.profile-body p { margin-top: 8px; font-size: 14px; }
+.profile-shelf { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
+.profile-shelf > button { min-width: 0; display: grid; align-content: start; justify-items: center; padding: 4px; border-radius: 10px; font-size: 12px; }
+.profile-shelf > button[aria-pressed=true] { outline: 2px solid #54765a; outline-offset: -2px; }
+.profile-shelf .patch-art { width: min(100%, 72px); height: auto; }
+.profile-shelf .honor-card { width: 100%; }
+.profile-more { width: 100%; margin-top: 12px; padding: 8px; font-size: 14px; }
+.profile-detail { grid-column: 1 / -1; border-radius: 8px; background: #eeede3; padding: 10px 12px; font-size: 14px; }

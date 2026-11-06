@@ -1,3 +1,4 @@
+import { ProfileName } from '../../features/improvements/MemberProfile';
 import React, { useState } from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
 import customAxios from '@/shared/lib/customAxios';
@@ -141,7 +142,7 @@ const EditableAttendanceList: React.FC<EditableAttendanceListProps> = ({
         return (
           <div
             key={user.userId}
-            className={`flex items-center gap-3 w-[335px] h-[56px] px-4 py-2.5 rounded-lg ${background}`}
+            className={`profile-roster-row flex items-center gap-3 w-[335px] h-[56px] px-4 py-2.5 rounded-lg ${background}`}
           >
             {/* 순서 */}
             <div className="w-5 text-center text-gray-500 font-semibold">{index + 1}</div>
@@ -160,7 +161,7 @@ const EditableAttendanceList: React.FC<EditableAttendanceListProps> = ({
             </div>
 
             {/* 이름 */}
-            <div className="flex-1 text-left">{user.userName}</div>
+            <div className="flex-1 text-left"><ProfileName userId={user.userId} name={user.userName} editing={editMode} /></div>
 
             {/* 상태 표시 or 토글 */}
             {editMode ? (
