@@ -4,7 +4,7 @@ import { badgeCondition } from './badgeCondition';
 import { BadgePatch } from './BadgePatch';
 import type { Motif } from './badgeCollection';
 import catalog from './badgeSeries.json';
-import { type RankMedal, medalPeriod, orderedRanks, rankPalette, RankPatch } from './RankMedals';
+import { type RankMedal, medalPeriod, rankPalette, RankPatch } from './RankMedals';
 import { errorMessage, request, type Badge } from './shared';
 import './rankMedals.css';
 import './memberProfile.css';
@@ -62,7 +62,7 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
       .catch(e => { if (active) setError(errorMessage(e)); });
     return () => { active = false; };
   }, [userId, attempt]);
-  const ranks = profile ? orderedRanks(profile.medals).map(m => ({
+  const ranks = profile ? profile.medals.map(m => ({
     kind: m.kind,
     key: m.kind + m.start, title: (m.kind === 'MONTH' ? '월간 ' : '학기 ') + m.place + '위',
     period: medalPeriod(m), accent: rankPalette(m)[1], art: <RankPatch medal={m}/>,

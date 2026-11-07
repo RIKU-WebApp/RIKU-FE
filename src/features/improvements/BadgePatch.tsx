@@ -173,14 +173,14 @@ export function PatchFrame({motif:m, palette:[base, accent, light], rankFrame, c
 
 export function BadgePatch({ patch, muted = false }: { patch: Pick<Patch,'motif'|'grade'|'single'>; muted?: boolean }) {
   const { motif: m, grade } = patch;
-  const [base, accent, light] = patch.single
-    ? (muted ? ['#25201c','#af4231','#f1d2c2'] : ['#220e09','#ee321b','#ffd2b4'])
-    : muted ? ['#657166', '#b8beab', '#e5e8d9'] : metals[grade];
+  const [base, accent, light] = muted
+    ? ['#657166', '#b8beab', '#e5e8d9']
+    : patch.single ? ['#220e09','#ee321b','#ffd2b4'] : metals[grade];
   return (
     <PatchFrame motif={m} palette={[base,accent,light]}>
       {grade >= 3 && <path d="m46 21 4-5 4 5-4 4z" fill={light} />}
       <Mark m={m} light={light} accent={accent} />
-      {patch.single && <path d="m36 18 14 5 14-5-14 10z" fill={muted?'#ad4936':'#ff3921'}/>}
+      {patch.single && <path d="m36 18 14 5 14-5-14 10z" fill={muted ? accent : '#ff3921'}/>}
       {Array.from({ length: grade + 1 }, (_, i) => (
         <path
           key={i}
