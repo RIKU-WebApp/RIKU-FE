@@ -1,3 +1,4 @@
+import { seatsLabel, totalLabel } from '../../features/improvements/availableSeats';
 import { useRunQueue, WaitingNames } from '../../features/improvements/RunWaitlist';
 import ShareRun from '../../features/improvements/ShareRun';
 import React, { useState, useEffect } from 'react';
@@ -583,15 +584,16 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
           </div>
         ) : userStatus === '' ? (
           <div>
+          {totalLabel(waitlist.seats?.total) && <p className="mb-2 text-sm text-kuDarkGreen">{totalLabel(waitlist.seats?.total)}</p>}
           {!!waitlist.queue?.groups?.length && <select aria-label="신청 그룹" className="block w-full rounded border p-2" value={joinGroup} onChange={e => setJoinGroup(e.target.value)}>
             <option value="">그룹 선택</option>
-            {waitlist.queue.groups.map(g => <option key={g.name} value={g.name}>{g.name}　{g.pace}{g.capacity != null ? '　' + g.capacity + '명' : ''}</option>)}
+            {waitlist.queue.groups.map(g => <option key={g.name} value={g.name}>{g.name}　{g.pace}{waitlist.seats && (g.capacity != null || waitlist.seats.total !== Infinity) ? '　' + seatsLabel(waitlist.seats.forGroup(g.name)) : ''}</option>)}
           </select>}
           <button
             className="flex justify-center items-center w-[327px] h-14 rounded-lg bg-kuGreen text-white text-lg font-bold mt-20 mb-2"
             onClick={handleStartClick} disabled={!!waitlist.queue?.groups?.length && !joinGroup}
           >
-            참여하기
+            {waitlist.seats?.forGroup(joinGroup) === 0 ? '대기 신청' : '참여하기'}
           </button>
           </div>
         ) : (

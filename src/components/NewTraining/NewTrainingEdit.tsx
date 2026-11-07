@@ -1,6 +1,6 @@
 import { useOriginalRunFields } from '../../features/improvements/runEdit';
 import { errorMessage } from '../../features/improvements/shared';
-import { GroupLimit, appendPlans, nextGroup, fromPlan, type PacePlan } from '../../features/improvements/PaceGroups';
+import { CapacityNote, GroupLimit, appendPlans, nextGroup, fromPlan, type PacePlan } from '../../features/improvements/PaceGroups';
 import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -296,7 +296,7 @@ function NewTrainingEdit() {
         </div>
       </div>
       <div className="w-full max-w-md px-4">
-        {limit.field}
+        {limit.fieldFor(pacerGroups)}
         <div className="my-2">제목</div>
         <input
           className="border rounded-lg w-full p-2"
@@ -407,6 +407,7 @@ function NewTrainingEdit() {
           >
             페이서 그룹 추가
           </button>
+          <CapacityNote />
 
           {isBottomSheetOpen && (
             <motion.div

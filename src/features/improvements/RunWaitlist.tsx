@@ -1,9 +1,11 @@
+import { availableSeats } from './availableSeats';
+import { TotalCapacityInput } from './TotalCapacityInput';
 import { PaceGroups, fromPlan, appendPlans, type GroupRow, type PacePlan } from './PaceGroups';
 import { useEffect, useState } from 'react';
 import { request, errorMessage } from './shared';
 
 type Type = 'flash' | 'event' | 'training';
-interface Queue { capacity: number | null; waiting: string[]; mine: boolean; groups: PacePlan[] }
+interface Queue { capacity: number | null; waiting: string[]; mine: boolean; groups: PacePlan[]; usedByGroup?: Record<string, number> }
 const path = (type: Type, id: string | number) => '/run/' + type + '/post/' + id + '/waitlist';
 
 export function useRunQueue(type: Type, id: string | number | undefined, tab: string) {
@@ -27,7 +29,8 @@ export function useRunQueue(type: Type, id: string | number | undefined, tab: st
     try { await request('delete', path(type, id) + '/me'); window.location.reload(); }
     catch (e) { setError(errorMessage(e)); }
   }
-  return { queue, leave, error };
+  const seats = queue?.usedByGroup ? availableSeats(queue.capacity, queue.groups, queue.usedByGroup) : undefined;
+  return { queue, leave, error, seats };
 }
 
 export function WaitingNames({ names }: { names?: string[] }) {
@@ -63,11 +66,10 @@ export function useCapacityInput(type: Type, id?: string) {
     if (!Number.isInteger(number) || number < 1 || number > 1000) throw new Error('정원은 1~1000명으로 입력해주세요.');
     data.append('capacity', String(number));
   }
-  const field = <label className="my-3 flex flex-col gap-2">총정원
-    <input type="number" min="1" max="1000" step="1" placeholder="제한 없음" value={value} disabled={!loaded}
-      className="rounded-lg border px-3 py-2" onChange={e => { setDirty(true); setValue(e.target.value); }} />
+  const fieldFor = (rows: GroupRow[]) => <div className="my-3">
+    <TotalCapacityInput rows={rows} value={value} disabled={!loaded} onChange={v => { setDirty(true); setValue(v); }} />
     {error && <span role="alert">{error}</span>}
-  </label>;
+  </div>;
   const groupField = <fieldset disabled={!loaded}><PaceGroups rows={groups} onChange={rows => { setGroupsDirty(true); setGroups(rows); }} /></fieldset>;
-  return { append, field, groupField };
+  return { append, field: fieldFor(groups), fieldFor, groupField };
 }

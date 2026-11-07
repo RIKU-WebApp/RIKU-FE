@@ -1,5 +1,5 @@
 import { errorMessage } from '../../features/improvements/shared';
-import { GroupLimit, appendPlans, nextGroup } from '../../features/improvements/PaceGroups';
+import { CapacityNote, GroupLimit, appendPlans, nextGroup } from '../../features/improvements/PaceGroups';
 import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -434,7 +434,7 @@ function TrainingMake() {
       </div>
 
       <div className="w-full max-w-md px-4">
-        {limit.field}
+        {limit.fieldFor(pacerGroups)}
         <div className="my-2">제목</div>
         <input
           className="border rounded-lg w-full p-2"
@@ -539,6 +539,7 @@ function TrainingMake() {
           >
             페이서 그룹 추가
           </button>
+          <CapacityNote />
 
           {isBottomSheetOpen && (
             <motion.div

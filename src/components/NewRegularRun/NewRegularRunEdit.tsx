@@ -1,4 +1,5 @@
 import { useOriginalRunFields } from '../../features/improvements/runEdit';
+import { TotalCapacityInput } from '../../features/improvements/TotalCapacityInput';
 import { PaceGroups, fromPlan, appendPlans, type GroupRow } from '../../features/improvements/PaceGroups';
 import { errorMessage, utcDate } from '../../features/improvements/shared';
 import { useRecruitment } from './Recruitment';
@@ -336,10 +337,9 @@ function NewRegularRunEdit() {
         ></textarea>
 
         {recruitment && (
-          <label className="my-4 block text-sm">총정원
-            <input type="number" min={1} max={1000} placeholder="제한 없음" value={capacity}
-              className="mt-2 w-full rounded-lg border p-2" onChange={e => setEditedCapacity(e.target.value)} />
-          </label>
+          <div className="my-4 text-sm">
+            <TotalCapacityInput rows={plans} value={capacity} onChange={setEditedCapacity} />
+          </div>
         )}
         <PaceGroups rows={plans} onChange={setEditedGroups} />
         {!recruitment?.configured && !editedGroups && <fieldset>
