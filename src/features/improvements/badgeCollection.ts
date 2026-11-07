@@ -1,3 +1,4 @@
+import { badgeCondition } from './badgeCondition';
 import type { Badge } from './shared';
 import definitions from './badgeSeries.json';
 export type Motif =
@@ -82,7 +83,7 @@ export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
         target,
         value: values[d.id] ?? 0,
         unit: d.unit,
-        rule: d.rule,
+        rule: badgeCondition(d, i),
         grade: i,
         single: d.levels.length === 1,
         granted: sample ? undefined : granted.has(id),

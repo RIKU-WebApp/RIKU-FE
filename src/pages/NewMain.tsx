@@ -405,7 +405,7 @@ const NewMain: React.FC = () => {
               onClick={
                 userRole === 'ADMIN' || userRole === 'PACER'
                   ? handleRegularRunMake
-                  : () => alert('관리자만 사용할 수 있는 기능입니다.')
+                  : () => alert('관리자 및 페이서만 사용할 수 있는 기능입니다.')
               }
             >
               정규런 일정 추가하기
@@ -423,7 +423,7 @@ const NewMain: React.FC = () => {
               onClick={
                 userRole === 'ADMIN' || userRole === 'PACER'
                   ? handleTrainingtMake
-                  : () => alert('관리자만 사용할 수 있는 기능입니다.')
+                  : () => alert('관리자 및 페이서만 사용할 수 있는 기능입니다.')
               }
             >
               훈련 일정 추가하기

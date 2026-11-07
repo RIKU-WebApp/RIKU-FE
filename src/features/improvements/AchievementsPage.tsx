@@ -3,6 +3,7 @@ import { Check, ChevronRight, LockKeyhole, X } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { Header, errorMessage, request } from './shared';
 import { collection, earned, type Activity, type Patch, type Progress } from './badgeCollection';
+import { minimumTarget } from './badgeCondition';
 import { BadgePatch } from './BadgePatch';
 import { MedalCard, sampleMedals } from './RankMedals';
 import './badgeBook.css';
@@ -24,7 +25,6 @@ const demo: Progress = {
 };
 const demoDistance: Activity = { verifiedKm: 122, personalKm: 65, badges: [] };
 const filters = ['전체', '획득', '미획득'] as const;
-const fmt = (v: number) => v.toLocaleString('ko-KR', { maximumFractionDigits: 1 });
 const highest = (family: Patch[]) => family.filter(earned).slice(-1)[0];
 function Detail({
   family,
@@ -62,20 +62,11 @@ function Detail({
         </span>
         <h2 id="patch-title">{active.name}</h2>
         <p>{active.rule}</p>
-        {active.standing && <small>{active.standing} / 목표 {active.condition}</small>}
+        {active.standing && <small>{active.standing}</small>}
         {active.unit && (
-          <>
-            <div className="patch-meter">
-              <i style={{ width: Math.min(100, (active.value / active.target) * 100) + '%' }} />
-            </div>
-            <small>
-              내 기록 {fmt(active.value)}
-              {active.unit === 'km' ? ' ' : ''}
-              {active.unit} / 목표 {fmt(active.target)}
-              {active.unit === 'km' ? ' ' : ''}
-              {active.unit}
-            </small>
-          </>
+          <div className="patch-meter">
+            <i style={{ width: Math.min(100, (active.value / active.target) * 100) + '%' }} />
+          </div>
         )}
         {family.length > 1 && (
           <div className="level-ladder" aria-label="등급별 달성 조건">
@@ -84,7 +75,7 @@ function Detail({
                 <span className={'rank-chip rank-' + b.grade} />
                 <b>{b.tier}</b>
                 <span>
-                  {b.condition ?? (fmt(b.target) + ' ' + b.unit)}
+                  {b.condition ?? minimumTarget(b.target, b.unit)}
                 </span>
                 {earned(b) ? (
                   <Check size={14} aria-label="획득" />
