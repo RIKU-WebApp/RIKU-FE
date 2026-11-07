@@ -1,3 +1,4 @@
+import { ProfileTrigger } from '../features/improvements/MemberProfile';
 import { useState, useEffect } from 'react';
 import defaultProfileImg from '@assets/default_profile.png'; //기본 프로필 이미지 불러오기
 import rikuHorn_left from '@assets/RankingPage/rikuHorn_left.svg';
@@ -15,17 +16,11 @@ interface SimpleUserInfo {
 //랭킹 페이지
 function RankingPage() {
   //상위 10명 정보를 저장한 top20_Info (서버에서 받아온 정보로 업데이트할 것임)
-  const [top20_Info, setTop20_Info] = useState<SimpleUserInfo[]>([]);
-  const [isLoading, setIsLoading] = useState(false); //랭킹 정보가 모두 불러와 졌는지 체크
+  const [top20_Info, setTop20_Info] = useState<(SimpleUserInfo & { rank: number })[]>([]);
+  const [isLoading, setIsLoading] = useState(true); //랭킹 정보가 모두 불러와 졌는지 체크
   const [error, setError] = useState<string | null>(null); // 에러 상태 관리
 
-  //자신의 정보 myInfo (안 불러져왔을 경우 표시할 placeholder 격의 데이터 하나 넣어놓을 것임)
-  const [myInfo, setMyInfo] = useState<SimpleUserInfo>({
-    userName: '정보없음',
-    userProfileImg: 'https://via.placeholder.com/48',
-    totalPoints: 111,
-    userId: 1,
-  });
+  const [myInfo, setMyInfo] = useState<SimpleUserInfo | null>(null);
 
   //자신의 랭킹 정보 myRankingInfo
   const [myRankingInfo, setMyRankingInfo] = useState<number>(0);
@@ -56,24 +51,12 @@ function RankingPage() {
         }
       );
 
-      //공동 순위 처리에 용이하도록 userId는 서버에서 받아온 정보가 아닌 순위대로 ++하는 idx로 선언(추후 공동 순위 처리 로직이 추가로 삽입됨)
-      let idx: number = 1;
-
-      //상위 10명의 정보를 넣어둘 배열 top20 (response.data.result의 "top20"에서 정보를 가져온다)
-      const top20: SimpleUserInfo[] = response.data.result.top20?.map((user: SimpleUserInfo) => ({
-        userId: idx++,
-        userName: user.userName,
-        userProfileImg: user.userProfileImg || null,
-        totalPoints: user.totalPoints,
-      }));
-
-      //공동 순위 처리해야 함
-      for (let i: number = 0; i < top20.length; i++) {
-        //이전 totalPoints랑 지금 totalPoints가 같다면
-        if (i > 0 && top20[i - 1].totalPoints === top20[i].totalPoints) {
-          top20[i].userId = top20[i - 1].userId;
-        }
-      }
+      const members: SimpleUserInfo[] = response.data.result.top20 ?? [];
+      let rank = 0;
+      const top20 = members.map((member, index) => {
+        if (index === 0 || members[index - 1].totalPoints !== member.totalPoints) rank = index + 1;
+        return { ...member, rank };
+      });
 
       const my: SimpleUserInfo = response.data.result.userPoints; //사용자 정보를 불러와서 저장
       const myRank: number = response.data.result.userRanking; //사용자 랭킹 정보를 불러와서 저장
@@ -138,16 +121,16 @@ function RankingPage() {
                 <span className="block text-center text-2xl font-bold mb-1 text-whiteSmoke">
                   2nd
                 </span>
-                <div className="w-full aspect-square bg-gray-300 rounded-full flex items-center justify-center border-[6px] border-kuBeige overflow-hidden z-10">
+                <ProfileTrigger userId={top20_Info[1]?.userId} name={top20_Info[1]?.userName ?? ''} className="w-full aspect-square bg-gray-300 rounded-full flex items-center justify-center border-[6px] border-kuBeige overflow-hidden z-10">
                   <img
                     src={top20_Info[1]?.userProfileImg ?? defaultProfileImg}
-                    alt="2nd"
+                    alt=""
                     className="w-full h-full object-cover"
                   />
-                </div>
+                </ProfileTrigger>
                 <div className="w-full bg-kuBeige rounded-xl -mt-4 py-4">
                   <span className="block text-center text-lg font-bold text-black">
-                    {top20_Info[1]?.userName}
+                    <ProfileTrigger userId={top20_Info[1]?.userId} name={top20_Info[1]?.userName ?? ''} className="inline-block">{top20_Info[1]?.userName}</ProfileTrigger>
                   </span>
                   <span className="block text-center text-sm text-kuDarkGreen font-semibold">
                     {top20_Info[1]?.totalPoints}P
@@ -173,16 +156,16 @@ function RankingPage() {
                   />
                 </div>
                 <div className="flex flex-col items-center -space-y-4">
-                  <div className="w-full aspect-square bg-gray-300 rounded-full flex items-center justify-center border-[6px] border-kuBeige overflow-hidden z-10">
+                  <ProfileTrigger userId={top20_Info[0]?.userId} name={top20_Info[0]?.userName ?? ''} className="w-full aspect-square bg-gray-300 rounded-full flex items-center justify-center border-[6px] border-kuBeige overflow-hidden z-10">
                     <img
                       src={top20_Info[0]?.userProfileImg ?? defaultProfileImg}
-                      alt="1st"
+                      alt=""
                       className="w-full h-full object-cover"
                     />
-                  </div>
+                  </ProfileTrigger>
                   <div className="w-full bg-kuBeige rounded-xl pt-4 pb-14">
                     <span className="block text-center text-lg font-bold text-black">
-                      {top20_Info[0]?.userName}
+                      <ProfileTrigger userId={top20_Info[0]?.userId} name={top20_Info[0]?.userName ?? ''} className="inline-block">{top20_Info[0]?.userName}</ProfileTrigger>
                     </span>
                     <span className="block text-center text-sm text-kuDarkGreen font-semibold">
                       {top20_Info[0]?.totalPoints}P
@@ -196,16 +179,16 @@ function RankingPage() {
                 <span className="block text-center text-2xl font-bold text-whiteSmoke mb-1">
                   3rd
                 </span>
-                <div className="w-full aspect-square bg-gray-300 rounded-full flex items-center justify-center border-[6px] border-kuBeige overflow-hidden z-10">
+                <ProfileTrigger userId={top20_Info[2]?.userId} name={top20_Info[2]?.userName ?? ''} className="w-full aspect-square bg-gray-300 rounded-full flex items-center justify-center border-[6px] border-kuBeige overflow-hidden z-10">
                   <img
                     src={top20_Info[2]?.userProfileImg ?? defaultProfileImg}
-                    alt="3rd"
+                    alt=""
                     className="w-full h-full object-cover"
                   />
-                </div>
+                </ProfileTrigger>
                 <div className="w-full bg-kuBeige rounded-xl -mt-4 py-4">
                   <span className="block text-center text-lg font-bold text-black">
-                    {top20_Info[2]?.userName}
+                    <ProfileTrigger userId={top20_Info[2]?.userId} name={top20_Info[2]?.userName ?? ''} className="inline-block">{top20_Info[2]?.userName}</ProfileTrigger>
                   </span>
                   <span className="block text-center text-sm text-kuDarkGreen font-semibold">
                     {top20_Info[2]?.totalPoints}P
@@ -224,33 +207,37 @@ function RankingPage() {
         </div>
 
         {/* 자신의 랭킹을 표시하는 카드 섹션 */}
-        <div className="w-full max-w-sm bg-kuLightGray rounded-xl flex flex-row justify-between items-center px-3 py-2 mb-6">
+        {myInfo && <div className="w-full max-w-sm bg-kuLightGray rounded-xl flex flex-row justify-between items-center px-3 py-2 mb-6">
           <div className="flex flex-row flex-start items-center">
             <span className="text-kuDarkGray text-base font-bold mr-4">{myRankingInfo}</span>
-            <img
-              src={myInfo.userProfileImg ?? defaultProfileImg}
-              alt="myProfileImg"
-              className="w-16 h-16 rounded-full mr-4 object-cover"
-            />
-            <span className="text-black text-xl font-bold">{myInfo.userName}</span>
+            <ProfileTrigger userId={myInfo.userId} name={myInfo.userName} className="inline-flex items-center">
+              <img
+                src={myInfo.userProfileImg ?? defaultProfileImg}
+                alt=""
+                className="w-16 h-16 rounded-full mr-4 object-cover"
+              />
+              <span className="text-black text-xl font-bold">{myInfo.userName}</span>
+            </ProfileTrigger>
           </div>
           <span className="text-kuDarkGreen text-xl font-bold mr-3">{myInfo.totalPoints}P</span>
-        </div>
+        </div>}
 
         {/* 그 밑의 4위부터 회원들 랭킹 프로필 카드 */}
-        {top20_Info.slice(3, viewCount).map((user, index) => (
+        {top20_Info.slice(3, viewCount).map((user) => (
           <div
-            key={index}
+            key={user.userId}
             className="w-full max-w-sm bg-kuWarmGray rounded-xl flex flex-row justify-between items-center px-3 py-2 mb-2"
           >
             <div className="flex flex-row items-center">
-              <span className="text-kuDarkGray text-sm font-bold mr-4">{user.userId}</span>
-              <img
-                src={user.userProfileImg ?? defaultProfileImg}
-                alt={`${user.userName} Profile`}
-                className="w-12 h-12 rounded-full mr-4 object-cover"
-              />
-              <span className="text-black text-base">{user.userName}</span>
+              <span className="text-kuDarkGray text-sm font-bold mr-4">{user.rank}</span>
+              <ProfileTrigger userId={user.userId} name={user.userName} className="inline-flex items-center">
+                <img
+                  src={user.userProfileImg ?? defaultProfileImg}
+                  alt=""
+                  className="w-12 h-12 rounded-full mr-4 object-cover"
+                />
+                <span className="text-black text-base">{user.userName}</span>
+              </ProfileTrigger>
             </div>
             <span className="text-kuDarkGreen text-base font-semibold mr-3">
               {user.totalPoints}P

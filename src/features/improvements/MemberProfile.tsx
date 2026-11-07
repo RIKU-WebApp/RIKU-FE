@@ -90,11 +90,23 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
   </dialog>;
 }
 
-export function ProfileName({ userId, name, editing, photo }: { userId: number; name: string; editing: boolean; photo?: { url?: string | null; size: number } }) {
+export function ProfileTrigger({ userId, name, className, children }: {
+  userId?: number;
+  name: string;
+  className: string;
+  children: React.ReactNode;
+}) {
   const [open, setOpen] = useState(false);
+  if (!userId || !Number.isSafeInteger(userId) || userId < 1) return <span className={className}>{children}</span>;
+  return <>
+    <button type="button" className={className} aria-haspopup="dialog" aria-label={name + ' 프로필'} onClick={() => setOpen(true)}>
+      {children}
+    </button>
+    {open && createPortal(<MemberProfile key={userId} userId={userId} onClose={() => setOpen(false)} />, document.body)}
+  </>;
+}
+
+export function ProfileName({ userId, name, editing, photo }: { userId: number; name: string; editing: boolean; photo?: { url?: string | null; size: number } }) {
   const identity = <>{photo && <span aria-hidden="true" className="shrink-0 rounded-full overflow-hidden bg-gray-400 text-white font-bold flex items-center justify-center" style={{ width: photo.size, height: photo.size }}>{photo.url ? <img src={photo.url} alt="" draggable={false} className="w-full h-full object-cover" /> : name.charAt(0)}</span>}{name}</>;
-  if (editing || !Number.isSafeInteger(userId) || userId < 1) return <span className="profile-trigger">{identity}</span>;
-  return <><button type="button" className="profile-trigger" aria-haspopup="dialog" aria-label={name + ' 프로필'}
-    onClick={() => setOpen(true)}>{identity}</button>
-    {open && createPortal(<MemberProfile key={userId} userId={userId} onClose={() => setOpen(false)} />, document.body)}</>;
+  return <ProfileTrigger userId={editing ? undefined : userId} name={name} className="profile-trigger">{identity}</ProfileTrigger>;
 }
