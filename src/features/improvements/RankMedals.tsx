@@ -5,16 +5,10 @@ import { PatchFrame, metals } from './BadgePatch';
 export type RankMedal = {kind:'MONTH'|'SEMESTER';start:string;achievedOn:string;place:number};
 
 
-export function orderedRanks(medals: readonly RankMedal[]) {
-  return [...medals].sort((a, b) => {
-    if (a.kind !== b.kind) return a.kind === 'SEMESTER' ? -1 : 1;
-    return b.achievedOn.localeCompare(a.achievedOn) || b.start.localeCompare(a.start) || a.place - b.place;
-  });
-}
 export const sampleMedals: RankMedal[] = [
+  {kind:'SEMESTER',start:'2025-09-01',achievedOn:'2026-03-01',place:2},
   {kind:'MONTH',start:'2026-10-01',achievedOn:'2026-10-31',place:1},
   {kind:'MONTH',start:'2026-09-01',achievedOn:'2026-09-30',place:3},
-  {kind:'SEMESTER',start:'2025-09-01',achievedOn:'2026-03-01',place:2},
 ];
 
 export function medalPeriod(m:RankMedal) {

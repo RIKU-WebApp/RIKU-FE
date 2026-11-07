@@ -6,7 +6,7 @@ import { Header, errorMessage, request } from './shared';
 import { collection, earned, type Activity, type Patch, type Progress } from './badgeCollection';
 import { minimumTarget } from './badgeCondition';
 import { BadgePatch } from './BadgePatch';
-import { MedalCard, sampleMedals, orderedRanks, type RankMedal } from './RankMedals';
+import { MedalCard, sampleMedals, type RankMedal } from './RankMedals';
 import './badgeBook.css';
 import './rankMedals.css';
 
@@ -57,7 +57,7 @@ function Detail({
         <button className="sheet-close" onClick={close} aria-label="닫기">
           <X size={21} />
         </button>
-        <BadgePatch patch={active} />
+        <BadgePatch patch={active} muted={!earned(active)} />
         <span className="patch-state">
           {active.tier} {earned(active) ? '획득' : '미획득'}
         </span>
@@ -98,7 +98,7 @@ export default function AchievementsPage() {
   const [error, setError] = useState('');
   const [attempt, retry] = useState(0);
   const [filter, setFilter] = useState<(typeof filters)[number]>(params.get('filter')==='earned'?'획득':'전체');
-  const medals = orderedRanks(sample ? sampleMedals : live?.[2] ?? []);
+  const medals = sample ? sampleMedals : live?.[2] ?? [];
   const [detail, setDetail] = useState<Patch>();
   useEffect(() => {
     if (sample) return;
@@ -201,7 +201,7 @@ export default function AchievementsPage() {
                     onClick={() => setDetail(hero)}
                     aria-label={hero.name + ' ' + hero.tier + ' 상세'}
                   >
-                    <BadgePatch patch={hero} />
+                    <BadgePatch patch={hero} muted={!earned(hero)} />
                   </button>
                 )}
               </div>
