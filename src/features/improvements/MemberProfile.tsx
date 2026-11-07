@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { BadgePatch } from './BadgePatch';
 import type { Motif } from './badgeCollection';
 import catalog from './badgeSeries.json';
-import { MedalCard, medalPeriod, type RankMedal } from './RankMedals';
+import type { RankMedal } from './RankMedals';
 import { errorMessage, request, type Badge } from './shared';
 import './rankMedals.css';
 import './memberProfile.css';
@@ -12,12 +12,8 @@ type Profile = { name: string; badges: Badge[]; medals: RankMedal[] };
 type Item = { key: string; title: string; detail: string; art: React.ReactNode };
 
 function earnedItems(profile: Profile): Item[] {
-  const items: Item[] = profile.medals.map(m => ({
-    key: m.kind + m.start, title: medalPeriod(m) + ' ' + m.place + '위',
-    detail: m.achievedOn.replace(/-/g, '.') + ' 달성',
-    art: <MedalCard medal={m} />,
-  }));
-  const grants = new Map(profile.badges.map(b => [b.code, b]));
+  const items: Item[] = [];
+  const grants = new Map(profile.badges.filter(b => !b.code.startsWith('monthlyRank_')).map(b => [b.code, b]));
   for (const d of catalog) {
     let best: Item | undefined;
     d.levels.forEach((target, grade) => {
@@ -79,7 +75,7 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
           <div className="profile-shelf">{(expanded ? items : items.slice(0, 6)).map(item =>
             <button key={item.key} aria-label={item.title} aria-pressed={selected === item.key}
               onClick={() => select(selected === item.key ? undefined : item.key)}>
-              {item.art}{!item.key.startsWith('MONTH') && !item.key.startsWith('SEMESTER') && <span>{item.title}</span>}
+              {item.art}<span>{item.title}</span>
             </button>)}
             {picked && <div className="profile-detail" role="status"
               style={{ gridRow: Math.floor(items.indexOf(picked) / 3) + 2 }}>
