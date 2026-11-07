@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { BadgePatch } from './BadgePatch';
 import type { Motif } from './badgeCollection';
 import catalog from './badgeSeries.json';
-import { MedalCard, medalPeriod, type RankMedal } from './RankMedals';
+import type { RankMedal } from './RankMedals';
 import { errorMessage, request, type Badge } from './shared';
 import './rankMedals.css';
 import './memberProfile.css';
@@ -12,12 +12,8 @@ type Profile = { name: string; badges: Badge[]; medals: RankMedal[] };
 type Item = { key: string; title: string; detail: string; art: React.ReactNode };
 
 function earnedItems(profile: Profile): Item[] {
-  const items: Item[] = profile.medals.map(m => ({
-    key: m.kind + m.start, title: medalPeriod(m) + ' ' + m.place + '위',
-    detail: m.achievedOn.replace(/-/g, '.') + ' 달성',
-    art: <MedalCard medal={m} />,
-  }));
-  const grants = new Map(profile.badges.map(b => [b.code, b]));
+  const items: Item[] = [];
+  const grants = new Map(profile.badges.filter(b => !b.code.startsWith('monthlyRank_')).map(b => [b.code, b]));
   for (const d of catalog) {
     let best: Item | undefined;
     d.levels.forEach((target, grade) => {
@@ -79,7 +75,7 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
           <div className="profile-shelf">{(expanded ? items : items.slice(0, 6)).map(item =>
             <button key={item.key} aria-label={item.title} aria-pressed={selected === item.key}
               onClick={() => select(selected === item.key ? undefined : item.key)}>
-              {item.art}{!item.key.startsWith('MONTH') && !item.key.startsWith('SEMESTER') && <span>{item.title}</span>}
+              {item.art}<span>{item.title}</span>
             </button>)}
             {picked && <div className="profile-detail" role="status"
               style={{ gridRow: Math.floor(items.indexOf(picked) / 3) + 2 }}>
@@ -94,10 +90,11 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
   </dialog>;
 }
 
-export function ProfileName({ userId, name, editing }: { userId: number; name: string; editing: boolean }) {
+export function ProfileName({ userId, name, editing, photo }: { userId: number; name: string; editing: boolean; photo?: { url?: string | null; size: number } }) {
   const [open, setOpen] = useState(false);
-  if (editing || !Number.isSafeInteger(userId) || userId < 1) return <>{name}</>;
+  const identity = <>{photo && <span aria-hidden="true" className="shrink-0 rounded-full overflow-hidden bg-gray-400 text-white font-bold flex items-center justify-center" style={{ width: photo.size, height: photo.size }}>{photo.url ? <img src={photo.url} alt="" draggable={false} className="w-full h-full object-cover" /> : name.charAt(0)}</span>}{name}</>;
+  if (editing || !Number.isSafeInteger(userId) || userId < 1) return <span className="profile-trigger">{identity}</span>;
   return <><button type="button" className="profile-trigger" aria-haspopup="dialog" aria-label={name + ' 프로필'}
-    onClick={() => setOpen(true)}>{name}</button>
+    onClick={() => setOpen(true)}>{identity}</button>
     {open && createPortal(<MemberProfile key={userId} userId={userId} onClose={() => setOpen(false)} />, document.body)}</>;
 }

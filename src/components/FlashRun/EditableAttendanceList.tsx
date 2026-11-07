@@ -109,7 +109,7 @@ const EditableAttendanceList: React.FC<EditableAttendanceListProps> = ({
                   const now = new Date();
                   const kst = new Date(new Date(postDate).getTime() + 9 * 60 * 60 * 1000);
                   if (now < kst) {
-                    alert('아직 명단 수정을 할 수 없습니다.');
+                    alert('참가자의 출석 여부는 집합 시간부터 수정할 수 있습니다.');
                     return;
                   }
                 }
@@ -142,26 +142,12 @@ const EditableAttendanceList: React.FC<EditableAttendanceListProps> = ({
         return (
           <div
             key={user.userId}
-            className={`profile-roster-row flex items-center gap-3 w-[335px] h-[56px] px-4 py-2.5 rounded-lg ${background}`}
+            className={`flex items-center gap-3 w-[335px] h-[56px] px-4 py-2.5 rounded-lg ${background}`}
           >
             {/* 순서 */}
             <div className="w-5 text-center text-gray-500 font-semibold">{index + 1}</div>
 
-            {/* 프로필 */}
-            <div className="w-10 h-10 rounded-full bg-gray-400 text-white font-bold flex items-center justify-center overflow-hidden">
-              {user.userProfileImg ? (
-                <img
-                  src={user.userProfileImg}
-                  alt="profile"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                user.userName?.charAt(0) || '?'
-              )}
-            </div>
-
-            {/* 이름 */}
-            <div className="flex-1 text-left"><ProfileName userId={user.userId} name={user.userName} editing={editMode} /></div>
+            <div className="flex-1 text-left"><ProfileName photo={{ url: user.userProfileImg, size: 40 }} userId={user.userId} name={user.userName} editing={editMode} /></div>
 
             {/* 상태 표시 or 토글 */}
             {editMode ? (

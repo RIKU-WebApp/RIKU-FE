@@ -118,23 +118,9 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
                 )}
 
                 <div
-                  className={`profile-roster-row flex items-center gap-2.5 w-[288px] h-[52px] px-4 py-2.5 rounded-lg text-base font-medium ${backgroundColor}`}
+                  className={`flex items-center gap-2.5 w-[288px] h-[52px] px-4 py-2.5 rounded-lg text-base font-medium ${backgroundColor}`}
                 >
-                  <div className="flex items-center gap-2 ">
-                    <div className="w-[36px] h-[36px] text-[14.4px] rounded-full overflow-hidden flex justify-center items-center bg-gray-400 text-white font-bold">
-                      {user.userProfileImg ? (
-                        <img
-                          src={user.userProfileImg}
-                          alt={`${user.userName} profile`}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span>{user.userName?.charAt(0) || '?'}</span>
-                      )}
-                    </div>
-                  </div>
-
-                  <span className="flex-1 ml-1 text-left text-[16px]"><ProfileName userId={user.userId} name={user.userName} editing={isEditMode} />{(user.pacer || user.isPacer) && <span className="role-pill pacer ml-2">페이서</span>}</span>
+                  <span className="flex-1 text-left"><ProfileName photo={{ url: user.userProfileImg, size: 36 }} userId={user.userId} name={user.userName} editing={isEditMode} />{(user.pacer || user.isPacer) && <span className="role-pill pacer ml-2">페이서</span>}</span>
 
                   {isEditMode ? (
                     <div
@@ -163,7 +149,7 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
       {!!waiting?.length && <>
         <h3 className="text-left font-semibold mt-4">대기명단</h3>
         {waiting.map(entry => (
-          <div key={entry.userId} className="profile-roster-row flex items-center gap-2 text-left rounded-lg bg-kuLightGray px-4 py-3">
+          <div key={entry.userId} className="flex items-center gap-2 text-left rounded-lg bg-kuLightGray px-4 py-3">
             <span className="text-sm">{entry.group}</span>
             <span className="flex-1 text-left">
               <ProfileName userId={entry.userId} name={entry.name} editing={isEditMode} />

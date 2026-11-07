@@ -119,23 +119,9 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
                 )}
 
                 <div
-                  className={`profile-roster-row flex items-center gap-2.5 w-[288px] h-[52px] px-4 py-2.5 rounded-lg text-base font-medium ${backgroundColor}`}
+                  className={`flex items-center gap-2.5 w-[288px] h-[52px] px-4 py-2.5 rounded-lg text-base font-medium ${backgroundColor}`}
                 >
-                  <div className="flex items-center gap-2 ">
-                    <div className="w-[36px] h-[36px] text-[14.4px] rounded-full overflow-hidden flex justify-center items-center bg-gray-400 text-white font-bold">
-                      {user.userProfileImg ? (
-                        <img
-                          src={user.userProfileImg}
-                          alt={`${user.userName} profile`}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span>{user.userName?.charAt(0) || '?'}</span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex-1 ml-1 text-left text-[16px]"><ProfileName userId={user.userId} name={user.userName} editing={isEditMode} /></div>
+                  <div className="flex-1 text-left"><ProfileName photo={{ url: user.userProfileImg, size: 36 }} userId={user.userId} name={user.userName} editing={isEditMode} /></div>
 
                   {isEditMode ? (
                     <div

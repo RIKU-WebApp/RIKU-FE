@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Header, errorMessage, request } from './shared';
 import { collection, earned, type Activity, type Patch, type Progress } from './badgeCollection';
 import { BadgePatch } from './BadgePatch';
-import { MedalCard, sampleMedals, type RankMedal } from './RankMedals';
+import { MedalCard, sampleMedals } from './RankMedals';
 import './badgeBook.css';
 import './rankMedals.css';
 
@@ -106,7 +106,7 @@ export default function AchievementsPage() {
   const [error, setError] = useState('');
   const [attempt, retry] = useState(0);
   const [filter, setFilter] = useState<(typeof filters)[number]>(params.get('filter')==='earned'?'획득':'전체');
-  const [medals, setMedals]=useState<RankMedal[]>([]);
+  const medals = sample ? sampleMedals : [];
   const [detail, setDetail] = useState<Patch>();
   useEffect(() => {
     if (sample) return;
@@ -115,10 +115,9 @@ export default function AchievementsPage() {
     Promise.all([
       request<Progress>('get', '/user/activity/badge-progress'),
       request<Activity>('get', '/user/activity/badges'),
-      request<RankMedal[]>('get','/user/activity/rank-honors'),
     ])
       .then((r) => {
-        if (active) {setLive([r[0],r[1]]);setMedals(r[2] ?? []);}
+        if (active) setLive(r);
       })
       .catch((e) => {
         if (active) setError(errorMessage(e));
@@ -245,8 +244,8 @@ export default function AchievementsPage() {
                 </button>
               ))}
             </nav>
-            {filter==='획득' && (sample?sampleMedals:medals).length>0 && <section className="honor-shelf">
-              <h3>입상 기록</h3><div className="patch-grid">{(sample?sampleMedals:medals).map(m=>
+            {filter==='획득' && medals.length>0 && <section className="honor-shelf">
+              <h3>입상 기록</h3><div className="patch-grid">{medals.map(m=>
                 <MedalCard key={m.kind+m.start} medal={m}/>)}</div>
             </section>}
             <div className="patch-grid">
@@ -281,7 +280,7 @@ export default function AchievementsPage() {
                 );
               })}
             </div>
-            {!sections.length && !(filter==='획득' && (sample?sampleMedals:medals).length) && (
+            {!sections.length && !(filter==='획득' && medals.length) && (
               <p className="patch-empty">
                 {filter === '획득' ? '아직 획득한 배지가 없어요.' : '모든 배지를 모았어요.'}
               </p>

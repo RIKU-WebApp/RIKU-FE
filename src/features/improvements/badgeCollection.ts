@@ -70,7 +70,7 @@ export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
   };
   const known = new Set<string>();
   const granted = new Set(a.badges.map((b) => b.code));
-  const series = definitions.map((d) =>
+  const series = definitions.filter(d => sample || d.id !== 'monthlyRank').map((d) =>
     d.levels.map((target, i) => {
       const id = (d.prefix ?? d.id) + '_' + target;
       known.add(id);
@@ -92,7 +92,7 @@ export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
       };
     })
   );
-  for (const b of a.badges.filter((b) => !known.has(b.code)))
+  for (const b of a.badges.filter((b) => !known.has(b.code) && (sample || !b.code.startsWith('monthlyRank_'))))
     series.push([
       {
         id: b.code,
