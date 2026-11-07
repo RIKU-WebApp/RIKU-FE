@@ -1,6 +1,7 @@
 import { request, errorMessage } from '../features/improvements/shared';
 import { previewFeaturesEnabled } from '../shared/config/features';
 import React, { useMemo, useRef, useState, useEffect, useLayoutEffect } from 'react';
+import { RecentCertificates } from '../features/improvements/SavedCertificates';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DayPicker } from 'react-day-picker';
 import { ko } from 'date-fns/locale';
@@ -310,6 +311,7 @@ const RecordPage: React.FC = () => {
           <img src={BackIcon} alt="뒤로가기" className="w-6 h-6" />
         </button>
       </div>
+      {previewFeaturesEnabled && step === 1 && <RecentCertificates/>}
       {/* 1단계: 입력 */}
       {step === 1 && (
         <section className="space-y-6 p-4 pt-0">

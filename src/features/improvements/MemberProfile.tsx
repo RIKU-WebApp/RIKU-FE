@@ -4,17 +4,18 @@ import { badgeCondition } from './badgeCondition';
 import { BadgePatch } from './BadgePatch';
 import type { Motif } from './badgeCollection';
 import catalog from './badgeSeries.json';
-import type { RankMedal } from './RankMedals';
+import { type RankMedal, medalPeriod, orderedRanks, rankPalette, RankPatch } from './RankMedals';
 import { errorMessage, request, type Badge } from './shared';
 import './rankMedals.css';
 import './memberProfile.css';
 
 type Profile = { name: string; badges: Badge[]; medals: RankMedal[] };
-type Item = { key: string; title: string; detail: string; art: React.ReactNode };
+type Item = { key: string; title: string; period?: string; accent?: string; detail: string; art: React.ReactNode };
 
-function earnedItems(profile: Profile): Item[] {
+
+export function earnedItems(badges: Badge[]): Item[] {
   const items: Item[] = [];
-  const grants = new Map(profile.badges.filter(b => !b.code.startsWith('monthlyRank_')).map(b => [b.code, b]));
+  const grants = new Map(badges.filter(b => !b.code.startsWith('monthlyRank_')).map(b => [b.code, b]));
   for (const d of catalog) {
     let best: Item | undefined;
     d.levels.forEach((target, grade) => {
@@ -42,7 +43,6 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
   const [profile, setProfile] = useState<Profile>();
   const [error, setError] = useState('');
   const [attempt, retry] = useState(0);
-  const [expanded, expand] = useState(false);
   const [selected, select] = useState<string>();
   useEffect(() => {
     const el = dialog.current;
@@ -61,19 +61,36 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
       .catch(e => { if (active) setError(errorMessage(e)); });
     return () => { active = false; };
   }, [userId, attempt]);
-  const items = profile ? earnedItems(profile) : [];
+  const ranks: Item[] = profile ? orderedRanks(profile.medals).slice(0, 2).map(m => ({
+    key: m.kind + m.start, title: (m.kind === 'MONTH' ? '월간 ' : '학기 ') + m.place + '위',
+    period: medalPeriod(m), accent: rankPalette(m)[1], art: <RankPatch medal={m}/>,
+    detail: medalPeriod(m) + ' (' + m.achievedOn.replace(/-/g, '.') + ' 달성)',
+  })) : [];
+  const selectedRank = ranks.find(rank => rank.key === selected);
+  const items = profile ? earnedItems(profile.badges) : [];
   const picked = items.find(item => item.key === selected);
+  const rankButton = (rank: Item) => <button className="profile-rank" key={rank.key}
+    style={{borderTopColor:rank.accent}} aria-label={rank.title + ', ' + rank.period}
+    aria-pressed={selected === rank.key} onClick={() => select(selected === rank.key ? undefined : rank.key)}>
+    {rank.art}<span>{rank.title}</span>
+  </button>;
   return <dialog ref={dialog} className="riku-dialog member-profile" aria-labelledby={heading}
     onCancel={onClose} onClick={e => { if (e.target === dialog.current) onClose(); }}>
     <div className="profile-body">
-      <button className="dialog-close" onClick={onClose} aria-label="프로필 닫기">×</button>
+      <div className="profile-heading">
       <h2 id={heading}>{profile?.name ?? '프로필'}</h2>
+      {ranks.length > 0 && <div className="profile-ranks" aria-label="입상 배지">
+        {ranks.map(rankButton)}
+      </div>}
+      <button className="dialog-close" onClick={onClose} aria-label="프로필 닫기">×</button>
+      </div>
+      {selectedRank && <div className="profile-detail" role="status"><strong>{selectedRank.title}</strong><p>{selectedRank.detail}</p></div>}
       {error ? <p role="alert">{error} <button onClick={() => retry(i => i + 1)}>다시 시도</button></p>
         : !profile ? <p role="status">불러오는 중…</p>
-        : items.length === 0 ? <p>아직 획득한 배지가 없어요.</p>
+        : items.length === 0 ? (ranks.length ? null : <p>아직 획득한 배지가 없어요.</p>)
         : <>
           <h3>획득 배지</h3>
-          <div className="profile-shelf">{(expanded ? items : items.slice(0, 6)).map(item =>
+          <div className="profile-shelf">{items.map(item =>
             <button key={item.key} aria-label={item.title} aria-pressed={selected === item.key}
               onClick={() => select(selected === item.key ? undefined : item.key)}>
               {item.art}<span>{item.title}</span>
@@ -83,9 +100,6 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
               <strong>{picked.title}</strong><p>{picked.detail}</p>
             </div>}
           </div>
-          {items.length > 6 && <button className="profile-more" onClick={() => { expand(!expanded); select(undefined); }}>
-            {expanded ? '접기' : '배지 모두 보기 (' + items.length + ')'}
-          </button>}
         </>}
     </div>
   </dialog>;

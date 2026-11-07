@@ -142,7 +142,9 @@ export function PatchFrame({motif:m, palette:[base, accent, light], rankFrame, c
         ? frames.road
         : frames.summit);
   return (
-    <svg aria-hidden="true" focusable="false" viewBox={semester ? "0 0 100 115" : "0 0 100 102"} className="patch-art">
+    <svg aria-hidden="true" focusable="false"
+      viewBox={semester ? "-8.5 -2 117 119.34" : rankFrame ? "-3.5 -3.2 107 109.14" : "0 0 100 102"}
+      className="patch-art">
       <defs>
         <linearGradient id={metal} x2="1" y2="1" gradientUnits="objectBoundingBox">
           <stop stopColor={light} />
