@@ -1,3 +1,4 @@
+import { getRankHonors } from './rankHonorsApi';
 import { useEffect, useRef, useState } from 'react';
 import { Check, ChevronRight, LockKeyhole, X } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
@@ -106,7 +107,7 @@ export default function AchievementsPage() {
     Promise.all([
       request<Progress>('get', '/user/activity/badge-progress'),
       request<Activity>('get', '/user/activity/badges'),
-      request<RankMedal[]>('get', '/user/activity/rank-honors'),
+      getRankHonors(),
     ])
       .then((r) => {
         if (active) setLive(r);

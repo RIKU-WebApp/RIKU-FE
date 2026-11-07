@@ -1,3 +1,4 @@
+import { getRankHonors } from './rankHonorsApi';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Image, MessageSquare } from 'lucide-react';
@@ -13,7 +14,7 @@ export default function MyBadgePreview() {
   const [failed, setFailed] = useState(false);
   useEffect(() => {
     let active = true;
-    request<RankMedal[]>('get','/user/activity/rank-honors').then(r=>{if(active)setRanks(r);}).catch(()=>{if(active)setFailed(true);});
+    getRankHonors().then(r=>{if(active)setRanks(r);}).catch(()=>{if(active)setFailed(true);});
     request<{badges: Badge[]}>('get', '/user/activity/badges')
       .then(activity => { if (active) setBadges(activity.badges); })
       .catch(() => { if (active) setFailed(true); });
