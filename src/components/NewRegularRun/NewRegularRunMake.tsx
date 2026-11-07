@@ -1,4 +1,5 @@
-import { GroupLimit, makePlans, nextGroup } from '../../features/improvements/PaceGroups';
+import { CapacityNote, GroupLimit, makePlans, nextGroup } from '../../features/improvements/PaceGroups';
+import { TotalCapacityInput } from '../../features/improvements/TotalCapacityInput';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
@@ -261,7 +262,7 @@ function NewRegularRunMake() {
         ></textarea>
 
         {previewFeaturesEnabled && <div className="flex gap-3 my-4">
-          <label className="flex-1 text-sm">총정원<input aria-label="총정원" className="border rounded-lg w-full p-2 mt-2" type="number" min={1} max={1000} placeholder="제한 없음" value={capacity} onChange={e => setCapacity(e.target.value)}/></label>
+          <div className="flex-1 text-sm"><TotalCapacityInput rows={pacerGroups} value={capacity} onChange={setCapacity} /></div>
         </div>}
         {/* 러닝 그룹 입력 UI */}
         <div className="flex flex-col items-center w-full max-w-md p-4 bg-white rounded-lg relative">
@@ -328,6 +329,7 @@ function NewRegularRunMake() {
           >
             그룹 추가
           </button>
+          <CapacityNote />
 
           {isBottomSheetOpen && (
             <motion.div

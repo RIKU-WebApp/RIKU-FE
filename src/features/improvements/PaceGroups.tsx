@@ -26,6 +26,10 @@ export function appendPlans(data: FormData, rows: GroupRow[]) {
     });
   });
 }
+export function CapacityNote() {
+  return <p className="mt-2 text-xs text-gray-500">그룹에 자리가 있어도 총정원이 차면 대기 신청됩니다.</p>;
+}
+
 export function GroupLimit({ row, onChange }: { row: GroupRow; onChange: (s: string) => void }) {
   return <input aria-label={row.id + '그룹 정원'} type="number" min={1} max={1000}
     className="w-14 rounded border p-1 text-center" placeholder="제한 없음" value={row.capacity ?? ''} onChange={e => onChange(e.target.value)} />;
@@ -44,5 +48,6 @@ export function PaceGroups({ rows, onChange }: { rows: GroupRow[]; onChange: (r:
       <td><button type="button" aria-label={row.id + '그룹 삭제'} onClick={() => onChange(rows.filter(r => r.id !== row.id))}>×</button></td>
     </tr>)}</tbody></table>}
     <button type="button" disabled={!next} className="mt-2 w-full rounded-lg border py-2" onClick={() => next && onChange([...rows,{id:next,distance:'',pace:''}])}>그룹 추가</button>
+    <CapacityNote />
   </section>;
 }

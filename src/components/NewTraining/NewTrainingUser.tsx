@@ -1,3 +1,4 @@
+import { seatsLabel, totalLabel } from '../../features/improvements/availableSeats';
 import { useRunQueue, WaitingNames } from '../../features/improvements/RunWaitlist';
 import ShareRun from '../../features/improvements/ShareRun';
 import React, { useState, useEffect } from 'react';
@@ -267,7 +268,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
   const handleOpenGroupModal = async () => {
     setIsGroupModalOpen(true);
     if (waitlist.queue?.groups?.length) {
-      setGroupList(waitlist.queue.groups.map(g => ({group:g.name, pace:g.pace + (g.capacity == null ? '' : '　' + g.capacity + '명')})));
+      setGroupList(waitlist.queue.groups.map(g => ({group:g.name, pace:g.pace})));
       return;
     }
     try {
@@ -747,7 +748,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
             className="w-[327px] h-14 rounded-lg bg-kuGreen text-white font-bold mt-6 mb-6"
             onClick={handleOpenGroupModal}
           >
-            참여하기
+            {waitlist.seats?.total === 0 ? '대기 신청' : '참여하기'}
           </button>
         )}
       </div>
@@ -762,6 +763,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
               ×
             </button>
             <h2 className="text-[16px] mb-4">훈련 그룹을 선택해주세요.</h2>
+            {!userStatus && totalLabel(waitlist.seats?.total) && <p className="mb-3 text-sm text-kuDarkGreen">{totalLabel(waitlist.seats?.total)}</p>}
 
             {/* 그룹 선택 옵션 */}
             <div className="flex justify-center">
@@ -803,6 +805,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
                         </span>
                       </div>
 
+                      {!userStatus && waitlist.seats && (waitlist.seats.total !== Infinity || waitlist.queue?.groups.some(g => g.name === group.group && g.capacity != null)) && <small className="ml-auto mr-2 text-kuDarkGreen">{seatsLabel(waitlist.seats.forGroup(group.group))}</small>}
                       {/* 오른쪽 체크 아이콘 */}
                       {isSelected && (
                         <img
@@ -820,8 +823,9 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
             <button
               className="mt-5 w-full py-3 bg-kuDarkGreen text-white rounded-lg"
               onClick={handleJoinConfirm}
+              disabled={!userStatus && !selectedGroup}
             >
-              확인
+              {!userStatus && waitlist.seats?.forGroup(selectedGroup) === 0 ? '대기 신청' : '확인'}
             </button>
 
             {/* 에러 메시지 */}
