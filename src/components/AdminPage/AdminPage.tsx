@@ -22,6 +22,8 @@ function AdminPage() {
   const navigate = useNavigate(); //useNavigate 훅을 사용해 navigate 함수 생성
 
   //필요한 state 정의
+  const [search, setSearch] = useState('');
+  const query = search.trim().normalize('NFC').toLocaleLowerCase();
   const [members, setMembers] = useState<Member[]>([]);
   const [editedMembers, setEditedMembers] = useState<Member[]>([]);
   const [roleChangedMembers, setRoleChangedMembers] = useState<Member[]>([]); //역할 바뀐 놈들 저장
@@ -187,7 +189,11 @@ function AdminPage() {
   //editedMembers state를 초기화하는 프로세스를 핸들링하는 메소드 handleReset
   function handleReset() {
     setEditedMembers([...members]);
+    setRoleChangedMembers([]);
+    setSortConfig(null);
   }
+
+  const visible = editedMembers.flatMap((member, index) => !query || member.userName.normalize('NFC').toLocaleLowerCase().includes(query) ? [{ member, index }] : []);
 
   //마이 페이지로 돌아가는 버튼
   function handleToMyPage() {
@@ -207,6 +213,7 @@ function AdminPage() {
         </span>
         <span className="text-sm font-bold">총 인원: {members.length}명</span>
       </div>
+      <input type="search" aria-label="부원 이름 검색" placeholder="부원 이름 검색" value={search} onChange={e => setSearch(e.target.value)} className="my-3 w-full max-w-xs rounded border px-3 py-2" />
       <div className="overflow-x-auto">
         <table className="table-auto w-[1220px] text-left border-collapse">
           {/*표 상단의 header 부분 렌더링*/}
@@ -249,8 +256,9 @@ function AdminPage() {
           </thead>
           {/*표 하단의 회원 정보 출력하는 부분 렌더링*/}
           <tbody>
-            {editedMembers.map((member, index) => (
-              <tr key={index}>
+            {query && !visible.length && <tr><td colSpan={9} className="py-4 text-center">검색 결과가 없습니다.</td></tr>}
+            {visible.map(({member, index}) => (
+              <tr key={member.studentId}>
                 <td className="px-4 py-2 border-b">{member.studentId}</td>
                 <td className="px-4 py-2 border-b">{member.userName}</td>
                 <td className="px-4 py-2 border-b">{member.college}</td>
