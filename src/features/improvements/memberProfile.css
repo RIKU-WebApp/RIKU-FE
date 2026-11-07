@@ -17,3 +17,10 @@
 .member-profile .patch-art { width: min(100%, 64px); height: auto; }
 .profile-shelf .honor-card { width: 100%; }
 .profile-detail { grid-column: 1 / -1; border-radius: 8px; background: #eeede3; padding: 10px 12px; font-size: 14px; }
+
+.rank-collection {margin-top:8px;}
+.rank-disclosure {width:100%;display:flex;justify-content:space-between;align-items:center;min-height:38px;color:#345943;font-size:13px;border-bottom:1px solid #d9dfd5;}
+.rank-disclosure b,.rank-collection h3 small {font-size:12px;color:#637366;}
+.all-rank-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+.all-rank-grid .profile-rank {width:100%;padding:5px 2px;}
+.all-rank-grid small {font-size:11px;color:#53665a;display:block;text-align:center;}

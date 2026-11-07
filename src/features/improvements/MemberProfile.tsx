@@ -11,7 +11,7 @@ import './memberProfile.css';
 
 type Profile = { name: string; badges: Badge[]; medals: RankMedal[] };
 type Item = { key: string; title: string; period?: string; accent?: string; detail: string; art: React.ReactNode };
-
+const previewLimit = 2;
 
 export function earnedItems(badges: Badge[]): Item[] {
   const items: Item[] = [];
@@ -43,6 +43,7 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
   const [profile, setProfile] = useState<Profile>();
   const [error, setError] = useState('');
   const [attempt, retry] = useState(0);
+  const [expanded, expand] = useState(false);
   const [selected, select] = useState<string>();
   useEffect(() => {
     const el = dialog.current;
@@ -61,30 +62,43 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
       .catch(e => { if (active) setError(errorMessage(e)); });
     return () => { active = false; };
   }, [userId, attempt]);
-  const ranks: Item[] = profile ? orderedRanks(profile.medals).slice(0, 2).map(m => ({
+  const ranks = profile ? orderedRanks(profile.medals).map(m => ({
+    kind: m.kind,
     key: m.kind + m.start, title: (m.kind === 'MONTH' ? '월간 ' : '학기 ') + m.place + '위',
     period: medalPeriod(m), accent: rankPalette(m)[1], art: <RankPatch medal={m}/>,
-    detail: medalPeriod(m) + ' (' + m.achievedOn.replace(/-/g, '.') + ' 달성)',
+    detail: m.achievedOn.replace(/-/g, '.') + ' 달성',
   })) : [];
   const selectedRank = ranks.find(rank => rank.key === selected);
   const items = profile ? earnedItems(profile.badges) : [];
   const picked = items.find(item => item.key === selected);
-  const rankButton = (rank: Item) => <button className="profile-rank" key={rank.key}
+  const rankButton = (rank: Item, full = false) => <button className="profile-rank" key={rank.key}
     style={{borderTopColor:rank.accent}} aria-label={rank.title + ', ' + rank.period}
     aria-pressed={selected === rank.key} onClick={() => select(selected === rank.key ? undefined : rank.key)}>
-    {rank.art}<span>{rank.title}</span>
+    {rank.art}<span>{rank.title}</span>{full && <small>{rank.period}</small>}
   </button>;
   return <dialog ref={dialog} className="riku-dialog member-profile" aria-labelledby={heading}
     onCancel={onClose} onClick={e => { if (e.target === dialog.current) onClose(); }}>
     <div className="profile-body">
       <div className="profile-heading">
       <h2 id={heading}>{profile?.name ?? '프로필'}</h2>
-      {ranks.length > 0 && <div className="profile-ranks" aria-label="입상 배지">
-        {ranks.map(rankButton)}
+      {ranks.length > 0 && !expanded && <div className="profile-ranks" aria-label="입상 배지">
+        {ranks.slice(0, previewLimit).map(rank => rankButton(rank))}
       </div>}
       <button className="dialog-close" onClick={onClose} aria-label="프로필 닫기">×</button>
       </div>
-      {selectedRank && <div className="profile-detail" role="status"><strong>{selectedRank.title}</strong><p>{selectedRank.detail}</p></div>}
+      {ranks.length > previewLimit && <div className="rank-collection">
+        <button className="rank-disclosure" aria-expanded={expanded} aria-controls={heading+'-collection'} onClick={()=>{expand(!expanded);select(undefined);}}>
+          <span>입상 배지 <b>{ranks.length}</b></span><span>{expanded?'접기':'전체보기'} {expanded?'⌃':'⌄'}</span>
+        </button>
+        <div id={heading+'-collection'} hidden={!expanded}>{expanded && (['SEMESTER', 'MONTH'] as const).map(kind =>{
+          const group=ranks.filter(rank => rank.kind === kind);
+          return group.length>0 && <section key={kind}><h3>{kind === 'SEMESTER' ? '학기' : '월간'} <small>{group.length}</small></h3>
+            <div className="all-rank-grid">{group.map(r=><div key={r.key}>{rankButton(r,true)}
+              {selected===r.key && <small role="status">{r.detail}</small>}
+            </div>)}</div></section>;
+        })}</div>
+      </div>}
+      {selectedRank && !expanded && <div className="profile-detail" role="status"><strong>{selectedRank.title}</strong><p>{selectedRank.period} ({selectedRank.detail})</p></div>}
       {error ? <p role="alert">{error} <button onClick={() => retry(i => i + 1)}>다시 시도</button></p>
         : !profile ? <p role="status">불러오는 중…</p>
         : items.length === 0 ? (ranks.length ? null : <p>아직 획득한 배지가 없어요.</p>)
