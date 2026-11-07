@@ -104,7 +104,7 @@ const EditableAttendanceList = forwardRef<
             const now = new Date();
             const postKST = new Date(new Date(postDate).getTime() + 9 * 60 * 60 * 1000);
             if (now < postKST) {
-              alert('아직 명단 수정을 할 수 없습니다.');
+              alert('참가자의 출석 여부는 집합 시간부터 수정할 수 있습니다.');
               return;
             }
           }
