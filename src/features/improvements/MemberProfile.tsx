@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { badgeCondition } from './badgeCondition';
 import { BadgePatch } from './BadgePatch';
 import type { Motif } from './badgeCollection';
 import catalog from './badgeSeries.json';
@@ -22,7 +23,7 @@ function earnedItems(profile: Profile): Item[] {
       const tier = d.tiers[grade];
       best = {
         key: code, title: d.name + ' ' + tier,
-        detail: [d.rule, d.conditions?.[grade] ?? (target + d.unit)].join(' — '),
+        detail: badgeCondition(d, grade),
         art: <BadgePatch patch={{ motif: d.motif as Motif, grade, single: d.levels.length === 1 }} />,
       };
     });
