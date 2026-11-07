@@ -1,7 +1,16 @@
-import type { CSSProperties } from 'react';
+import { type CSSProperties, type ReactNode } from 'react';
+import {rankSeason, SeasonMark} from './rankSeasons';
 import { PatchFrame, metals } from './BadgePatch';
 
 export type RankMedal = {kind:'MONTH'|'SEMESTER';start:string;achievedOn:string;place:number};
+
+
+export function orderedRanks(medals: readonly RankMedal[]) {
+  return [...medals].sort((a, b) => {
+    if (a.kind !== b.kind) return a.kind === 'SEMESTER' ? -1 : 1;
+    return b.achievedOn.localeCompare(a.achievedOn) || b.start.localeCompare(a.start) || a.place - b.place;
+  });
+}
 export const sampleMedals: RankMedal[] = [
   {kind:'MONTH',start:'2026-10-01',achievedOn:'2026-10-31',place:1},
   {kind:'MONTH',start:'2026-09-01',achievedOn:'2026-09-30',place:3},
@@ -42,13 +51,33 @@ function PeriodStamp({medal, ink, base}:{medal:RankMedal;ink:string;base:string}
   </g>;
 }
 
-export function MedalCard({medal, stamped=true}:{medal:RankMedal;stamped?:boolean}) {
+export function rankPalette(medal: RankMedal) {
+  return metals[(medal.kind === 'SEMESTER' ? 6 : 3) - medal.place];
+}
+
+// Monthly patches share their term's edge motif. Keep the number and date area clear.
+const termMarks = [
+  'M20 55q7-6 11-21q-12 4-11 21Zm0 0 8-15', // leaf
+  'm20 38 10 6-10 6m0 0 10 6-10 6',          // switchbacks
+  'M21 59V39l10-5v14l-10 5m1-8 8-4',         // pennant
+  'M19 54q1-12 6-8t6-10m-12 25q1-12 6-8t6-10', // waves
+];
+
+export function LegacyTermMark({medal, accent}: {medal: RankMedal; accent: string}) {
+  const [year, month] = medal.start.split('-').map(Number);
+  const schoolYear = month < 3 ? year - 1 : year;
+  const secondTerm = month >= 9 || month < 3;
+  const index = (schoolYear * 2 + Number(secondTerm)) % termMarks.length;
+  return <g fill="none" stroke={accent} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+    <path d={termMarks[index]}/><path d={termMarks[index]} transform="translate(100 0) scale(-1 1)"/>
+  </g>;
+}
+
+export function RankPatch({medal, stamped=true, edgeDetail}:{medal:RankMedal;stamped?:boolean;edgeDetail?:ReactNode}) {
   const semester = medal.kind === 'SEMESTER';
-  const grade = (semester ? 6 : 3)-medal.place;
-  const palette = metals[grade];
+  const palette = rankPalette(medal);
   const [base,accent,light] = palette;
-  return <div className="honor-card" style={{'--edge':accent} as CSSProperties}>
-    <PatchFrame motif={semester?'flag':'track'} palette={palette} rankFrame={semester?'semester':'monthly'}>
+  return <PatchFrame motif={semester?'flag':'track'} palette={palette} rankFrame={semester?'semester':'monthly'}>
       {semester ? <>
         <SemesterStar accent={accent} light={light}/>
         <path d={stamped?"m28 66 9 5-1 3-8-5zm44 0-9 5 1 3 8-5z":"m26 65 24 13 24-13v5L50 83 26 70z"} fill={accent}/>
@@ -58,11 +87,18 @@ export function MedalCard({medal, stamped=true}:{medal:RankMedal;stamped?:boolea
         <path d="M21 42q3-14 18-15h18m22 31q-4 14-19 14H42" strokeWidth="1.3"/>
         <path d="m34 24 .5 5m4-6 .5 5" stroke={light} strokeWidth="2"/>
       </g>}
+      {edgeDetail ?? (rankSeason(medal) ? <SeasonMark medal={medal} accent={accent} light={light}/> : <LegacyTermMark medal={medal} accent={accent}/>)}
       <path d={digits[medal.place]} transform={stamped?'translate(0 -1.5)':semester?'translate(0 2)':undefined}
         fill="none" stroke={light} strokeWidth="6.3" strokeLinecap="square" strokeLinejoin="bevel"/>
       {stamped && <PeriodStamp medal={medal} ink={light} base={base}/>}
       {!semester && !stamped && <path d="M43 82h14" stroke={accent} strokeWidth="2"/>}
-    </PatchFrame>
+    </PatchFrame>;
+}
+
+export function MedalCard({medal, stamped=true}:{medal:RankMedal;stamped?:boolean}) {
+  const semester = medal.kind === 'SEMESTER';
+  return <div className="honor-card" style={{'--edge':rankPalette(medal)[1]} as CSSProperties}>
+    <RankPatch medal={medal} stamped={stamped}/>
     <strong>{semester?'학기':'월간'} {medal.place}위</strong>
     <span>{medalPeriod(medal)}</span>
     <small><time dateTime={medal.achievedOn}>{medal.achievedOn.replace(/-/g,'.')}</time> 달성</small>

@@ -5,7 +5,7 @@ import { Header, errorMessage, request } from './shared';
 import { collection, earned, type Activity, type Patch, type Progress } from './badgeCollection';
 import { minimumTarget } from './badgeCondition';
 import { BadgePatch } from './BadgePatch';
-import { MedalCard, sampleMedals } from './RankMedals';
+import { MedalCard, sampleMedals, orderedRanks, type RankMedal } from './RankMedals';
 import './badgeBook.css';
 import './rankMedals.css';
 
@@ -91,13 +91,13 @@ function Detail({
   );
 }
 export default function AchievementsPage() {
-  const [params, setParams] = useSearchParams();
+  const [params] = useSearchParams();
   const sample = import.meta.env.DEV && params.get('sample') === '1';
-  const [live, setLive] = useState<[Progress, Activity]>();
+  const [live, setLive] = useState<[Progress, Activity, RankMedal[]]>();
   const [error, setError] = useState('');
   const [attempt, retry] = useState(0);
   const [filter, setFilter] = useState<(typeof filters)[number]>(params.get('filter')==='earned'?'획득':'전체');
-  const medals = sample ? sampleMedals : [];
+  const medals = orderedRanks(sample ? sampleMedals : live?.[2] ?? []);
   const [detail, setDetail] = useState<Patch>();
   useEffect(() => {
     if (sample) return;
@@ -106,6 +106,7 @@ export default function AchievementsPage() {
     Promise.all([
       request<Progress>('get', '/user/activity/badge-progress'),
       request<Activity>('get', '/user/activity/badges'),
+      request<RankMedal[]>('get', '/user/activity/rank-honors'),
     ])
       .then((r) => {
         if (active) setLive(r);
@@ -136,27 +137,12 @@ export default function AchievementsPage() {
           : (highest(f) ?? (filter === '전체' ? f[0] : undefined)),
     }))
     .filter((s) => s.card !== undefined);
-  if(filter==='획득'){
-    const priority=(p:Patch)=>p.grade===5 || p.single ? 0 : 1;
-    sections.sort((a,b)=>priority(a.card!)-priority(b.card!));
-  }
   return (
     <main className="riku-page patch-book">
-      <Header title="배지 관리" back="/record/archive" />
+      <Header title="배지 관리" />
       <div className="patch-wrap">
         <div className="patch-page-title">
           <h2>{sample ? '예시 배지첩' : '내 배지첩'}</h2>
-          {import.meta.env.DEV && (
-            <button
-              onClick={() => {
-                setParams(sample ? {} : { sample: '1' }, { replace: true });
-                setFilter('전체');
-                setDetail(undefined);
-              }}
-            >
-              {sample ? '내 배지 보기' : '예시 보기'} <ChevronRight size={14} />
-            </button>
-          )}
         </div>
         {!data ? (
           error ? (
@@ -235,11 +221,8 @@ export default function AchievementsPage() {
                 </button>
               ))}
             </nav>
-            {filter==='획득' && medals.length>0 && <section className="honor-shelf">
-              <h3>입상 기록</h3><div className="patch-grid">{medals.map(m=>
-                <MedalCard key={m.kind+m.start} medal={m}/>)}</div>
-            </section>}
             <div className="patch-grid">
+              {filter !== '미획득' && medals.map(m => <MedalCard key={m.kind+m.start} medal={m}/>)}
               {sections.map(({ f, card }) => {
                 const p = card!;
                 return (

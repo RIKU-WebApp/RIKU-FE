@@ -1,10 +1,11 @@
-import { useState, useEffect, useMemo } from 'react';
+import { Fragment, useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom'; // Link 컴포넌트 import
 import profile_Img from '@assets/default_profile.png'; //이미지 불러오기
 import rightArrow_Icon from '@assets/right_arrow.svg'; //라이쿠 로고 불러오기
 import customAxios from '@/shared/lib/customAxios';
 import { logout } from '@features/auth/api/tokenAuth';
 import { previewFeaturesEnabled } from '../shared/config/features';
+import MyBadgePreview from '../features/improvements/MyBadgePreview';
 
 import {
   format,
@@ -87,6 +88,7 @@ function MyPage() {
   });
   const [isUserInfoLoaded, setIsUserInfoLoaded] = useState(false); //유저 정보 로딩 여부
   const [attendChecked, setAttendChecked] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   //오늘 날짜 기준으로 한달 치 날짜 만들기 (추후, "출석체크" 캘린더에서 사용할 예정)
   const pointDate = useMemo(() => new Date(), []);
@@ -261,15 +263,20 @@ function MyPage() {
       </div>
 
       {/* 오늘의 출석 세션 */}
-      <div className="bg-whiteSmoke p-4 rounded-xl w-full max-w-sm text-center items-center">
-        <p className="text-xl font-extrabold text-gray-800">오늘의 출석</p>
-        <p className="text-base text-gray-500">출석하면 +1P!</p>
+      <div className="bg-whiteSmoke px-4 py-3 mb-4 rounded-xl w-full max-w-sm">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-baseline gap-x-2">
+            <h2 className="text-lg font-bold text-gray-800">오늘의 출석</h2>
+            <span className="text-sm text-gray-600">출석하면 +1P!</span>
+          </div>
+          <button aria-expanded={calendarOpen} onClick={() => setCalendarOpen(!calendarOpen)}
+            className="py-1 text-sm text-gray-600">{calendarOpen ? '달력 접기' : '출석 달력'}</button>
+        </div>
 
         {/* 중첩 map 함수를 사용해서 출석체크 달력을 출력할 것이다(캘린더 렌더링) */}
-        {weeks.map((week, index) => (
-          <>
+        {calendarOpen && weeks.map((week, index) => (
+          <Fragment key={index}>
             <div
-              key={index}
               className="relative grid grid-cols-7 mt-4 mb-4 text-center w-full max-w-sm"
             >
               {week.map((day, subIndex) => {
@@ -306,12 +313,12 @@ function MyPage() {
             </div>
             {/* 마지막 줄이 아닌 경우에만 선을 추가 */}
             {index < weeks.length - 1 && <div className="w-full h-px bg-gray-200" />}
-          </>
+          </Fragment>
         ))}
 
         {/* 출석하기 버튼 */}
         <button
-          className={`w-full mt-4 mb-2 py-3 ${
+          className={`w-full mt-2 py-2 ${
             !isAttendCheckBtnValid()
               ? 'bg-kuDarkGreen hover:bg-kuGreen text-white'
               : 'bg-kuLightGray text-gray-900 cursor-not-allowed'
@@ -323,6 +330,7 @@ function MyPage() {
         </button>
       </div>
 
+      <MyBadgePreview />
       {/* '공지사항' 버튼 */}
       {/* <div className="w-full max-w-sm mt-4">
         {renderButton("공지사항", rightArrow_Icon, handleNoticeClick)}
@@ -338,10 +346,6 @@ function MyPage() {
         {renderButton("FAQ", rightArrow_Icon, handleNoticeClick)}
       </div> */}
 
-      <div className="w-full max-w-sm mt-6 rounded-lg border border-kuLightGray divide-y divide-kuLightGray">
-        {renderButton('기록소', rightArrow_Icon, () => navigate('/record/archive'))}
-        {previewFeaturesEnabled && renderButton('건의사항', rightArrow_Icon, () => navigate('/feedback'))}
-      </div>
       {userInfo.userRole === 'ADMIN' && (
         <section aria-labelledby="admin-menu-title" className="w-full max-w-sm mt-6 overflow-hidden rounded-lg border border-kuDarkGreen">
           <h2 id="admin-menu-title" className="bg-kuDarkGreen px-4 py-3 text-lg font-semibold text-white">관리자 메뉴</h2>

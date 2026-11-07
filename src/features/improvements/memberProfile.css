@@ -1,13 +1,19 @@
 .profile-trigger { display: inline-flex; align-items: center; gap: 10px; width: fit-content; text-align: left; }
 .member-profile.riku-dialog { padding: 0; margin: auto; border-radius: 16px; background: #faf9f4; color: #26392f; }
 .profile-body { position: relative; padding: 22px 18px; }
-.profile-body h2 { padding-right: 32px; }
-.profile-body h3 { margin: 18px 0 8px; font-size: 14px; font-weight: 600; }
+.profile-heading { display: flex; align-items: center; gap: 6px; }
+.profile-heading h2 { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.profile-heading .dialog-close { position: static; flex: none; line-height: 1; padding: 2px 4px 8px; }
+.profile-ranks { display: flex; gap: 3px; max-width: 71%; align-items: center; }
+.profile-ranks .profile-rank { flex: 0 1 65px; min-width: 0; }
+.profile-rank span { white-space: nowrap; }
+.profile-rank { display: grid; flex: 0 0 68px; justify-items: center; row-gap: 1px; padding: 4px 1px; border: 1px solid #d9dbd1; border-top-width: 3px; border-radius: 9px; background: #fffefa; font-size: 12px; }
+.profile-rank[aria-pressed=true] { background: #eeede3; }
+.profile-body h3 { margin: 8px 0 4px; font-size: 14px; font-weight: 600; }
 .profile-body p { margin-top: 8px; font-size: 14px; }
 .profile-shelf { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
-.profile-shelf > button { min-width: 0; display: grid; align-content: start; justify-items: center; padding: 4px; border-radius: 10px; font-size: 12px; }
+.profile-shelf > button { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; justify-items: center; row-gap: 2px; padding: 8px 4px; border-radius: 10px; font-size: 12px; line-height: 1.35; }
 .profile-shelf > button[aria-pressed=true] { outline: 2px solid #54765a; outline-offset: -2px; }
-.profile-shelf .patch-art { width: min(100%, 72px); height: auto; }
+.member-profile .patch-art { width: min(100%, 64px); height: auto; }
 .profile-shelf .honor-card { width: 100%; }
-.profile-more { width: 100%; margin-top: 12px; padding: 8px; font-size: 14px; }
 .profile-detail { grid-column: 1 / -1; border-radius: 8px; background: #eeede3; padding: 10px 12px; font-size: 14px; }

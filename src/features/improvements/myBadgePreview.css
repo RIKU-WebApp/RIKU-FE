@@ -1,0 +1,16 @@
+.my-badge-preview { margin-bottom: 16px; color: #243d31; }
+.my-badge-link { display: block; border: 1px solid #dce2da; border-radius: 12px; padding: 14px 16px; background: #f8faf6; }
+.my-badge-heading, .my-badge-heading span { display: flex; align-items: center; }
+.my-badge-heading { justify-content: space-between; }
+.my-badge-heading h2 { font-size: 18px; font-weight: 700; }
+.my-badge-heading span { font-size: 13px; color: #536756; }
+.my-badge-link p { margin-top: 10px; font-size: 14px; }
+.my-badge-strip { margin-top: 10px; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
+.my-badge-strip > div { display: grid; justify-items: center; gap: 3px; text-align: center; font-size: 13px; }
+.my-badge-strip .patch-art { width: 50px; height: auto; }
+.my-rank-count { margin-top: 8px; font-size: 13px; font-weight: 600; }
+.my-rank-strip { margin-top: 5px; }
+.my-rank-strip > div { gap: 1px; padding: 5px 2px; border: 1px solid #dce2da; border-top-width: 3px; border-radius: 9px; background: #fffefa; }
+.my-rank-strip small { color: #536756; font-size: 11px; }
+.my-shortcuts { display: flex; gap: 8px; margin-top: 8px; }
+.my-shortcuts a { flex: 1; display: flex; justify-content: center; align-items: center; gap: 8px; min-height: 46px; border: 1px solid #dce2da; border-radius: 10px; font-size: 15px; font-weight: 600; }
