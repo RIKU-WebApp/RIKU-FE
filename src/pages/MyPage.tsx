@@ -6,6 +6,7 @@ import customAxios from '@/shared/lib/customAxios';
 import { logout } from '@features/auth/api/tokenAuth';
 import { previewFeaturesEnabled } from '../shared/config/features';
 import MyBadgePreview from '../features/improvements/MyBadgePreview';
+import LocalRunTestButton from '../features/improvements/LocalRunTestButton';
 
 import {
   format,
@@ -63,6 +64,7 @@ function makeCalendarDays(pointDate: Date) {
 //UserInfo의 타입을 명확하게 지정하기 위함
 //--> String, Number와 같이 대문자 타입은 JS의 래퍼 객체 타입, 아래와 같은 상황에선 소문자 써야함!
 interface UserInfo {
+  localRunTestOrigin?: string;
   studentId: string;
   userName: string;
   userProfileImgUrl: string | null;
@@ -123,6 +125,7 @@ function MyPage() {
 
       if (response.data.isSuccess === true) {
         const data = {
+          localRunTestOrigin: response.data.result.localRunTestOrigin,
           studentId: response.data.result.studentId,
           userName: response.data.result.userName,
           userProfileImgUrl: response.data.result.userProfileImgUrl,
@@ -331,6 +334,7 @@ function MyPage() {
       </div>
 
       <MyBadgePreview />
+      <LocalRunTestButton origin={userInfo.localRunTestOrigin} />
       {/* '공지사항' 버튼 */}
       {/* <div className="w-full max-w-sm mt-4">
         {renderButton("공지사항", rightArrow_Icon, handleNoticeClick)}
