@@ -64,7 +64,7 @@ export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
     streak: p.streak,
     hosted: p.hosted,
     verifiedKm: Number(a.verifiedKm),
-    personalKm: Number(a.personalKm),
+    // Personal mileage is paused. Keep previously issued tiers, never infer them from distance.
     checkins: p.checkins,
     fourSeasons: p.fourSeasons,
     certificateDays: p.certificateDays,
@@ -92,7 +92,7 @@ export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
         name: d.name,
         motif: d.motif as Motif,
         target: goal,
-        value: achieved,
+        value: d.id === 'personalKm' ? (granted.has(id) ? goal : 0) : achieved,
         unit: d.unit,
         rule: badgeCondition(d, i),
         grade: i,
@@ -102,8 +102,8 @@ export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
         condition: d.conditions?.[i],
         standing: d.id === 'monthlyRank' ? (p.bestMonthlyRank ? '월간 최고 '+p.bestMonthlyRank+'위' : '집계된 월간 순위 없음') : undefined,
       };
-    })
-  );
+    }).filter(patch => patch.family !== 'personalKm' || granted.has(patch.id))
+  ).filter(family => family.length > 0);
   for (const b of a.badges.filter((b) => !known.has(b.code) && (sample || !b.code.startsWith('monthlyRank_'))))
     series.push([
       {
