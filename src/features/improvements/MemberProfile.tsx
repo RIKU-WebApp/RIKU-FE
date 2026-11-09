@@ -12,11 +12,13 @@ import './memberProfile.css';
 type Profile = { name: string; badges: Badge[]; medals: RankMedal[] };
 type Item = { key: string; title: string; period?: string; accent?: string; detail: string; art: React.ReactNode };
 const previewLimit = 2;
+const profileCatalog = [...catalog].sort((a, b) =>
+  (a.profileOrder ?? Number.MAX_SAFE_INTEGER) - (b.profileOrder ?? Number.MAX_SAFE_INTEGER));
 
 export function earnedItems(badges: Badge[]): Item[] {
   const items: Item[] = [];
   const grants = new Map(badges.filter(b => !b.code.startsWith('monthlyRank_')).map(b => [b.code, b]));
-  for (const d of catalog) {
+  for (const d of profileCatalog) {
     let best: Item | undefined;
     d.levels.forEach((target, grade) => {
       const code = (d.prefix ?? d.id) + '_' + target;

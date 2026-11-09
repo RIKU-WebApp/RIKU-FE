@@ -26,6 +26,7 @@ export interface Progress {
   hosted: number;
   checkins: number;
   fourSeasons: number;
+  seasonVisits?: number[];
   certificateDays: number;
   bestMonthlyRank: number | null;
   byType: Record<string, number>;
@@ -63,7 +64,7 @@ export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
     streak: p.streak,
     hosted: p.hosted,
     verifiedKm: Number(a.verifiedKm),
-    personalKm: Number(a.personalKm),
+    // Personal mileage is paused. Keep previously issued tiers, never infer them from distance.
     checkins: p.checkins,
     fourSeasons: p.fourSeasons,
     certificateDays: p.certificateDays,
@@ -75,13 +76,23 @@ export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
     d.levels.map((target, i) => {
       const id = (d.prefix ?? d.id) + '_' + target;
       known.add(id);
+      let achieved = values[d.id] ?? 0, goal = target;
+      if (i >= 3 && d.id === 'kinds') {
+        const needs = i === 3 ? [3,3,2,2] : [15,15,6,6];
+        achieved = ['REGULAR','FLASH','TRAINING','EVENT'].reduce((n,k,j) => n + Math.min(p.byType[k] ?? 0, needs[j]), 0);
+        goal = needs.reduce((a,b) => a+b, 0);
+      } else if (i >= 3 && d.id === 'fourSeasons') {
+        const need = i === 3 ? 2 : 5;
+        achieved = (p.seasonVisits ?? []).reduce((sum,n) => sum + Math.min(n,need), 0);
+        goal = 4 * need;
+      }
       return {
         id,
         family: d.id,
         name: d.name,
         motif: d.motif as Motif,
-        target,
-        value: values[d.id] ?? 0,
+        target: goal,
+        value: d.id === 'personalKm' ? (granted.has(id) ? goal : 0) : achieved,
         unit: d.unit,
         rule: badgeCondition(d, i),
         grade: i,
@@ -91,8 +102,8 @@ export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
         condition: d.conditions?.[i],
         standing: d.id === 'monthlyRank' ? (p.bestMonthlyRank ? '월간 최고 '+p.bestMonthlyRank+'위' : '집계된 월간 순위 없음') : undefined,
       };
-    })
-  );
+    }).filter(patch => patch.family !== 'personalKm' || granted.has(patch.id))
+  ).filter(family => family.length > 0);
   for (const b of a.badges.filter((b) => !known.has(b.code) && (sample || !b.code.startsWith('monthlyRank_'))))
     series.push([
       {

@@ -150,6 +150,7 @@ const toYMD = (d: Date): string => {
 const RecordPage: React.FC = () => {
   const navigate = useNavigate();
   const saved = useLocation().state?.record as {title:string;date:string;distanceKm:number;minutes:number} | undefined;
+  const [distance,setDistance] = useState<string|null>(saved ? String(saved.distanceKm) : null);
   const savedPace = saved && saved.distanceKm > 0 ? Math.round(saved.minutes * 60 / saved.distanceKm) : 0;
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
@@ -181,6 +182,11 @@ const RecordPage: React.FC = () => {
     const pace = paceToSecondsPerKm(run.paceMM, run.paceSS);
     return calcDistanceKm(total, pace);
   }, [run.timeHH, run.timeMM, run.timeSS, run.paceMM, run.paceSS]);
+
+  const seconds = hmsToSeconds(run.timeHH,run.timeMM,run.timeSS);
+  const pace = paceToSecondsPerKm(run.paceMM,run.paceSS) ||
+    (run.distanceKm > 0 ? Math.round(seconds / run.distanceKm) : 0);
+  const printedPace = pace > 0 ? fmtPace(String(Math.floor(pace/60)),String(pace%60)) : '—';
 
   // 미리보기 캔버스 참조 (640x640)
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -215,7 +221,10 @@ const RecordPage: React.FC = () => {
   const goNext = () => {
     if (!run.title.trim()) return alert('러닝 제목을 입력해 주세요.');
     if (!run.date) return alert('날짜를 선택해 주세요.');
-    setRun((p) => ({ ...p, distanceKm: autoDistance }));
+    const km = distance === null ? Number(autoDistance.toFixed(2)) : Number(distance);
+    if (!Number.isFinite(km) || km < 0 || km > 99999.99 || Number(km.toFixed(2)) !== km)
+      return alert('거리는 0~99,999.99 km 사이에서 소수 둘째 자리까지 입력해 주세요.');
+    setRun((p) => ({ ...p, distanceKm: km }));
     setStep(2);
   };
   const goPrev = () => setStep(1);
@@ -254,6 +263,7 @@ const RecordPage: React.FC = () => {
         const form = new FormData();
         form.append('title', run.title);
         form.append('date', run.date);
+        if (distance !== null || run.distanceKm > 0) form.append('distanceKm', String(run.distanceKm));
         form.append('image', blob, 'certificate.jpg');
         const id = await request<number>('post', '/user/certificates', form);
         navigate('/record/saved/' + id);
@@ -460,15 +470,12 @@ const RecordPage: React.FC = () => {
             </div>
           </div>
 
-          {/* 자동 거리 */}
-          <div>
-            <label className="mb-1 block text-sm font-medium">거리 (자동계산)</label>
-            <input
-              className="w-full rounded-xl border bg-gray-50 p-3"
-              readOnly
-              value={`${autoDistance.toFixed(2)}km`}
-            />
-          </div>
+          <label className="block"><span className="mb-1 block text-sm font-medium">거리 (km)</span>
+            <input type="number" inputMode="decimal" min="0" step="0.01" placeholder="0.00"
+              className="w-full rounded-xl border p-3" value={distance ?? (autoDistance ? autoDistance.toFixed(2) : '')}
+              onChange={e => setDistance(e.target.value || null)} />
+          </label>
+
 
           {/* 사진 (스타일 버튼 + 미리보기) */}
           <div>
@@ -580,8 +587,8 @@ const RecordPage: React.FC = () => {
                   title={run.title}
                   date={fmtDateCompact(run.date)}
                   time={fmtTime(run.timeHH, run.timeMM, run.timeSS)}
-                  pace={fmtPace(run.paceMM, run.paceSS)}
-                  distanceKm={run.distanceKm || autoDistance}
+                  pace={printedPace}
+                  distanceKm={run.distanceKm}
                   photoUrl={run.photoPreview || defalultImg}
                   onImageLoad={() => setImageReady(true)}
                   onImageError={() => setImageReady(true)}
@@ -592,8 +599,8 @@ const RecordPage: React.FC = () => {
                   title={run.title}
                   date={run.date.replaceAll('-', '_')}
                   time={fmtTime(run.timeHH, run.timeMM, run.timeSS)}
-                  pace={fmtPace(run.paceMM, run.paceSS)}
-                  distanceKm={run.distanceKm || autoDistance}
+                  pace={printedPace}
+                  distanceKm={run.distanceKm}
                   photoUrl={run.photoPreview || defalultImg}
                   theme={templateBTheme}
                 />
@@ -602,8 +609,8 @@ const RecordPage: React.FC = () => {
                 <TemplateC
                   date={run.date.replaceAll('-', '.')}
                   time={fmtTime(run.timeHH, run.timeMM, run.timeSS)}
-                  pace={fmtPace(run.paceMM, run.paceSS)}
-                  distanceKm={run.distanceKm || autoDistance}
+                  pace={printedPace}
+                  distanceKm={run.distanceKm}
                   photoUrl={run.photoPreview || defalultImg}
                   theme={templateCTheme}
                 />
@@ -613,8 +620,8 @@ const RecordPage: React.FC = () => {
                   title={run.title}
                   date={run.date.replaceAll('-', '.')} // YYYY.MM.DD
                   time={fmtTime(run.timeHH, run.timeMM, run.timeSS)}
-                  pace={fmtPace(run.paceMM, run.paceSS)}
-                  distanceKm={run.distanceKm || autoDistance}
+                  pace={printedPace}
+                  distanceKm={run.distanceKm}
                   photoUrl={run.photoPreview || defalultImg}
                   theme={templateDTheme}
                 />
@@ -624,8 +631,8 @@ const RecordPage: React.FC = () => {
                   title={run.title}
                   date={run.date.replaceAll('-', '')} // YYYYMMDD
                   time={fmtTime(run.timeHH, run.timeMM, run.timeSS)}
-                  pace={fmtPace(run.paceMM, run.paceSS)}
-                  distanceKm={run.distanceKm || autoDistance}
+                  pace={printedPace}
+                  distanceKm={run.distanceKm}
                   photoUrl={run.photoPreview || defalultImg}
                 />
               )}
