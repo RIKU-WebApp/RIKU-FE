@@ -18,7 +18,8 @@
       "금",
       "플래티넘",
       "다이아"
-    ]
+    ],
+    "profileOrder": 1
   },
   {
     "id": "REGULAR",
@@ -39,7 +40,8 @@
       "금",
       "플래티넘",
       "다이아"
-    ]
+    ],
+    "profileOrder": 3
   },
   {
     "id": "FLASH",
@@ -259,7 +261,8 @@
       "다이아",
       "명예"
     ],
-    "prefix": "CLUB"
+    "prefix": "CLUB",
+    "profileOrder": 2
   },
   {
     "id": "personalKm",
