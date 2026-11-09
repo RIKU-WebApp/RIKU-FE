@@ -14,6 +14,7 @@ export function minimumTarget(target: number, unit: string) {
 
 export function badgeCondition(series: BadgeSeries, grade: number) {
   const target = minimumTarget(series.levels[grade], series.unit);
+  if ((series.id === 'kinds' || series.id === 'fourSeasons') && series.conditions?.[grade]) return series.conditions[grade];
   switch (series.id) {
     case 'visits': return `마감된 클럽 모임에 ${target} 출석`;
     case 'REGULAR':

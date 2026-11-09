@@ -26,6 +26,7 @@ export interface Progress {
   hosted: number;
   checkins: number;
   fourSeasons: number;
+  seasonVisits?: number[];
   certificateDays: number;
   bestMonthlyRank: number | null;
   byType: Record<string, number>;
@@ -75,13 +76,23 @@ export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
     d.levels.map((target, i) => {
       const id = (d.prefix ?? d.id) + '_' + target;
       known.add(id);
+      let achieved = values[d.id] ?? 0, goal = target;
+      if (i >= 3 && d.id === 'kinds') {
+        const needs = i === 3 ? [3,3,2,2] : [15,15,6,6];
+        achieved = ['REGULAR','FLASH','TRAINING','EVENT'].reduce((n,k,j) => n + Math.min(p.byType[k] ?? 0, needs[j]), 0);
+        goal = needs.reduce((a,b) => a+b, 0);
+      } else if (i >= 3 && d.id === 'fourSeasons') {
+        const need = i === 3 ? 2 : 5;
+        achieved = (p.seasonVisits ?? []).reduce((sum,n) => sum + Math.min(n,need), 0);
+        goal = 4 * need;
+      }
       return {
         id,
         family: d.id,
         name: d.name,
         motif: d.motif as Motif,
-        target,
-        value: values[d.id] ?? 0,
+        target: goal,
+        value: achieved,
         unit: d.unit,
         rule: badgeCondition(d, i),
         grade: i,
