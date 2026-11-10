@@ -49,7 +49,7 @@ const ProtectedRoute = () => {
 
   //localStorage에 accessToken이 저장되어 있지 않은 경우, 로그인 페이지로 redirect 시킨다
   if (!isAuthenticated) {
-    return <Navigate to={`/login?next=${encodeURIComponent(location.pathname + location.search)}`} replace />;
+    return <Navigate to={`/login?next=${encodeURIComponent(location.pathname + location.search + location.hash)}`} replace />;
   }
 
   //localStorage에 accessToken이 저장되어 있는 경우, 하위 Route 렌더링

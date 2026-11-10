@@ -7,7 +7,7 @@ import { getAccessToken, getRefreshToken, reissueToken } from '@features/auth/ap
 function useLoginPage() {
   const location = useLocation();
   const next = new URLSearchParams(location.search).get('next');
-  const returnTo = next && /^\/(regular|flash|training|event|tab|record|my-achievements)(\/|$|\?)/.test(next) && !next.includes('\\') ? next : '/tab/main';
+  const returnTo = next && /^\/(regular|flash|training|event|tab|record|my-achievements)(\/|$|[?#])/i.test(next) && !next.includes('\\') ? next : '/tab/main';
   const navigate = useNavigate(); //useNavigate 훅을 사용해 navigate 함수 생성
 
   const [id, setID] = useState<string>(''); //ID state

@@ -79,7 +79,7 @@ customAxios.interceptors.response.use(
       message = '인증이 만료되었습니다. 다시 로그인해주세요.';
       clearAuthStorage();
       if (window.location.pathname !== '/login') {
-        const next = window.location.pathname + window.location.search;
+        const next = window.location.pathname + window.location.search + window.location.hash;
         window.location.replace(`/login?next=${encodeURIComponent(next)}`);
       }
     } else {
