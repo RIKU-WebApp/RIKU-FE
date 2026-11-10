@@ -5,9 +5,24 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/:kind(regular|flash|training|event)/:id([0-9]+)",
+      "source": "/:kind([Rr][Ee][Gg][Uu][Ll][Aa][Rr])/:id([0-9]+)",
       "has": [{ "type": "header", "key": "user-agent", "value": ".*[Kk][Aa][Kk][Aa][Oo][Tt][Aa][Ll][Kk]-[Ss][Cc][Rr][Aa][Pp].*" }],
-      "destination": "https://riku-server.store/public/run-preview/:kind/:id"
+      "destination": "https://riku-server.store/public/run-preview/regular/:id"
+    },
+    {
+      "source": "/:kind([Ff][Ll][Aa][Ss][Hh])/:id([0-9]+)",
+      "has": [{ "type": "header", "key": "user-agent", "value": ".*[Kk][Aa][Kk][Aa][Oo][Tt][Aa][Ll][Kk]-[Ss][Cc][Rr][Aa][Pp].*" }],
+      "destination": "https://riku-server.store/public/run-preview/flash/:id"
+    },
+    {
+      "source": "/:kind([Tt][Rr][Aa][Ii][Nn][Ii][Nn][Gg])/:id([0-9]+)",
+      "has": [{ "type": "header", "key": "user-agent", "value": ".*[Kk][Aa][Kk][Aa][Oo][Tt][Aa][Ll][Kk]-[Ss][Cc][Rr][Aa][Pp].*" }],
+      "destination": "https://riku-server.store/public/run-preview/training/:id"
+    },
+    {
+      "source": "/:kind([Ee][Vv][Ee][Nn][Tt])/:id([0-9]+)",
+      "has": [{ "type": "header", "key": "user-agent", "value": ".*[Kk][Aa][Kk][Aa][Oo][Tt][Aa][Ll][Kk]-[Ss][Cc][Rr][Aa][Pp].*" }],
+      "destination": "https://riku-server.store/public/run-preview/event/:id"
     },
     { "source": "/(.*)", "destination": "/" }
   ]
