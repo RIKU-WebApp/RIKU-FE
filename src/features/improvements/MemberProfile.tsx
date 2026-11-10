@@ -138,6 +138,20 @@ export function ProfileTrigger({ userId, name, className, children }: {
 }
 
 export function ProfileName({ userId, name, editing, photo }: { userId: number; name: string; editing: boolean; photo?: { url?: string | null; size: number } }) {
-  const identity = <>{photo && <span aria-hidden="true" className="shrink-0 rounded-full overflow-hidden bg-gray-400 text-white font-bold flex items-center justify-center" style={{ width: photo.size, height: photo.size }}>{photo.url ? <img src={photo.url} alt="" draggable={false} className="w-full h-full object-cover" /> : name.charAt(0)}</span>}{name}</>;
-  return <ProfileTrigger userId={editing ? undefined : userId} name={name} className="profile-trigger">{identity}</ProfileTrigger>;
+  return (
+    <ProfileTrigger userId={editing ? undefined : userId} name={name} className="profile-trigger">
+      {photo && (
+        <span
+          aria-hidden="true"
+          className="shrink-0 rounded-full overflow-hidden bg-gray-400 text-white font-bold flex items-center justify-center"
+          style={{ width: photo.size, height: photo.size }}
+        >
+          {photo.url
+            ? <img src={photo.url} alt="" draggable={false} className="w-full h-full object-cover" />
+            : name.charAt(0)}
+        </span>
+      )}
+      <span className="truncate">{name}</span>
+    </ProfileTrigger>
+  );
 }

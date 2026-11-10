@@ -120,7 +120,10 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
                 <div
                   className={`flex items-center gap-2.5 w-[288px] h-[52px] px-4 py-2.5 rounded-lg text-base font-medium ${backgroundColor}`}
                 >
-                  <span className="flex-1 text-left"><ProfileName photo={{ url: user.userProfileImg, size: 36 }} userId={user.userId} name={user.userName} editing={isEditMode} />{(user.pacer || user.isPacer) && <span className="role-pill pacer ml-2">페이서</span>}</span>
+                  <span className="flex min-w-0 flex-1 items-center gap-2 text-left">
+                    <ProfileName photo={{ url: user.userProfileImg, size: 36 }} userId={user.userId} name={user.userName} editing={isEditMode} />
+                    {(user.pacer || user.isPacer) && <span className="role-pill pacer shrink-0">페이서</span>}
+                  </span>
 
                   {isEditMode ? (
                     <div
@@ -151,9 +154,9 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
         {waiting.map(entry => (
           <div key={entry.userId} className="flex items-center gap-2 text-left rounded-lg bg-kuLightGray px-4 py-3">
             <span className="text-sm">{entry.group}</span>
-            <span className="flex-1 text-left">
+            <span className="flex min-w-0 flex-1 items-center gap-2 text-left">
               <ProfileName userId={entry.userId} name={entry.name} editing={isEditMode} />
-              {entry.role === 'PACER' && <span className="role-pill pacer ml-2">페이서</span>}
+              {entry.role === 'PACER' && <span className="role-pill pacer shrink-0">페이서</span>}
             </span>
           </div>
         ))}

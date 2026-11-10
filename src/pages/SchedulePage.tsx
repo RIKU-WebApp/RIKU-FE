@@ -512,14 +512,7 @@ function SchedulePage() {
       {/* 플로팅 버튼 */}
       <button
         onClick={toggleFloatingButton}
-        className={`fixed bottom-20 
-    left-1/2 
-    translate-x-[calc(215px-100%-20px)]
-    zfold:translate-x-[calc(215px-100%-50px)]     
-    iphonese:translate-x-[calc(215px-100%-35px)]  
-    iphonepro:translate-x-[calc(215px-100%-30px)]
-    iphonepromax:translate-x-[calc(215px-100%-12px)]
-    lg:translate-x-[calc(215px-100%-10px)]      /* 큰 화면: 오른쪽 네비 옆 */
+        className={`fixed bottom-20 right-[max(16px,calc((100%-430px)/2+10px))]
     w-16 h-16 rounded-full bg-kuDarkGreen text-white
     flex items-center justify-center shadow-lg hover:bg-kuDarkGreen-dark
     focus:outline-none z-50 transition-transform duration-300
@@ -541,13 +534,7 @@ function SchedulePage() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className={`fixed bottom-40 left-1/2 
-        translate-x-[calc(215px-100%-35px)]
-        zfold:translate-x-[calc(215px-100%-60px)]     
-        iphonese:translate-x-[calc(215px-100%-45px)]  
-        iphonepro:translate-x-[calc(215px-100%-35px)]
-        iphonepromax:translate-x-[calc(215px-100%-22px)]
-        lg:translate-x-[calc(215px-100%-20px)] // 데스크탑
+            className={`fixed bottom-40 right-[max(16px,calc((100%-430px)/2+10px))]
         flex flex-col space-y-4 pointer-events-auto`}
           >
             {/* 번개런 일정 추가하기 */}

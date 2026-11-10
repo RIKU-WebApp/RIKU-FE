@@ -22,6 +22,7 @@ interface RunData {
   participants: number;
   postStatus: 'NOW' | 'CANCELED' | 'CLOSED';
   postImageUrl: string;
+  showFullImage?: boolean | null;
 }
 
 const config = {
@@ -96,13 +97,13 @@ const RunList: React.FC = () => {
     <div className="flex flex-col justify-center items-center mx-auto max-w-[430px]">
       {/* 오늘의 러닝 */}
       <div className="relative bg-kuDarkGreen w-full min-h-[268px]">
-        <div className="w-full flex flex-col items-center pt-2">
+        <div className="w-full flex flex-col items-center px-5 pt-2">
           <div className="w-[114px] h-[32px] bg-white text-kuDarkGreen text-[16px] font-bold rounded-xl flex items-center justify-center">
             오늘의 {current.title}
           </div>
 
           {todayRuns.length > 0 ? (
-            <div className="relative w-[335px] mt-3">
+            <div className="relative w-full max-w-[335px] mt-3">
               <Swiper
                 modules={[Pagination, Navigation]}
                 pagination={{
@@ -117,6 +118,7 @@ const RunList: React.FC = () => {
                   return (
                     <SwiperSlide key={run.id}>
                       <TodayRun
+                        showFullImage={runType === 'regular' && run.showFullImage === true}
                         location={run.title}
                         postimg={run.postImageUrl}
                         runDate={kst}
@@ -136,7 +138,7 @@ const RunList: React.FC = () => {
               ></div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center w-[335px] h-[200px] bg-kuLightGray rounded-lg mt-4">
+            <div className="flex flex-col items-center justify-center w-full max-w-[335px] h-[200px] bg-kuLightGray rounded-lg mt-4">
               <p className="text-[18px] font-semibold text-black">
                 현재 진행중인 {current.title}
                 {getSubjectParticle(current.title)} 없습니다.
@@ -152,14 +154,14 @@ const RunList: React.FC = () => {
       </div>
 
       {/* 예정된 러닝 */}
-      <div className="w-[375px] mt-4">
+      <div className="w-full max-w-[375px] mt-4">
         <h2 className="text-[20px] font-semibold ml-5">예정된 {current.title}</h2>
-        <div className="flex flex-col space-y-[12px] mt-[16px] ml-[20px]">
+        <div className="flex flex-col space-y-[12px] mt-[16px] px-5">
           {upcomingRuns.map((run) => {
             const { formattedDate, formattedTime } = toKST(run.date);
             return (
               <ListEventCard
-                compact={runType === 'regular'}
+                showFullImage={runType === 'regular' ? run.showFullImage ?? true : undefined}
                 key={run.id}
                 location={run.title}
                 postimg={run.postImageUrl}
@@ -178,7 +180,7 @@ const RunList: React.FC = () => {
       <div className="w-full h-[8px] bg-kuLightGray mt-[32px]"></div>
 
       {/* 지난 러닝 */}
-      <div className="w-[375px] mt-4 mb-[100px]">
+      <div className="w-full max-w-[375px] mt-4 mb-[100px]">
         <h2 className="text-[20px] font-semibold ml-5">지난 {current.title}</h2>
         <div className="grid grid-cols-3 gap-x-[12px] gap-y-[16px] mt-[20px] px-3">
           {[...pastRuns]
@@ -187,8 +189,9 @@ const RunList: React.FC = () => {
             .map((run) => {
               const { formattedDate } = toKST(run.date);
               return (
-                <div key={run.id} className="justify-self-center">
+                <div key={run.id} className="w-full max-w-[103px] justify-self-center">
                   <PastRuns
+                    showFullImage={runType === 'regular' && run.showFullImage === true}
                     title={run.title}
                     date={formattedDate}
                     peoplecount={String(run.participants)}

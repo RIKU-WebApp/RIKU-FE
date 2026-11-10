@@ -142,12 +142,12 @@ const EditableAttendanceList: React.FC<EditableAttendanceListProps> = ({
         return (
           <div
             key={user.userId}
-            className={`flex items-center gap-3 w-[335px] h-[56px] px-4 py-2.5 rounded-lg ${background}`}
+            className={`flex items-center gap-3 w-full max-w-[335px] h-[56px] px-4 py-2.5 rounded-lg ${background}`}
           >
             {/* 순서 */}
             <div className="w-5 text-center text-gray-500 font-semibold">{index + 1}</div>
 
-            <div className="flex-1 text-left"><ProfileName photo={{ url: user.userProfileImg, size: 40 }} userId={user.userId} name={user.userName} editing={editMode} /></div>
+            <div className="flex min-w-0 flex-1 items-center gap-2 text-left"><ProfileName photo={{ url: user.userProfileImg, size: 40 }} userId={user.userId} name={user.userName} editing={editMode} /></div>
 
             {/* 상태 표시 or 토글 */}
             {editMode ? (
