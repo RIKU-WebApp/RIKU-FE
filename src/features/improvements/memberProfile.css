@@ -1,4 +1,4 @@
-.profile-trigger { display: inline-flex; align-items: center; gap: 10px; width: fit-content; text-align: left; }
+.profile-trigger { display: inline-flex; align-items: center; gap: 10px; width: fit-content; max-width: 100%; min-width: 0; text-align: left; }
 .member-profile.riku-dialog { padding: 0; margin: auto; border-radius: 16px; background: #faf9f4; color: #26392f; }
 .profile-body { position: relative; padding: 22px 18px; }
 .profile-heading { display: flex; align-items: center; gap: 6px; }

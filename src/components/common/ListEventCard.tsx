@@ -1,4 +1,5 @@
 import React from 'react';
+import RunCardImage from './RunCardImage';
 import NOWimg from '../../assets/Main-img/NewOpenStatus.svg';
 import CLODESDimg from '../../assets/Main-img/NewClosedStatus.svg';
 import CANCELEDimg from '../../assets/Main-img/NewCanceledStatus.svg';
@@ -6,18 +7,18 @@ import peopleimg from '../../assets/people_darkgreen.svg';
 import defaultimg from '../../assets/CardDefaultImg.svg';
 
 interface EventCardProps {
-  compact?: boolean;
+  showFullImage?: boolean;
   location: string;
   postimg?: string;
   runState: 'NOW' | 'CANCELED' | 'CLOSED';
   date: string; // 가공된 날짜 문자열 (예: 2025.03.27)
   time: string; // 가공된 시간 문자열 (예: 15:00)
   participants: number;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const ListEventCard: React.FC<EventCardProps> = ({
-  compact = false,
+  showFullImage,
   location,
   postimg,
   runState,
@@ -42,7 +43,7 @@ const ListEventCard: React.FC<EventCardProps> = ({
 
   return (
     <div
-      className={`flex flex-col relative w-[335px] max-w-full ${compact ? "h-[262px]" : "h-[322px]"} bg-kuLightGray rounded-lg cursor-pointer`}
+      className={`flex flex-col relative w-[335px] max-w-full bg-kuLightGray rounded-lg ${onClick ? "cursor-pointer" : ""}`}
       onClick={onClick}
     >
       {/* 상태 뱃지 */}
@@ -54,23 +55,20 @@ const ListEventCard: React.FC<EventCardProps> = ({
       </div>
 
       {/* 참가자 수 */}
-      <div className="absolute top-[20px] left-[280px] flex items-center space-x-1">
+      <div className="absolute top-[20px] right-4 flex items-center space-x-1">
         <img src={peopleimg} className="w-[20px] h-[20px]" alt="참가자" />
         <div className="text-[12px] font-bold text-black/60">{participants}</div>
       </div>
 
       {/* 러닝 장소 또는 제목 */}
-      <div className="absolute top-[64px] left-[16px] text-[20px] font-semibold max-w-[300px] truncate overflow-hidden whitespace-nowrap">
+      <div className="absolute top-[64px] left-[16px] text-[20px] font-semibold right-4 truncate overflow-hidden whitespace-nowrap">
         {location}
       </div>
 
       {/* 러닝 이미지 */}
-      <div className="absolute top-[106px] left-[16px] justify-center">
-        <div className={`w-[303px] ${compact ? "h-[140px]" : "h-[200px]"} overflow-hidden`}>
-          <img
-            className={`w-full h-full rounded-[8px] ${compact ? 'object-contain bg-white' : 'object-cover'}`}
-            src={postimg ? postimg : defaultimg}
-          />
+      <div className="mt-[106px] mx-4 mb-4">
+        <div className={`w-full ${showFullImage !== undefined ? "h-[140px]" : "h-[200px]"} overflow-hidden rounded-[8px]`}>
+          <RunCardImage src={postimg || defaultimg} showFullImage={showFullImage} />
         </div>
       </div>
     </div>

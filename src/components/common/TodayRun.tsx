@@ -1,4 +1,5 @@
 import React from 'react';
+import RunCardImage from './RunCardImage';
 import NOWimg from '../../assets/Main-img/NewOpenStatus.svg';
 import PROGRESSimg from '../../assets/progress.svg';
 import CLODESDimg from '../../assets/Main-img/NewClosedStatus.svg';
@@ -8,6 +9,7 @@ import defaultimg from '../../assets/CardDefaultImg.svg';
 import ARGENTimg from '../../assets/Main-img/NewUrgentStatus.svg';
 
 interface EventCardProps {
+  showFullImage?: boolean;
   location: string;
   postimg?: string;
   runDate: Date; // 호출부에서 표시 시간대에 맞게 변환한 러닝 날짜
@@ -19,6 +21,7 @@ interface EventCardProps {
 }
 
 const NewEventCard: React.FC<EventCardProps> = ({
+  showFullImage,
   location,
   postimg,
   runDate,
@@ -68,7 +71,7 @@ const NewEventCard: React.FC<EventCardProps> = ({
 
   return (
     <div
-      className="flex flex-col relative w-[335px] h-[322px] bg-kuLightGray rounded-lg"
+      className="flex flex-col relative w-full max-w-[335px] h-[322px] bg-kuLightGray rounded-lg"
       onClick={onClick}
     >
       {/* 상태 뱃지 */}
@@ -79,22 +82,19 @@ const NewEventCard: React.FC<EventCardProps> = ({
       </div>
 
       {/* 참가자 수 */}
-      <div className="absolute top-[16px] left-[280px] flex items-center space-x-1">
+      <div className="absolute top-[16px] right-4 flex items-center space-x-1">
         <img src={peopleimg} className="w-[20px] h-[20px]" alt="참가자" />
         <div className="text-[12px] font-bold text-black/60">{participants}</div>
       </div>
 
       {/* 러닝 장소 또는 제목 */}
-      <div className="absolute top-[64px] left-[16px] text-[20px] font-semibold max-w-[300px] truncate overflow-hidden whitespace-nowrap">
+      <div className="absolute top-[64px] left-[16px] text-[20px] font-semibold right-4 truncate overflow-hidden whitespace-nowrap">
         {location}
       </div>
 
       {/* 러닝 이미지 */}
-      <div className="absolute top-[106px] left-[16px] overflow-hidden w-[303px] h-[200px] justify-center">
-        <img
-          className="w-full h-full rounded-[8px] object-cover"
-          src={postimg ? postimg : defaultimg}
-        />
+      <div className="absolute top-[106px] left-[16px] right-4 overflow-hidden rounded-[8px] h-[200px] justify-center">
+        <RunCardImage src={postimg || defaultimg} showFullImage={showFullImage} />
       </div>
     </div>
   );

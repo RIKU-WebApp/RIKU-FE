@@ -1,3 +1,4 @@
+import RegularCoverField from './RegularCoverField';
 import { useOriginalRunFields } from '../../features/improvements/runEdit';
 import { TotalCapacityInput } from '../../features/improvements/TotalCapacityInput';
 import { PaceGroups, fromPlan, appendPlans, type GroupRow } from '../../features/improvements/PaceGroups';
@@ -51,7 +52,11 @@ function NewRegularRunEdit() {
   const [selectedMinutes, setSelectedMinutes] = useState<string>('5');
   const [selectedSeconds, setSelectedSeconds] = useState<string>('30');
   const [mainImage, setMainImage] = useState<File | null>(null);
-  const [mainPreview, setMainPreview] = useState<string | null>(null);
+  const [imageBusy, setImageBusy] = useState(false);
+  const [savedImage, setSavedImage] = useState<string | null>(null);
+  const [savedFit, setSavedFit] = useState<boolean | null>(null);
+  const [participantCount, setParticipantCount] = useState(0);
+  const [editedFit, setEditedFit] = useState<boolean>();
   const [courseImages, setCourseImages] = useState<File[]>([]);
   const [coursePreviews, setCoursePreviews] = useState<string[]>([]);
 
@@ -75,7 +80,10 @@ function NewRegularRunEdit() {
         setTitle(result.title);
         setLocation(result.location);
         setContent(result.content);
-        setMainPreview(result.postImageUrl);
+        setSavedImage(result.postImageUrl);
+        setSavedFit(result.showFullImage ?? null);
+        setEditedFit(undefined);
+        setParticipantCount(result.participantsNum ?? 0);
         setCoursePreviews(result.attachmentUrls || []);
         setAttachmentUrls(result.attachmentUrls || []);
 
@@ -135,28 +143,6 @@ function NewRegularRunEdit() {
       }
     }
     setIsBottomSheetOpen(false);
-  };
-
-  const handleMainImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      try {
-        const compressedFile = await imageCompression(file, {
-          maxSizeMB: 5,
-          maxWidthOrHeight: 1000,
-          useWebWorker: true,
-        });
-
-        const reader = new FileReader();
-        reader.onloadend = () => setMainPreview(reader.result as string);
-        reader.readAsDataURL(compressedFile);
-
-        setMainImage(compressedFile);
-      } catch (error) {
-        console.error('대표 이미지 압축 실패:', error);
-        alert('대표 이미지 압축 중 문제가 발생했습니다.');
-      }
-    }
   };
 
   const handleCourseImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -243,6 +229,7 @@ function NewRegularRunEdit() {
       formData.append('location', location);
       original.appendDate(formData, dateTime.date!, dateTime.time);
       formData.append('content', content);
+      if (editedFit !== undefined) formData.append('showFullImage', String(editedFit));
       if (mainImage) formData.append('postImage', mainImage);
       const fileIdx = 0;
 
@@ -484,44 +471,9 @@ function NewRegularRunEdit() {
         </div>
 
         </fieldset>}
-        {/* 대표 이미지 */}
-        <div className="my-4">
-          <h2 className="mb-2">대표 게시글 사진</h2>
-          <div className="relative w-[104px] h-[104px]">
-            {mainPreview ? (
-              <>
-                <img
-                  src={mainPreview}
-                  alt="대표 이미지"
-                  className="w-full h-full object-cover rounded-md"
-                />
-                <button
-                  onClick={() => {
-                    setMainImage(null);
-                    setMainPreview(null);
-                  }}
-                  className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                >
-                  ✕
-                </button>
-              </>
-            ) : (
-              <label
-                htmlFor="mainImageUpload"
-                className="w-full h-full border border-dashed border-gray-400 flex items-center justify-center text-gray-500 cursor-pointer rounded-md"
-              >
-                +
-              </label>
-            )}
-          </div>
-          <input
-            type="file"
-            id="mainImageUpload"
-            accept="image/*"
-            onChange={handleMainImageUpload}
-            className="hidden"
-          />
-        </div>
+        <RegularCoverField title={title} dateTime={dateTime}
+          savedImage={savedImage} participants={participantCount} showFullImage={editedFit ?? savedFit ?? true} onFitChange={setEditedFit}
+          onFileChange={setMainImage} onBusyChange={setImageBusy} />
 
         {/* 코스 사진 */}
         <div className="my-4">
@@ -562,6 +514,7 @@ function NewRegularRunEdit() {
         </div>
 
         <button
+          disabled={imageBusy}
           onClick={handleSubmit}
           className="w-full bg-[#366943] text-white py-3 rounded-lg mt-4"
         >

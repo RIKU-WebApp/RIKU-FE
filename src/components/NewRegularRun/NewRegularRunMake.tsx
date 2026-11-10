@@ -1,3 +1,4 @@
+import RegularCoverField from './RegularCoverField';
 import { CapacityNote, GroupLimit, makePlans, nextGroup } from '../../features/improvements/PaceGroups';
 import { TotalCapacityInput } from '../../features/improvements/TotalCapacityInput';
 import React, { useState, useEffect } from 'react';
@@ -59,7 +60,8 @@ function NewRegularRunMake() {
   }, []);
 
   const [mainImage, setMainImage] = useState<File | null>(null);
-  const [mainPreview, setMainPreview] = useState<string | null>(null);
+  const [imageBusy, setImageBusy] = useState(false);
+  const [showFullImage, setShowFullImage] = useState(false);
   const [courseImages, setCourseImages] = useState<File[]>([]);
   const [coursePreviews, setCoursePreviews] = useState<string[]>([]);
 
@@ -98,30 +100,6 @@ function NewRegularRunMake() {
       }
     }
     setIsBottomSheetOpen(false);
-  };
-
-  const handleMainImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      const compressedFile = await imageCompression(file, {
-        maxSizeMB: 5,
-        maxWidthOrHeight: 1000,
-        useWebWorker: true,
-      });
-
-      setMainImage(compressedFile);
-
-      const reader = new FileReader();
-      reader.onloadend = () => setMainPreview(reader.result as string);
-      reader.readAsDataURL(compressedFile);
-    } catch (error) {
-      console.error('대표 이미지 압축 실패:', error);
-      alert('대표 이미지 압축 중 오류가 발생했습니다.');
-    }
-
-    e.target.value = ''; // input 초기화
   };
 
   const handleCourseImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -188,11 +166,12 @@ function NewRegularRunMake() {
       const [hours, minutes] = dateTime.time.split(':').map(Number);
       const selected = dateTime.date!;
       const local = new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), hours, minutes);
-      const request = {title, location, content, date: local.toISOString().slice(0,19), capacity: capacity === '' ? null : Number(capacity), groups: makePlans(pacerGroups)};
+      const request = {title, location, content, showFullImage, date: local.toISOString().slice(0,19), capacity: capacity === '' ? null : Number(capacity), groups: makePlans(pacerGroups)};
       const formData = new FormData();
       if (previewFeaturesEnabled) {
         formData.append('request', new Blob([JSON.stringify(request)], {type:'application/json'}));
       } else {
+        formData.append('showFullImage', String(showFullImage));
         formData.append('title', title);
         formData.append('location', location);
         formData.append('content', content);
@@ -396,44 +375,9 @@ function NewRegularRunMake() {
           )}
         </div>
 
-        {/* 대표 이미지 */}
-        <div className="my-4">
-          <h2 className="mb-2">대표 이미지 (필수)</h2>
-          <div className="relative w-[104px] h-[104px]">
-            {mainPreview ? (
-              <>
-                <img
-                  src={mainPreview}
-                  alt="대표 이미지"
-                  className="w-full h-full object-cover rounded-md"
-                />
-                <button
-                  onClick={() => {
-                    setMainImage(null);
-                    setMainPreview(null);
-                  }}
-                  className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                >
-                  ✕
-                </button>
-              </>
-            ) : (
-              <label
-                htmlFor="mainImageUpload"
-                className="w-full h-full border border-dashed border-gray-400 flex items-center justify-center text-gray-500 cursor-pointer rounded-md"
-              >
-                +
-              </label>
-            )}
-          </div>
-          <input
-            type="file"
-            id="mainImageUpload"
-            accept="image/*"
-            onChange={handleMainImageUpload}
-            className="hidden"
-          />
-        </div>
+        <RegularCoverField title={title} dateTime={dateTime}
+          showFullImage={showFullImage} onFitChange={setShowFullImage}
+          onFileChange={setMainImage} onBusyChange={setImageBusy} />
 
         {/* 코스 사진 */}
         <div className="my-4">
@@ -474,7 +418,7 @@ function NewRegularRunMake() {
         </div>
 
         <button
-          disabled={submitting}
+          disabled={submitting || imageBusy}
           onClick={handleSubmit}
           className="w-full bg-[#366943] text-white py-3 rounded-lg mt-4"
         >
