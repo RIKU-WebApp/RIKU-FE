@@ -1,4 +1,5 @@
 import React from 'react';
+import RunCardImage from './RunCardImage';
 import NOWimg from '../../assets/Main-img/NewOpenStatus.svg';
 import CLODESDimg from '../../assets/Main-img/NewClosedStatus.svg';
 import CANCELEDimg from '../../assets/Main-img/NewCanceledStatus.svg';
@@ -66,11 +67,8 @@ const ListEventCard: React.FC<EventCardProps> = ({
 
       {/* 러닝 이미지 */}
       <div className="mt-[106px] mx-4 mb-4">
-        <div className={`w-full ${showFullImage !== undefined ? "h-[140px]" : "h-[200px]"} overflow-hidden`}>
-          <img
-            className={`w-full h-full rounded-[8px] ${showFullImage ? 'object-contain' : 'object-cover'}`}
-            src={postimg ? postimg : defaultimg}
-          />
+        <div className={`w-full ${showFullImage !== undefined ? "h-[140px]" : "h-[200px]"} overflow-hidden rounded-[8px]`}>
+          <RunCardImage src={postimg || defaultimg} showFullImage={showFullImage} />
         </div>
       </div>
     </div>

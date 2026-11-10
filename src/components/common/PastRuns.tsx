@@ -1,4 +1,5 @@
 import React from 'react';
+import RunCardImage from './RunCardImage';
 import sampleimg from '../../assets/pastrunsample.svg';
 import peopleimg from '../../assets/people_darkgreen.svg';
 
@@ -18,7 +19,7 @@ const PastRuns: React.FC<PastRunsProps> = ({ showFullImage, date, peoplecount, t
   return (
     <div className="relative w-full max-w-[103.05px] h-[152px] bg-kuLightGray rounded-xl" onClick={onClick}>
       <div className={`absolute top-0 w-full max-w-[103.05px] ${showFullImage ? "h-[66px]" : "h-[85px]"} overflow-hidden rounded-xl`}>
-        <img className={`w-full h-full ${showFullImage ? 'object-contain' : 'object-cover'} rounded-t-[6.44px]`} src={postimg || sampleimg} />
+        <RunCardImage src={postimg || sampleimg} showFullImage={showFullImage} />
       </div>
       <div className="absolute top-[66px] w-full h-[88px] rounded-xl bg-kuLightGray">
         <div className="relative">

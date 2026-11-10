@@ -1,4 +1,5 @@
 import React from 'react';
+import RunCardImage from './RunCardImage';
 import NOWimg from '../../assets/Main-img/NewOpenStatus.svg';
 import PROGRESSimg from '../../assets/progress.svg';
 import CLODESDimg from '../../assets/Main-img/NewClosedStatus.svg';
@@ -92,11 +93,8 @@ const NewEventCard: React.FC<EventCardProps> = ({
       </div>
 
       {/* 러닝 이미지 */}
-      <div className="absolute top-[106px] left-[16px] right-4 overflow-hidden h-[200px] justify-center">
-        <img
-          className={`w-full h-full rounded-[8px] ${showFullImage ? 'object-contain' : 'object-cover'}`}
-          src={postimg ? postimg : defaultimg}
-        />
+      <div className="absolute top-[106px] left-[16px] right-4 overflow-hidden rounded-[8px] h-[200px] justify-center">
+        <RunCardImage src={postimg || defaultimg} showFullImage={showFullImage} />
       </div>
     </div>
   );
