@@ -16,6 +16,11 @@ interface Member {
   isPacer: boolean;
 }
 
+function termLabel(term: string) {
+  const [year, semester] = term.split('-');
+  return `${year}년 ${semester}학기`;
+}
+
 //운영진 페이지
 //회원 정보를 모두 조회하고, 권한 변경 및 회원 삭제를 할 수 있는 API 필요
 function AdminPage() {
@@ -25,6 +30,13 @@ function AdminPage() {
   const [search, setSearch] = useState('');
   const query = search.trim().normalize('NFC').toLocaleLowerCase();
   const [members, setMembers] = useState<Member[]>([]);
+  const [term, setTerm] = useState('');
+  const [confirmed, setConfirmed] = useState<Set<string> | null>(null);
+  const [renewalError, setRenewalError] = useState(false);
+  const [loadAttempt, setLoadAttempt] = useState(0);
+  const [confirming, setConfirming] = useState(false);
+  const year = Number(new Intl.DateTimeFormat('en', { year: 'numeric', timeZone: 'Asia/Seoul' }).format(new Date()));
+  const terms = [year - 1, year, year + 1].flatMap(y => [`${y}-1`, `${y}-2`]);
   const [editedMembers, setEditedMembers] = useState<Member[]>([]);
   const [roleChangedMembers, setRoleChangedMembers] = useState<Member[]>([]); //역할 바뀐 놈들 저장
   const [sortConfig, setSortConfig] = useState<{
@@ -72,6 +84,35 @@ function AdminPage() {
     // setEditedMembers(dummyData);
     fetchMembers();
   }, []);
+
+  useEffect(() => {
+    if (!term) return;
+    let current = true;
+    customAxios.get(`/admin/renewals/${term}`).then(({ data }) => {
+      if (!data.isSuccess) throw new Error();
+      if (current) setConfirmed(new Set<string>(data.result ?? []));
+    }).catch(() => { if (current) setRenewalError(true); });
+    return () => { current = false; };
+  }, [term, loadAttempt]);
+
+  async function confirmRenewal(member: Member) {
+    const promotion = member.userRole === 'NEW_MEMBER' ? '\n확정하면 일반 부원으로 승급합니다.' : '';
+    if (!window.confirm(`${member.userName} (${member.studentId})님의 ${termLabel(term)} 연장을 확정할까요?${promotion}`)) return;
+    setConfirming(true);
+    try {
+      const { data } = await customAxios.put(`/admin/renewals/${term}/${encodeURIComponent(member.studentId)}`);
+      if (!data.isSuccess) throw new Error(data.responseMessage);
+      const updateRole = (rows: Member[]) => rows.map(row => row.studentId === member.studentId
+        ? { ...row, userRole: data.result } : row);
+      setMembers(updateRole);
+      setEditedMembers(updateRole);
+      setConfirmed(previous => new Set(previous).add(member.studentId));
+    } catch (error) {
+      alert((error as { message?: string }).message || '연장을 확정하지 못했습니다.');
+    } finally {
+      setConfirming(false);
+    }
+  }
 
   //회원 등급(userRole)을 바꾸기 위한 드롭다운 핸들링 함수 handleRoleChange
   function handleRoleChange(index: number, newRole: string) {
@@ -163,11 +204,13 @@ function AdminPage() {
       const accessToken = localStorage.getItem('accessToken') || ''; //localStorage에 저장된 accessToken 값이 없으면 ''으로 초기화
       const url = '/admin';
       //roleChangedMembers 배열의 요소들에서 studentId, userName만을 추출
-      const payload = roleChangedMembers.map(({ studentId, userRole, isPacer }) => ({
-        studentId,
-        userRole,
-        isPacer,
-      }));
+      const originals = new Map(members.map(member => [member.studentId, member]));
+      const payload = roleChangedMembers.flatMap(({ studentId, userRole, isPacer }) => {
+        const original = originals.get(studentId);
+        if (!original || (original.userRole === userRole && original.isPacer === isPacer)) return [];
+        return [{ studentId, userRole: original.userRole === userRole ? undefined : userRole,
+          isPacer: original.isPacer === isPacer ? undefined : isPacer }];
+      });
       //바뀐 친구가 없다면(roleChangedMembers에 들어간 놈이 아무것도 없다면..)
       if (payload.length === 0) {
         alert('현재 바뀐 정보가 없습니다.');
@@ -194,6 +237,7 @@ function AdminPage() {
   }
 
   const visible = editedMembers.flatMap((member, index) => !query || member.userName.normalize('NFC').toLocaleLowerCase().includes(query) ? [{ member, index }] : []);
+  const pendingMembers = new Set(roleChangedMembers.map(member => member.studentId));
 
   //마이 페이지로 돌아가는 버튼
   function handleToMyPage() {
@@ -214,6 +258,13 @@ function AdminPage() {
         <span className="text-sm font-bold">총 인원: {members.length}명</span>
       </div>
       <input type="search" aria-label="부원 이름 검색" placeholder="부원 이름 검색" value={search} onChange={e => setSearch(e.target.value)} className="my-3 w-full max-w-xs rounded border px-3 py-2" />
+      <select aria-label="연장할 학기" className="my-3 rounded border px-3 py-2" value={term} disabled={confirming}
+        onChange={e => { setConfirmed(null); setRenewalError(false); setTerm(e.target.value); }}>
+        <option value="">연장할 학기 선택</option>
+        {terms.map(t => <option key={t} value={t}>{termLabel(t)}</option>)}
+      </select>
+      {renewalError && <button type="button" className="px-2 underline"
+        onClick={() => { setRenewalError(false); setLoadAttempt(n => n + 1); }}>연장 명단 다시 불러오기</button>}
       <div className="overflow-x-auto">
         <table className="table-auto w-[1220px] text-left border-collapse">
           {/*표 상단의 header 부분 렌더링*/}
@@ -252,11 +303,12 @@ function AdminPage() {
                   {header}
                 </th>
               ))}
+              {term && <th className="px-4 py-2 border-b whitespace-nowrap">학기 연장</th>}
             </tr>
           </thead>
           {/*표 하단의 회원 정보 출력하는 부분 렌더링*/}
           <tbody>
-            {query && !visible.length && <tr><td colSpan={9} className="py-4 text-center">검색 결과가 없습니다.</td></tr>}
+            {query && !visible.length && <tr><td colSpan={term ? 10 : 9} className="py-4 text-center">검색 결과가 없습니다.</td></tr>}
             {visible.map(({member, index}) => (
               <tr key={member.studentId}>
                 <td className="px-4 py-2 border-b">{member.studentId}</td>
@@ -268,6 +320,7 @@ function AdminPage() {
                 <td className="px-4 py-2 border-b">{member.participationCount}</td>
                 <td className="px-4 py-2 border-b">
                   <select
+                    disabled={confirming}
                     value={member.userRole}
                     onChange={(e) => handleRoleChange(index, e.target.value)}
                     className="border rounded p-1"
@@ -281,11 +334,19 @@ function AdminPage() {
                 <td className="px-4 py-2 border-b text-center">
                   <input
                     type="checkbox"
+                    disabled={confirming}
                     checked={member.isPacer}
                     onChange={() => handlePacerToggle(index)}
                     className="w-4 h-4 mr-2 accent-kuDarkGreen"
                   />
                 </td>
+                {term && <td className="px-4 py-2 border-b whitespace-nowrap">
+                  {confirmed?.has(member.studentId) ? '확정 완료' : member.userRole === 'INACTIVE' ? '—' :
+                    <button type="button" className="text-kuDarkGreen underline disabled:text-gray-400"
+                      title={pendingMembers.has(member.studentId) ? '회원 정보 변경을 먼저 저장하거나 초기화해 주세요.' : undefined}
+                      disabled={!confirmed || confirming || pendingMembers.has(member.studentId)}
+                      onClick={() => confirmRenewal(member)}>연장 확정</button>}
+                </td>}
               </tr>
             ))}
           </tbody>
@@ -307,6 +368,7 @@ function AdminPage() {
         </button>
         <button
           onClick={handleSave}
+          disabled={confirming}
           className="bg-kuDarkGreen text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           저장
