@@ -493,7 +493,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
                     data={people}
                     className="font-bold text-kuDarkGreen w-[24px] h-[24px] mr-2"
                   />
-                  <span className="font-bold text-kuDarkGreen">{currentParticipantsNum}{waitlist.queue?.capacity != null && ' / ' + waitlist.queue.capacity}</span>
+                  <span className="font-bold text-kuDarkGreen">{currentParticipantsNum}</span>
                 </div>
                 <ShareRun inline title={title} location={location} date={date} imageUrl={postimgurl} path={`/flash/${postId}`} />
               </div>

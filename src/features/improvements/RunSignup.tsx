@@ -3,12 +3,16 @@ import { seatsLabel, totalLabel } from './availableSeats';
 import { errorMessage } from './shared';
 import type { useRunQueue } from './RunWaitlist';
 
-export function SignupStatus({ remaining, waiting }: { remaining?: number; waiting?: number }) {
+export function groupSignupLabel(remaining: number, waiting = 0) {
+  return remaining === 0 && waiting > 0 ? `대기 ${waiting}명` : seatsLabel(remaining);
+}
+
+export function SignupStatus({ remaining, waiting, group }: { remaining?: number; waiting?: number; group?: string }) {
   const seats = totalLabel(remaining);
   if (!seats && !waiting) return null;
   return <p className="mb-2 flex flex-wrap justify-center gap-x-3 text-sm text-kuDarkGreen" aria-live="polite">
     {seats && <span>{seats}</span>}
-    {(!!waiting || remaining === 0) && waiting != null && <span>전체 대기 {waiting}명</span>}
+    {waiting != null && waiting > 0 && <span>{group && group + '그룹 '}대기 {waiting}명</span>}
   </p>;
 }
 
@@ -37,7 +41,9 @@ export function RunJoinButton({ waitlist, onJoin }: {
       setBusy(false);
     }
   }
-  const status = <SignupStatus remaining={seats?.total} waiting={queue?.waiting.length} />;
+  const singleGroup = groups.length === 1 ? groups[0].name : undefined;
+  const waiting = singleGroup ? queue?.waitingByGroup?.[singleGroup] : queue?.waiting.length;
+  const status = <SignupStatus remaining={seats?.total} group={singleGroup} waiting={groups.length > 1 ? undefined : waiting} />;
   return <div className="mx-auto mb-2 mt-8 w-[min(327px,90vw)]">
     {status}
     <button type="button" className={action} disabled={!queue || busy} onClick={() => {
@@ -60,7 +66,7 @@ export function RunJoinButton({ waitlist, onJoin }: {
           className={`flex items-center gap-2 rounded-lg border px-3 py-3 text-left ${group === g.name ? 'border-kuDarkGreen bg-[#F3F8E8]' : 'bg-gray-100'}`}
           onClick={() => setGroup(g.name)}>
           <span>{g.name}</span><span>{g.distanceKm}km</span><span>{g.pace}</span>
-          {seats && (g.capacity != null || seats.total !== Infinity) && <small className="ml-auto text-kuDarkGreen">{seatsLabel(seats.forGroup(g.name))}</small>}
+          {seats && (g.capacity != null || seats.total !== Infinity) && <small className="ml-auto text-kuDarkGreen">{groupSignupLabel(seats.forGroup(g.name), queue?.waitingByGroup?.[g.name])}</small>}
         </button>)}
       </div>
       <button type="button" disabled={busy || !groups.some(g => g.name === group)} className={action}

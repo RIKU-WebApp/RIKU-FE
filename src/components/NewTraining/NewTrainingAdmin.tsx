@@ -640,7 +640,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId, onBack }) => {
             <div className="flex w-full items-center justify-between gap-3 my-1.5">
               <div className="flex items-center shrink-0">
                 <object data={people} className="w-[24px] h-[24px] mr-2" />
-                <span className="font-bold text-kuDarkGreen">{participantsNum}{waitlist.queue?.capacity != null && ' / ' + waitlist.queue.capacity}</span>
+                <span className="font-bold text-kuDarkGreen">{participantsNum}</span>
               </div>
               <ShareRun inline title={title} location={location} date={date} imageUrl={postImageUrl} path={`/training/${postId}`} />
             </div>

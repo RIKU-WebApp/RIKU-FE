@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { request, errorMessage } from './shared';
 
 type Type = 'flash' | 'event' | 'training';
-interface Queue { capacity: number | null; waiting: string[]; mine: boolean; groups: PacePlan[]; usedByGroup?: Record<string, number> }
+interface Queue { capacity: number | null; waiting: string[]; mine: boolean; groups: PacePlan[]; usedByGroup?: Record<string, number>; waitingByGroup?: Record<string, number> }
 const path = (type: Type, id: string | number) => '/run/' + type + '/post/' + id + '/waitlist';
 
 export function useRunQueue(type: Type, id: string | number | undefined, tab: string) {

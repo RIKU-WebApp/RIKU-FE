@@ -598,7 +598,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
             <div className="flex w-full items-center justify-between gap-3 my-1.5">
               <div className="flex items-center shrink-0">
                 <object data={people} className="w-[24px] h-[24px] mr-2 font-bold font-#366943" />
-                <span className="font-bold text-kuDarkGreen">{currentParticipantsNum}{waitlist.queue?.capacity != null && ' / ' + waitlist.queue.capacity}</span>
+                <span className="font-bold text-kuDarkGreen">{currentParticipantsNum}</span>
               </div>
               <ShareRun inline title={title} location={location} date={date} imageUrl={postimgurl} path={`/event/${postId}`} />
             </div>
