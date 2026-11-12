@@ -9,7 +9,7 @@ import TabButton from './TapButton';
 
 import customAxios from '@/shared/lib/customAxios';
 import flashrunimage from '@assets/Run-img/flashrunimage.jpg'; // 번개런 기본이미지
-import BackBtnimg from '@assets/BackBtn.svg';
+import RunBackButton from '@shared/ui/RunBackButton';
 import pacermark from '@assets/pacer-mark.svg';
 import CommentSection from '../common/CommentSection';
 import EditableAttendanceList from './EditableAttendanceList';
@@ -37,6 +37,7 @@ interface FlashRunAdminData {
   content: string;
   userName: string;
   code?: string;
+  onBack: () => void;
   postId?: string; // 게시글 ID 추가
   postimgurl: string;
 }
@@ -56,6 +57,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
   participantsNum,
   content,
   postId,
+  onBack,
   postimgurl,
 }) => {
   const [activeTab, setActiveTab] = useState<'소개' | '명단'>('소개');
@@ -71,7 +73,6 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
   const [editableParticipants, setEditableParticipants] = useState<EditableUser[]>([]);
 
   const navigate = useNavigate();
-  const handleBack = () => navigate(-1);
 
   const handleStartClick = async () => {
     if (!code) {
@@ -345,11 +346,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
       <div className="w-full max-w-[430px] mx-auto flex flex-col items-center text-center justify-center">
         {/* 상단바 */}
         <div className="relative flex bg-kuDarkGreen w-full h-[56px] text-white text-xl font-semibold justify-center items-center">
-          <img
-            src={BackBtnimg}
-            className="absolute left-[24px] cursor-pointer"
-            onClick={handleBack}
-          />
+          <RunBackButton onClick={onBack} />
           번개런
           <div
             ref={dotButtonRef}
@@ -420,7 +417,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
                         if (data.isSuccess) {
                           alert('게시글이 성공적으로 취소되었습니다.');
                           setShowMenu(false);
-                          navigate('/flash');
+                          navigate('/tab/flash', { replace: true });
                         } else {
                           alert(data.responseMessage || '취소에 실패했습니다.');
                         }
@@ -463,7 +460,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
                       if (data.isSuccess) {
                         alert('게시글이 삭제되었습니다.');
                         setShowMenu(false);
-                        navigate('/flash');
+                        navigate('/tab/flash', { replace: true });
                       } else {
                         alert(data.responseMessage || '삭제에 실패했습니다.');
                       }

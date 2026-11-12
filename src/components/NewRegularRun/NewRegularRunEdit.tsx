@@ -1,3 +1,4 @@
+import { goBackOrReplace } from '@shared/lib/runNavigation';
 import RunCoverField from '../common/RunCoverField';
 import { useOriginalRunFields } from '../../features/improvements/runEdit';
 import { TotalCapacityInput } from '../../features/improvements/TotalCapacityInput';
@@ -289,7 +290,7 @@ function NewRegularRunEdit() {
     <div className="flex flex-col items-center min-h-screen">
       <div className="flex items-center justify-center w-full h-[56px] px-5 mb-5 relative bg-kuDarkGreen">
         <div className="text-2xl font-semibold text-white text-center">정규런 수정</div>
-        <button onClick={() => navigate(-1)} className="absolute left-4">
+        <button onClick={() => goBackOrReplace(navigate, `/regular/${postId}`)} className="absolute left-4">
           <img src={BackIcon} alt="뒤로가기" className="w-6 h-6" />
         </button>
       </div>

@@ -10,7 +10,7 @@ import TabButtonUser from './TapButtonUser';
 import customAxios from '@/shared/lib/customAxios';
 import flashrunimage from '@assets/Run-img/flashrunimage.jpg'; // 번개런 기본이미지
 import { useNavigate } from 'react-router-dom';
-import BackBtnimg from '@assets/BackBtn.svg';
+import RunBackButton from '@shared/ui/RunBackButton';
 import pacermark from '@assets/pacer-mark.svg';
 import CommentSection from '../common/CommentSection';
 import EditableAttendanceList, {
@@ -52,6 +52,7 @@ interface FlashRunUserData {
   content: string;
   userName: string;
   code?: string;
+  onBack: () => void;
   postId?: string; // 게시글 ID
   userStatus?: string; // 유저의 현재 상태 (참여, 출석 등)
   postimgurl?: string;
@@ -68,6 +69,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
   content,
   userName,
   postId,
+  onBack,
   postimgurl,
   userRole,
 }) => {
@@ -431,7 +433,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
     <div className="flex flex-col items-center text-center max-w-[430px] mx-auto overflow-y-auto justify-center">
       {/* 상단바 */}
       <div className="relative flex bg-kuDarkGreen w-full h-[56px] text-white text-center text-xl font-semibold justify-center items-center">
-        <img src={BackBtnimg} className="absolute left-[24px]" onClick={() => navigate(-1)}></img>
+        <RunBackButton onClick={onBack} />
         행사
         <div
           ref={dotButtonRef}
@@ -502,7 +504,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
                       if (data.isSuccess) {
                         alert('게시글이 성공적으로 취소되었습니다.');
                         setShowMenu(false);
-                        navigate('/event');
+                        navigate('/tab/event', { replace: true });
                       } else {
                         alert(data.responseMessage || '취소에 실패했습니다.');
                       }
@@ -542,7 +544,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
                     if (data.isSuccess) {
                       alert('게시글이 삭제되었습니다.');
                       setShowMenu(false);
-                      navigate('/event'); // 또는 window.location.href = "/event";
+                      navigate('/tab/event', { replace: true });
                     } else {
                       alert(data.responseMessage || '삭제에 실패했습니다.');
                     }

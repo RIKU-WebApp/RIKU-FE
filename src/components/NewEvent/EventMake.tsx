@@ -1,3 +1,4 @@
+import { goBackOrReplace } from '@shared/lib/runNavigation';
 import RunCoverField from '../common/RunCoverField';
 import { errorMessage } from '../../features/improvements/shared';
 import { useCapacityInput } from '../../features/improvements/RunWaitlist';
@@ -187,7 +188,7 @@ function EventMake() {
 
       if (response.data.isSuccess) {
         alert('행사가 성공적으로 생성되었습니다!');
-        navigate('/event');
+        navigate('/tab/event', { replace: true });
       } else {
         alert(`요청 실패: ${response.data.responseMessage}`);
       }
@@ -292,7 +293,7 @@ function EventMake() {
     <div className="flex flex-col items-center min-h-screen w-full max-w-[430px] mx-auto">
       <div className="flex items-center justify-center w-full h-[56px] px-5 mb-5 relative bg-kuDarkGreen">
         <div className="text-2xl font-semibold text-white text-center">행사 만들기</div>
-        <button onClick={() => navigate(-1)} className="absolute left-4">
+        <button onClick={() => goBackOrReplace(navigate, '/tab/event')} className="absolute left-4">
           <img src={BackIcon} alt="뒤로가기" className="w-6 h-6" />
         </button>
       </div>

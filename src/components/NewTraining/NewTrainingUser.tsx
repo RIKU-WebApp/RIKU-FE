@@ -11,7 +11,7 @@ import AttendanceList from './AttendanceList';
 import customAxios from '@/shared/lib/customAxios';
 import flashrunimage from '../../assets/Run-img/flashrunimage.jpg';
 import { useNavigate } from 'react-router-dom';
-import BackBtnimg from '../../assets/BackBtn.svg';
+import RunBackButton from '@shared/ui/RunBackButton';
 import pacermark from '../../assets/pacer-mark.svg';
 import CommentSection from '../common/CommentSection';
 import PacerCard from './PacerCard';
@@ -39,14 +39,14 @@ interface Pacer {
 }
 
 interface FlashRunUserData {
+  onBack: () => void;
   postId?: string;
 }
 
 type ParticipantGroup = React.ComponentProps<typeof AttendanceList>['groupedParticipants'][number];
 
-const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
+const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId, onBack }) => {
   const navigate = useNavigate();
-  const handleBack = () => navigate(-1);
 
   const [activeTab, setActiveTab] = useState<'소개' | '명단'>('소개');
   const waitlist = useRunQueue('training', postId, activeTab);
@@ -481,11 +481,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
       onClick={handleOutsideClick}
     >
       <div className="relative flex bg-kuDarkGreen w-full h-[56px] text-white text-center text-xl font-semibold justify-center items-center">
-        <img
-          src={BackBtnimg}
-          className="absolute left-[24px] cursor-pointer"
-          onClick={handleBack}
-        />
+        <RunBackButton onClick={onBack} />
         훈련
         {userInfo.userRole === 'ADMIN' && (
           <div
@@ -537,7 +533,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId }) => {
                     alert('게시글이 삭제되었습니다.');
                     setShowMenu(false);
                     // 목록으로 이동
-                    window.location.href = '/training';
+                    navigate('/tab/training', { replace: true });
                   } else {
                     alert(data.responseMessage || '삭제에 실패했습니다.');
                   }
