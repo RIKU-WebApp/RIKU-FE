@@ -57,7 +57,7 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
     (user) => user.status === 'PENDING' || user.status === 'ATTENDED' || user.status === 'ABSENT'
   ).length;
   return (
-    <div className="flex flex-col gap-3 px-5 mt-[22px]">
+    <div data-no-swipe={isEditMode || undefined} className="flex flex-col gap-3 px-5 mt-[22px]">
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center text-sm font-medium text-[#366943] gap-1">
           <img src={peopleimg} alt="people icon" className="w-[24px] h-[17px]" />

@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import people from '@assets/FlashRunDetail/people.svg';
 import place from '@assets/FlashRunDetail/place.svg';
 import time from '@assets/FlashRunDetail/time.svg';
-import TabButtonUser from './TapButtonUser';
+import RunDetailTabs from '../common/RunDetailTabs';
 
 import customAxios from '@/shared/lib/customAxios';
 import flashrunimage from '@assets/Run-img/flashrunimage.jpg'; // 번개런 기본이미지
@@ -605,9 +605,7 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
           </div>
         </div>
       </div>
-      <div className="w-full">
-        <TabButtonUser leftLabel="소개" rightLabel="명단" onTabChange={handleTabChange} />
-      </div>
+      <RunDetailTabs activeTab={activeTab} onChange={handleTabChange}>
       {activeTab === '소개' && (
         <>
           <div className="flex justify-center items-center w-[327px] h-14 bg-[#F0F4DD] rounded-lg text-sm font-normal mt-5">
@@ -697,10 +695,12 @@ const NewEventAdmin: React.FC<FlashRunUserData> = ({
           userRole={userInfo.userRole}
         />
       )}
-      <div className="">
-        {activeTab === '명단' && <WaitingNames names={waitlist.queue?.waiting} />}
+      {activeTab === '명단' && <WaitingNames names={waitlist.queue?.waiting} />}
       {waitlist.error && <p role="alert">{waitlist.error}</p>}
-      <CommentSection
+      </RunDetailTabs>
+
+      <div>
+        <CommentSection
           postId={postId!}
           postType="event"
           userInfo={userInfo}
