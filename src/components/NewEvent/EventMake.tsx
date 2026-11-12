@@ -1,3 +1,4 @@
+import RunCoverField from '../common/RunCoverField';
 import { errorMessage } from '../../features/improvements/shared';
 import { useCapacityInput } from '../../features/improvements/RunWaitlist';
 import React, { useState, useEffect, useRef } from 'react';
@@ -51,7 +52,8 @@ function EventMake() {
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const handleContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value);
-  const [postImagePreview, setPostImagePreview] = useState<string | null>(null);
+  const [showFullImage, setShowFullImage] = useState(false);
+  const [coverBusy, setCoverBusy] = useState(false);
   const [postImage, setPostImage] = useState<File | null>(null);
   const [attachmentPreviews, setAttachmentPreviews] = useState<string[]>([]);
   const [attachments, setAttachments] = useState<File[]>([]);
@@ -165,6 +167,7 @@ function EventMake() {
       const token = localStorage.getItem('accessToken') || 'null';
 
       const formData = new FormData();
+      formData.append('showFullImage', String(showFullImage));
       limit.append(formData);
       const eventType = isCustom ? customInput : selected;
       formData.append('eventType', eventType);
@@ -228,29 +231,6 @@ function EventMake() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handlePostImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    try {
-      const compressedFile = await imageCompression(file, {
-        maxSizeMB: 5,
-        maxWidthOrHeight: 1000,
-        useWebWorker: true,
-      });
-
-      setPostImage(compressedFile);
-
-      const reader = new FileReader();
-      reader.onloadend = () => setPostImagePreview(reader.result as string);
-      reader.readAsDataURL(compressedFile);
-    } catch (error) {
-      console.error('대표 이미지 압축 실패:', error);
-      alert('대표 이미지 압축 중 문제가 발생했습니다.');
-    }
-
-    event.target.value = '';
-  };
 
   const handleRemoveAttachment = (index: number) => {
     setAttachments((prev) => prev.filter((_, i) => i !== index));
@@ -438,38 +418,9 @@ function EventMake() {
           onChange={handleContent}
         ></textarea>
 
-        {/* 대표 이미지 업로드 */}
-        <div className="my-4">
-          <h2 className="mb-2">대표 이미지 (필수)</h2>
-          {postImagePreview ? (
-            <div className="relative w-[104px] h-[104px]">
-              <img src={postImagePreview} className="w-full h-full object-cover rounded-md" />
-              <button
-                onClick={() => {
-                  setPostImage(null);
-                  setPostImagePreview(null);
-                }}
-                className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-              >
-                ✕
-              </button>
-            </div>
-          ) : (
-            <label
-              htmlFor="postImageUpload"
-              className="w-[104px] h-[104px] border border-dashed border-gray-400 flex items-center justify-center text-gray-500 cursor-pointer rounded-md"
-            >
-              +
-            </label>
-          )}
-          <input
-            type="file"
-            id="postImageUpload"
-            accept="image/*"
-            onChange={handlePostImageUpload}
-            className="hidden"
-          />
-        </div>
+        <RunCoverField runLabel="행사" title={title} dateTime={dateTime}
+          showFullImage={showFullImage} onFitChange={setShowFullImage}
+          onFileChange={setPostImage} onBusyChange={setCoverBusy} />
 
         {/* 첨부 이미지 업로드 */}
         <div className="my-4">
@@ -506,6 +457,7 @@ function EventMake() {
         </div>
 
         <button
+          disabled={coverBusy}
           onClick={handleSubmit}
           className="w-full bg-[#366943] text-white py-3 rounded-lg mt-4"
         >

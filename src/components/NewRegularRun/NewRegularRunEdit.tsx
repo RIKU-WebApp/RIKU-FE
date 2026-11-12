@@ -1,4 +1,4 @@
-import RegularCoverField from './RegularCoverField';
+import RunCoverField from '../common/RunCoverField';
 import { useOriginalRunFields } from '../../features/improvements/runEdit';
 import { TotalCapacityInput } from '../../features/improvements/TotalCapacityInput';
 import { PaceGroups, fromPlan, appendPlans, type GroupRow } from '../../features/improvements/PaceGroups';
@@ -471,7 +471,7 @@ function NewRegularRunEdit() {
         </div>
 
         </fieldset>}
-        <RegularCoverField title={title} dateTime={dateTime}
+        <RunCoverField runLabel="정규런" title={title} dateTime={dateTime}
           savedImage={savedImage} participants={participantCount} showFullImage={editedFit ?? savedFit ?? true} onFitChange={setEditedFit}
           onFileChange={setMainImage} onBusyChange={setImageBusy} />
 

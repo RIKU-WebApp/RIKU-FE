@@ -1,3 +1,4 @@
+import RunCoverField from '../common/RunCoverField';
 import { errorMessage } from '../../features/improvements/shared';
 import { CapacityNote, GroupLimit, appendPlans, nextGroup } from '../../features/improvements/PaceGroups';
 import { useCapacityInput } from '../../features/improvements/RunWaitlist';
@@ -58,35 +59,13 @@ function TrainingMake() {
 
   // 대표 사진
   const [mainImage, setMainImage] = useState<File | null>(null);
-  const [mainPreview, setMainPreview] = useState<string | null>(null);
+  const [showFullImage, setShowFullImage] = useState(false);
+  const [coverBusy, setCoverBusy] = useState(false);
 
   // 코스 사진
   const [courseImages, setCourseImages] = useState<File[]>([]);
   const [coursePreviews, setCoursePreviews] = useState<string[]>([]);
 
-  const handleMainImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      const compressedFile = await imageCompression(file, {
-        maxSizeMB: 5, // 1MB 이하
-        maxWidthOrHeight: 1000, // 해상도 제한
-        useWebWorker: true,
-      });
-
-      setMainImage(compressedFile);
-
-      const reader = new FileReader();
-      reader.onloadend = () => setMainPreview(reader.result as string);
-      reader.readAsDataURL(compressedFile);
-    } catch (error) {
-      console.error('대표 이미지 압축 실패:', error);
-      alert('대표 이미지 압축 중 오류가 발생했습니다.');
-    }
-
-    e.target.value = ''; // input 초기화
-  };
 
   const handleCourseImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
@@ -250,6 +229,7 @@ function TrainingMake() {
       const token = localStorage.getItem('accessToken') || 'null';
 
       const formData = new FormData();
+      formData.append('showFullImage', String(showFullImage));
       limit.append(formData);
       appendPlans(formData, pacerGroups);
       formData.append('replacePacers', 'true');
@@ -606,44 +586,9 @@ function TrainingMake() {
           )}
         </div>
 
-        {/* 대표 이미지 */}
-        <div className="my-4">
-          <h2 className="mb-2">대표 이미지 (필수)</h2>
-          <div className="relative w-[104px] h-[104px]">
-            {mainPreview ? (
-              <>
-                <img
-                  src={mainPreview}
-                  alt="대표 이미지"
-                  className="w-full h-full object-cover rounded-md"
-                />
-                <button
-                  onClick={() => {
-                    setMainImage(null);
-                    setMainPreview(null);
-                  }}
-                  className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                >
-                  ✕
-                </button>
-              </>
-            ) : (
-              <label
-                htmlFor="mainImageUpload"
-                className="w-full h-full border border-dashed border-gray-400 flex items-center justify-center text-gray-500 cursor-pointer rounded-md"
-              >
-                +
-              </label>
-            )}
-          </div>
-          <input
-            type="file"
-            id="mainImageUpload"
-            accept="image/*"
-            onChange={handleMainImageUpload}
-            className="hidden"
-          />
-        </div>
+        <RunCoverField runLabel="훈련" title={title} dateTime={dateTime}
+          showFullImage={showFullImage} onFitChange={setShowFullImage}
+          onFileChange={setMainImage} onBusyChange={setCoverBusy} />
 
         {/* 코스 사진 */}
         <div className="my-4">
@@ -684,6 +629,7 @@ function TrainingMake() {
         </div>
 
         <button
+          disabled={coverBusy}
           onClick={handleSubmit}
           className="w-full bg-[#366943] text-white py-3 rounded-lg mt-4"
         >

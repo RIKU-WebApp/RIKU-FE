@@ -1,3 +1,4 @@
+import RunCoverField from '../common/RunCoverField';
 import { useOriginalRunFields } from '../../features/improvements/runEdit';
 import { errorMessage } from '../../features/improvements/shared';
 import { useCapacityInput } from '../../features/improvements/RunWaitlist';
@@ -23,7 +24,11 @@ function FlashRunEdit() {
     time: '00:00',
   });
   const [postImage, setPostImage] = useState<File | null>(null);
-  const [postImagePreview, setPostImagePreview] = useState<string | null>(null);
+  const [savedImage, setSavedImage] = useState<string | null>(null);
+  const [savedFit, setSavedFit] = useState(false);
+  const [editedFit, setEditedFit] = useState<boolean>();
+  const [participants, setParticipants] = useState(0);
+  const [coverBusy, setCoverBusy] = useState(false);
 
   const [attachmentPreviews, setAttachmentPreviews] = useState<string[]>([]);
   const [newAttachmentFiles, setNewAttachmentFiles] = useState<File[]>([]);
@@ -40,7 +45,9 @@ function FlashRunEdit() {
         setTitle(result.title);
         setLocation(result.location);
         setContent(result.content);
-        setPostImagePreview(result.postImageUrl);
+        setSavedImage(result.postImageUrl);
+        setSavedFit(result.showFullImage ?? false);
+        setParticipants(result.participantsNum ?? 0);
         setAttachmentPreviews(result.attachmentUrls || []);
         setAttachmentPreviews(result.attachmentUrls || []);
         setOriginalAttachmentUrls(result.attachmentUrls || []);
@@ -53,29 +60,6 @@ function FlashRunEdit() {
     fetchPost();
   }, [postId]);
 
-  const handlePostImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      const compressedFile = await imageCompression(file, {
-        maxSizeMB: 5, // 1MB 이하로 압축
-        maxWidthOrHeight: 1000, // 해상도 제한
-        useWebWorker: true,
-      });
-
-      setPostImage(compressedFile);
-
-      const reader = new FileReader();
-      reader.onloadend = () => setPostImagePreview(reader.result as string);
-      reader.readAsDataURL(compressedFile);
-    } catch (error) {
-      console.error('대표 이미지 압축 실패:', error);
-      alert('대표 이미지 압축 중 오류가 발생했습니다.');
-    }
-
-    e.target.value = ''; //
-  };
 
   const handleAttachmentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
@@ -151,6 +135,7 @@ function FlashRunEdit() {
 
       const token = localStorage.getItem('accessToken') || 'null';
       const formData = new FormData();
+      if (editedFit !== undefined) formData.append('showFullImage', String(editedFit));
       limit.append(formData);
 
       if (title) formData.append('title', title);
@@ -247,40 +232,9 @@ function FlashRunEdit() {
           onChange={(e) => setContent(e.target.value)}
         />
 
-        {/* 대표 이미지 */}
-        <div className="my-4">
-          <h2 className="mb-2">대표 이미지 (필수)</h2>
-          <div className="relative w-[104px] h-[104px]">
-            {postImagePreview ? (
-              <>
-                <img src={postImagePreview} className="w-full h-full object-cover rounded-md" />
-                <button
-                  onClick={() => {
-                    setPostImage(null);
-                    setPostImagePreview(null);
-                  }}
-                  className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                >
-                  ✕
-                </button>
-              </>
-            ) : (
-              <label
-                htmlFor="postImageUpload"
-                className="w-[104px] h-[104px] border border-dashed border-gray-400 flex items-center justify-center text-gray-500 cursor-pointer rounded-md"
-              >
-                +
-              </label>
-            )}
-            <input
-              type="file"
-              id="postImageUpload"
-              accept="image/*"
-              onChange={handlePostImageUpload}
-              className="hidden"
-            />
-          </div>
-        </div>
+        <RunCoverField runLabel="번개런" title={title} dateTime={dateTime}
+          savedImage={savedImage} participants={participants} showFullImage={editedFit ?? savedFit} onFitChange={setEditedFit}
+          onFileChange={setPostImage} onBusyChange={setCoverBusy} />
 
         {/* 첨부 이미지 */}
         <div className="my-4">
@@ -317,6 +271,7 @@ function FlashRunEdit() {
         </div>
 
         <button
+          disabled={coverBusy}
           onClick={handleSubmit}
           className="w-full bg-[#366943] text-white py-3 font-bold rounded-lg mt-4 mb-4"
         >

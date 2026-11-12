@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import imageCompression from 'browser-image-compression';
-import ListEventCard from '../common/ListEventCard';
+import ListEventCard from './ListEventCard';
 
 type Props = {
+  runLabel: '정규런' | '번개런' | '훈련' | '행사';
   title: string;
   dateTime: { date: Date | null; time: string };
   savedImage?: string | null;
@@ -15,7 +16,7 @@ type Props = {
   onBusyChange: (busy: boolean) => void;
 };
 
-export default function RegularCoverField({ title, dateTime, savedImage, participants = 0,
+export default function RunCoverField({ runLabel, title, dateTime, savedImage, participants = 0,
   showFullImage, onFitChange, onFileChange, onBusyChange }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState('');
@@ -65,7 +66,7 @@ export default function RegularCoverField({ title, dateTime, savedImage, partici
         </label>)}
       </fieldset>
       <div aria-label="목록 미리보기">
-        <ListEventCard showFullImage={showFullImage} location={title || '정규런'} postimg={image}
+        <ListEventCard compact={runLabel === '정규런'} showFullImage={showFullImage} location={title || runLabel} postimg={image}
           runState="NOW" participants={participants} date={dateTime.date ? format(dateTime.date, 'MM/dd EEEE', {locale: ko}) : '날짜'}
           time={dateTime.time} />
       </div>
