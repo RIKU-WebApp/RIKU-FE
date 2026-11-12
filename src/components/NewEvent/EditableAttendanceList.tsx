@@ -118,7 +118,7 @@ const EditableAttendanceList = forwardRef<
     const attendedCount = users.filter((u) => u.status === 'ATTENDED').length;
 
     return (
-      <div className="flex flex-col p-5 gap-3">
+      <div data-no-swipe={editMode || undefined} className="flex flex-col p-5 gap-3">
         {/* 상단 인원 수 */}
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-1">

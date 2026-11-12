@@ -12,7 +12,7 @@ import RunBackButton from '@shared/ui/RunBackButton';
 import pacermark from '@assets/pacer-mark.svg';
 import flashrunimage from '../../assets/Run-img/flashrunimage.jpg';
 
-import TabButton from './TapButton';
+import RunDetailTabs from '../common/RunDetailTabs';
 import AttendanceList from './AttendanceList';
 import PacerCard from './PacerCard';
 import CommentSection from '../common/CommentSection';
@@ -648,9 +648,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId, onBack }) => {
         </div>
       </div>
 
-      <div className="w-full">
-        <TabButton leftLabel="소개" rightLabel="명단" onTabChange={handleTabChange} />
-      </div>
+      <RunDetailTabs activeTab={activeTab} onChange={handleTabChange}>
 
       {activeTab === '소개' && (
         <>
@@ -728,6 +726,8 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId, onBack }) => {
 
       {activeTab === '명단' && <WaitingNames names={waitlist.queue?.waiting} />}
       {waitlist.error && <p role="alert">{waitlist.error}</p>}
+      </RunDetailTabs>
+
       <CommentSection
         postId={postId!}
         postType="training"

@@ -1,4 +1,5 @@
-import { seatsLabel, totalLabel } from '../../features/improvements/availableSeats';
+import { SignupStatus } from '../../features/improvements/RunSignup';
+import { seatsLabel } from '../../features/improvements/availableSeats';
 import { useRunQueue, WaitingNames } from '../../features/improvements/RunWaitlist';
 import ShareRun from '../../features/improvements/ShareRun';
 import React, { useState, useEffect } from 'react';
@@ -6,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import people from '../../assets/FlashRunDetail/people.svg';
 import place from '../../assets/FlashRunDetail/place.svg';
 import time from '../../assets/FlashRunDetail/time.svg';
-import TabButton from './TapButton';
+import RunDetailTabs from '../common/RunDetailTabs';
 import AttendanceList from './AttendanceList';
 import customAxios from '@/shared/lib/customAxios';
 import flashrunimage from '../../assets/Run-img/flashrunimage.jpg';
@@ -617,9 +618,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId, onBack }) => {
         </div>
       </div>
 
-      <div className="w-full">
-        <TabButton leftLabel="소개" rightLabel="명단" onTabChange={handleTabChange} />
-      </div>
+      <RunDetailTabs activeTab={activeTab} onChange={handleTabChange}>
 
       {activeTab === '소개' && (
         <>
@@ -699,6 +698,8 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId, onBack }) => {
 
       {activeTab === '명단' && <WaitingNames names={waitlist.queue?.waiting} />}
       {waitlist.error && <p role="alert">{waitlist.error}</p>}
+      </RunDetailTabs>
+
       <CommentSection
         postId={postId!}
         postType="training"
@@ -759,7 +760,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId, onBack }) => {
               ×
             </button>
             <h2 className="text-[16px] mb-4">훈련 그룹을 선택해주세요.</h2>
-            {!userStatus && totalLabel(waitlist.seats?.total) && <p className="mb-3 text-sm text-kuDarkGreen">{totalLabel(waitlist.seats?.total)}</p>}
+            {!userStatus && <SignupStatus remaining={waitlist.seats?.total} waiting={waitlist.queue?.waiting.length} />}
 
             {/* 그룹 선택 옵션 */}
             <div className="flex justify-center">

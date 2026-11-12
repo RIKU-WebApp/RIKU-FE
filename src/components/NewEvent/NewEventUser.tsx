@@ -1,4 +1,4 @@
-import { seatsLabel, totalLabel } from '../../features/improvements/availableSeats';
+import { RunJoinButton } from '../../features/improvements/RunSignup';
 import { useRunQueue, WaitingNames } from '../../features/improvements/RunWaitlist';
 import ShareRun from '../../features/improvements/ShareRun';
 import React, { useState, useEffect, useRef } from 'react';
@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import people from '@assets/FlashRunDetail/people.svg';
 import place from '@assets/FlashRunDetail/place.svg';
 import time from '@assets/FlashRunDetail/time.svg';
-import TabButtonUser from './TapButtonUser';
+import RunDetailTabs from '../common/RunDetailTabs';
 
 import customAxios from '@/shared/lib/customAxios';
 import flashrunimage from '@assets/Run-img/flashrunimage.jpg'; // 번개런 기본이미지
@@ -69,7 +69,6 @@ const NewEventUser: React.FC<FlashRunUserData> = ({
 }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'소개' | '명단'>('소개');
-  const [joinGroup, setJoinGroup] = useState('');
   const waitlist = useRunQueue('event', postId, activeTab);
   const [buttonText, setButtonText] = useState(() => {
     // 로컬 스토리지에서 buttonText 초기값 가져옴
@@ -105,35 +104,27 @@ const NewEventUser: React.FC<FlashRunUserData> = ({
     }
   }, [userStatus, postId]);
 
-  const handleStartClick = async () => {
-    try {
-      const token = localStorage.getItem('accessToken') || 'null';
-      const response = await customAxios.patch(
-        `/run/event/post/${postId}/join${joinGroup ? '?group=' + encodeURIComponent(joinGroup) : ''}`,
-        {},
-        {
-          headers: {
-            Authorization: `${token}`,
-          },
-        }
-      );
-
-      if (response.data.isSuccess) {
-        if (waitlist.queue?.capacity != null || waitlist.queue?.groups?.length || response.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
-        setUserStatus(response.data.result.status);
-        setButtonText('출석하기');
-        setError(null);
-
-        await fetchParticipants(); // 명단 즉시 반영
-      } else {
-        if (response.data.responseMessage === '이미 참여한 유저입니다.') {
-          alert('이미 참여했습니다.');
-        } else {
-          setError(response.data.responseMessage);
-        }
+  const handleStartClick = async (joinGroup: string) => {
+    const token = localStorage.getItem('accessToken') || 'null';
+    const response = await customAxios.patch(
+      `/run/event/post/${postId}/join${joinGroup ? '?group=' + encodeURIComponent(joinGroup) : ''}`,
+      {},
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
       }
-    } catch (error: any) {
-      setError('러닝 참여에 실패했습니다.');
+    );
+
+    if (response.data.isSuccess) {
+      if (waitlist.queue?.capacity != null || waitlist.queue?.groups?.length || response.data.result?.message === '대기명단에 등록되었습니다.') { window.location.reload(); return; }
+      setUserStatus(response.data.result.status);
+      setButtonText('출석하기');
+      setError(null);
+
+      await fetchParticipants(); // 명단 즉시 반영
+    } else {
+      throw new Error(response.data.responseMessage || '신청에 실패했습니다.');
     }
   };
 
@@ -488,9 +479,7 @@ const NewEventUser: React.FC<FlashRunUserData> = ({
           </div>
         </div>
       </div>
-      <div className="w-full">
-        <TabButtonUser leftLabel="소개" rightLabel="명단" onTabChange={handleTabChange} />
-      </div>
+      <RunDetailTabs activeTab={activeTab} onChange={handleTabChange}>
       {activeTab === '소개' && (
         <>
           <div className="flex justify-center items-center w-[327px] h-14 bg-[#F0F4DD] rounded-lg text-sm font-normal mt-5">
@@ -580,6 +569,8 @@ const NewEventUser: React.FC<FlashRunUserData> = ({
       )}
       {activeTab === '명단' && <WaitingNames names={waitlist.queue?.waiting} />}
       {waitlist.error && <p role="alert">{waitlist.error}</p>}
+      </RunDetailTabs>
+
       <CommentSection
         postId={postId!}
         postType="event"
@@ -616,19 +607,7 @@ const NewEventUser: React.FC<FlashRunUserData> = ({
             </div>
           </div>
         ) : userStatus === '' ? (
-          <div>
-          {totalLabel(waitlist.seats?.total) && <p className="mb-2 text-sm text-kuDarkGreen">{totalLabel(waitlist.seats?.total)}</p>}
-          {!!waitlist.queue?.groups?.length && <select aria-label="신청 그룹" className="block w-full rounded border p-2" value={joinGroup} onChange={e => setJoinGroup(e.target.value)}>
-            <option value="">그룹 선택</option>
-            {waitlist.queue.groups.map(g => <option key={g.name} value={g.name}>{g.name}　{g.pace}{waitlist.seats && (g.capacity != null || waitlist.seats.total !== Infinity) ? '　' + seatsLabel(waitlist.seats.forGroup(g.name)) : ''}</option>)}
-          </select>}
-          <button
-            className="flex justify-center items-center w-[327px] h-14 rounded-lg bg-kuGreen text-white text-lg font-bold mt-20 mb-2"
-            onClick={handleStartClick} disabled={!!waitlist.queue?.groups?.length && !joinGroup}
-          >
-            {waitlist.seats?.forGroup(joinGroup) === 0 ? '대기 신청' : '참여하기'}
-          </button>
-          </div>
+          <RunJoinButton waitlist={waitlist} onJoin={handleStartClick} />
         ) : (
           <button
             className="flex justify-center items-center w-[327px] h-14 rounded-lg bg-[#ECEBE4] text-[#757575] text-lg font-bold mt-20 mb-2 cursor-not-allowed"

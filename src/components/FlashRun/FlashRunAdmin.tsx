@@ -1,3 +1,4 @@
+import type { AttendanceUser as EditableUser } from './participants';
 import { useRunQueue, WaitingNames } from '../../features/improvements/RunWaitlist';
 import ShareRun from '../../features/improvements/ShareRun';
 import React, { useState, useEffect, useRef } from 'react';
@@ -5,7 +6,7 @@ import FlashRunlogo from '@assets/FlashRunDetail/flashrunlogo.svg';
 import people from '@assets/FlashRunDetail/people.svg';
 import place from '@assets/FlashRunDetail/place.svg';
 import time from '@assets/FlashRunDetail/time.svg';
-import TabButton from './TapButton';
+import RunDetailTabs from '../common/RunDetailTabs';
 
 import customAxios from '@/shared/lib/customAxios';
 import flashrunimage from '@assets/Run-img/flashrunimage.jpg'; // 번개런 기본이미지
@@ -21,18 +22,11 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import { useNavigate } from 'react-router-dom';
 
-interface Participant {
-  id: number;
-  name: string;
-  profileImage?: string | null;
-  isPresent: boolean;
-}
-
 interface FlashRunAdminData {
   title: string;
   location: string;
   date: string;
-  participants: Participant[];
+  participants: EditableUser[];
   participantsNum: number;
   content: string;
   userName: string;
@@ -40,13 +34,6 @@ interface FlashRunAdminData {
   onBack: () => void;
   postId?: string; // 게시글 ID 추가
   postimgurl: string;
-}
-
-interface EditableUser {
-  userId: number;
-  userName: string;
-  userProfileImg?: string | null;
-  status: 'ATTENDED' | 'PENDING' | 'ABSENT';
 }
 
 const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
@@ -70,7 +57,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
   const [date, setDate] = useState('');
   const [currentParticipantsNum, setCurrentParticipantsNum] = useState<number>(participantsNum); // 현재 불러오는 값
   const [postCreatorName, setPostCreatorName] = useState('');
-  const [editableParticipants, setEditableParticipants] = useState<EditableUser[]>([]);
+  const [editableParticipants, setEditableParticipants] = useState<EditableUser[]>(participants);
 
   const navigate = useNavigate();
 
@@ -211,17 +198,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
     }
   };
 
-  useEffect(() => {
-    if (participants.length > 0) {
-      const converted = participants.map((p) => ({
-        userId: p.id,
-        userName: p.name,
-        userProfileImg: p.profileImage || null,
-        status: p.isPresent ? 'ATTENDED' : 'PENDING',
-      }));
-      setEditableParticipants(converted as EditableUser[]);
-    }
-  }, [postId, participants]);
+  useEffect(() => { setEditableParticipants(participants); }, [participants]);
 
   const [userInfo, setUserInfo] = useState<{
     userId: number;
@@ -524,7 +501,7 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
           </div>
         </div>
 
-        <TabButton leftLabel="소개" rightLabel="명단" onTabChange={handleTabChange} />
+        <RunDetailTabs activeTab={activeTab} onChange={handleTabChange}>
         {activeTab === '소개' && (
           <>
             <div className="flex justify-center items-center w-full max-w-[320px] h-14 bg-[#F0F4DD] rounded-lg text-sm font-normal mt-5">
@@ -615,6 +592,8 @@ const FlashRunAdmin: React.FC<FlashRunAdminData> = ({
         )}
         {activeTab === '명단' && <WaitingNames names={waitlist.queue?.waiting} />}
       {waitlist.error && <p role="alert">{waitlist.error}</p>}
+      </RunDetailTabs>
+
       <CommentSection
           postId={postId!}
           postType="flash"

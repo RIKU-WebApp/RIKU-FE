@@ -1,16 +1,10 @@
+import { normalizeParticipants, type AttendanceUser } from './participants';
 import { useRunDetailBack } from '@shared/lib/runNavigation';
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
 import FlashRunAdmin from './FlashRunAdmin';
 import FlashRunUser from './FlashRunUser';
-
-interface Participant {
-  id: number;
-  name: string;
-  profileImage?: string | null;
-  isPresent: boolean;
-}
 
 interface DetailData {
   title: string;
@@ -19,7 +13,7 @@ interface DetailData {
   content: string;
   userName: string;
   participantsNum: number;
-  participants: Participant[];
+  participants: AttendanceUser[];
   adminId: number;
   postimgurl: string;
 }
@@ -55,7 +49,7 @@ const FlashRunDetail: React.FC = () => {
             content: result.content,
             userName: result.userName,
             participantsNum: result.participantsNum,
-            participants: result.participants,
+            participants: normalizeParticipants(result.participants ?? []),
             adminId: result.postCreatorInfo.userId,
             postimgurl: result.postImageUrl,
           });
