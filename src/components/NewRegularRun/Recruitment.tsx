@@ -1,4 +1,5 @@
-import { availableSeats, seatsLabel, totalLabel } from '../../features/improvements/availableSeats';
+import { availableSeats, totalLabel } from '../../features/improvements/availableSeats';
+import { groupSignupLabel } from '../../features/improvements/RunSignup';
 import { useCallback, useEffect, useState } from 'react';
 import { request, errorMessage, utcDate } from '../../features/improvements/shared';
 import { previewFeaturesEnabled } from '../../shared/config/features';
@@ -47,6 +48,10 @@ export function RecruitmentActions({data, postId, date, postStatus, canApplyAsPa
   const mine = data.mine;
   const used: Record<string, number> = {};
   for (const entry of data.confirmed) used[entry.group] = (used[entry.group] ?? 0) + 1;
+  const waitingByGroup = new Map<string, number>();
+  for (const { group } of data.waiting) {
+    waitingByGroup.set(group, (waitingByGroup.get(group) ?? 0) + 1);
+  }
   const seats = availableSeats(data.capacity, data.groups, used);
   const full = seats.total === 0;
   const editable = open && mine?.attendance !== 'ATTENDED';
@@ -83,7 +88,7 @@ export function RecruitmentActions({data, postId, date, postStatus, canApplyAsPa
         <div className="flex flex-col gap-3">
           {data.groups.map(g => (
             <button key={g.name} className={`flex items-center gap-2 rounded-lg border px-3 py-3 text-left ${group === g.name ? 'bg-[#F3F8E8] border-kuDarkGreen' : 'bg-gray-100'}`} onClick={() => setGroup(g.name)}>
-              <span>{g.name}</span><span>{g.distanceKm}km</span><span>{g.pace}</span>{!mine && (g.capacity != null || seats.total !== Infinity) && <small className="ml-auto text-kuDarkGreen">{seatsLabel(seats.forGroup(g.name))}</small>}
+              <span>{g.name}</span><span>{g.distanceKm}km</span><span>{g.pace}</span>{!mine && (g.capacity != null || seats.total !== Infinity) && <small className="ml-auto text-kuDarkGreen">{groupSignupLabel(seats.forGroup(g.name), waitingByGroup.get(g.name))}</small>}
             </button>
           ))}
         </div>

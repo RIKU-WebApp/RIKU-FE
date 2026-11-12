@@ -1,5 +1,4 @@
-import { SignupStatus } from '../../features/improvements/RunSignup';
-import { seatsLabel } from '../../features/improvements/availableSeats';
+import { SignupStatus, groupSignupLabel } from '../../features/improvements/RunSignup';
 import { useRunQueue, WaitingNames } from '../../features/improvements/RunWaitlist';
 import ShareRun from '../../features/improvements/ShareRun';
 import React, { useState, useEffect } from 'react';
@@ -610,7 +609,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId, onBack }) => {
             <div className="flex w-full items-center justify-between gap-3 my-1.5">
               <div className="flex items-center shrink-0">
                 <object data={people} className="w-[24px] h-[24px] mr-2" />
-                <span className="font-bold text-kuDarkGreen">{participantsNum}{waitlist.queue?.capacity != null && ' / ' + waitlist.queue.capacity}</span>
+                <span className="font-bold text-kuDarkGreen">{participantsNum}</span>
               </div>
               <ShareRun inline title={title} location={location} date={date} imageUrl={postImageUrl} path={`/training/${postId}`} />
             </div>
@@ -760,7 +759,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId, onBack }) => {
               ×
             </button>
             <h2 className="text-[16px] mb-4">훈련 그룹을 선택해주세요.</h2>
-            {!userStatus && <SignupStatus remaining={waitlist.seats?.total} waiting={waitlist.queue?.waiting.length} />}
+            {!userStatus && <SignupStatus remaining={waitlist.seats?.total} />}
 
             {/* 그룹 선택 옵션 */}
             <div className="flex justify-center">
@@ -802,7 +801,7 @@ const NewTrainingUser: React.FC<FlashRunUserData> = ({ postId, onBack }) => {
                         </span>
                       </div>
 
-                      {!userStatus && waitlist.seats && (waitlist.seats.total !== Infinity || waitlist.queue?.groups.some(g => g.name === group.group && g.capacity != null)) && <small className="ml-auto mr-2 text-kuDarkGreen">{seatsLabel(waitlist.seats.forGroup(group.group))}</small>}
+                      {!userStatus && waitlist.seats && (waitlist.seats.total !== Infinity || waitlist.queue?.groups.some(g => g.name === group.group && g.capacity != null)) && <small className="ml-auto mr-2 text-kuDarkGreen">{groupSignupLabel(waitlist.seats.forGroup(group.group), waitlist.queue?.waitingByGroup?.[group.group])}</small>}
                       {/* 오른쪽 체크 아이콘 */}
                       {isSelected && (
                         <img
