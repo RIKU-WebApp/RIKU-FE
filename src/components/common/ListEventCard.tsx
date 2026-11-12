@@ -7,6 +7,7 @@ import peopleimg from '../../assets/people_darkgreen.svg';
 import defaultimg from '../../assets/CardDefaultImg.svg';
 
 interface EventCardProps {
+  compact?: boolean;
   showFullImage?: boolean;
   location: string;
   postimg?: string;
@@ -18,6 +19,7 @@ interface EventCardProps {
 }
 
 const ListEventCard: React.FC<EventCardProps> = ({
+  compact = false,
   showFullImage,
   location,
   postimg,
@@ -67,7 +69,7 @@ const ListEventCard: React.FC<EventCardProps> = ({
 
       {/* 러닝 이미지 */}
       <div className="mt-[106px] mx-4 mb-4">
-        <div className={`w-full ${showFullImage !== undefined ? "h-[140px]" : "h-[200px]"} overflow-hidden rounded-[8px]`}>
+        <div className={`w-full ${compact ? "h-[140px]" : "h-[200px]"} overflow-hidden rounded-[8px]`}>
           <RunCardImage src={postimg || defaultimg} showFullImage={showFullImage} />
         </div>
       </div>

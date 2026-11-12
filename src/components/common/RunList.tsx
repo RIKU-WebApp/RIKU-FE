@@ -118,7 +118,7 @@ const RunList: React.FC = () => {
                   return (
                     <SwiperSlide key={run.id}>
                       <TodayRun
-                        showFullImage={runType === 'regular' && run.showFullImage === true}
+                        showFullImage={run.showFullImage === true}
                         location={run.title}
                         postimg={run.postImageUrl}
                         runDate={kst}
@@ -161,7 +161,8 @@ const RunList: React.FC = () => {
             const { formattedDate, formattedTime } = toKST(run.date);
             return (
               <ListEventCard
-                showFullImage={runType === 'regular' ? run.showFullImage ?? true : undefined}
+                compact={runType === 'regular'}
+                showFullImage={run.showFullImage ?? (runType === 'regular')}
                 key={run.id}
                 location={run.title}
                 postimg={run.postImageUrl}
@@ -191,7 +192,7 @@ const RunList: React.FC = () => {
               return (
                 <div key={run.id} className="w-full max-w-[103px] justify-self-center">
                   <PastRuns
-                    showFullImage={runType === 'regular' && run.showFullImage === true}
+                    showFullImage={run.showFullImage === true}
                     title={run.title}
                     date={formattedDate}
                     peoplecount={String(run.participants)}

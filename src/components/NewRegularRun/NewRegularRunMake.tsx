@@ -1,4 +1,4 @@
-import RegularCoverField from './RegularCoverField';
+import RunCoverField from '../common/RunCoverField';
 import { CapacityNote, GroupLimit, makePlans, nextGroup } from '../../features/improvements/PaceGroups';
 import { TotalCapacityInput } from '../../features/improvements/TotalCapacityInput';
 import React, { useState, useEffect } from 'react';
@@ -375,7 +375,7 @@ function NewRegularRunMake() {
           )}
         </div>
 
-        <RegularCoverField title={title} dateTime={dateTime}
+        <RunCoverField runLabel="정규런" title={title} dateTime={dateTime}
           showFullImage={showFullImage} onFitChange={setShowFullImage}
           onFileChange={setMainImage} onBusyChange={setImageBusy} />
 
