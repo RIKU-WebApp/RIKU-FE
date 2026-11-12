@@ -8,7 +8,7 @@ import RegularRunlogo from '@assets/regularRunMark.svg';
 import people from '@assets/FlashRunDetail/people.svg';
 import place from '@assets/FlashRunDetail/place.svg';
 import time from '@assets/FlashRunDetail/time.svg';
-import BackBtnimg from '@assets/BackBtn.svg';
+import RunBackButton from '@shared/ui/RunBackButton';
 import pacermark from '../../assets/pacer-mark.svg';
 import flashrunimage from '../../assets/Run-img/flashrunimage.jpg';
 
@@ -348,10 +348,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId, onBack }) => {
     <div {...swipeTabs} className="w-full min-h-screen bg-white overflow-y-auto overflow-x-hidden">
       <div className="flex flex-col items-center text-center justify-center w-full max-w-[430px] mx-auto">
         <div className="relative flex bg-kuDarkGreen w-full h-[56px] text-white text-xl font-semibold justify-center items-center">
-          <button type="button" aria-label="정규런 목록으로" onClick={onBack}
-            className="absolute left-2.5 flex h-11 w-11 items-center justify-center">
-            <img src={BackBtnimg} alt="" />
-          </button>
+          <RunBackButton onClick={onBack} />
           정규런
           {userInfo.userRole === 'ADMIN' && (
             <div
@@ -405,7 +402,7 @@ const NewRegularRunUser: React.FC<FlashRunUserData> = ({ postId, onBack }) => {
                     if (data.isSuccess) {
                       alert('게시글이 삭제되었습니다.');
                       setShowMenu(false);
-                      navigate('/regular');
+                      navigate('/tab/regular', { replace: true });
                     } else {
                       alert(data.responseMessage || '삭제에 실패했습니다.');
                     }

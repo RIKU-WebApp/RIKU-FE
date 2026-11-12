@@ -1,3 +1,4 @@
+import { useRunDetailBack } from '@shared/lib/runNavigation';
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import customAxios from '@/shared/lib/customAxios';
@@ -26,6 +27,7 @@ interface DetailData {
 const FlashRunDetail: React.FC = () => {
   const { postId } = useParams<{ postId: string }>(); // URL의 postId 파라미터 가져오기
   const navigate = useNavigate(); // 페이지 이동 훅
+  const handleBack = useRunDetailBack('flash');
   const [detailData, setDetailData] = useState<DetailData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const myId = JSON.parse(localStorage.getItem('MyId') || 'null');
@@ -81,8 +83,8 @@ const FlashRunDetail: React.FC = () => {
   }
   if (detailData.adminId == myId)
     // 내 userId와 게시글 만든 사람의 Id 비교후 렌더링
-    return <FlashRunAdmin {...detailData} postId={postId} />;
-  else return <FlashRunUser {...detailData} postId={postId} />;
+    return <FlashRunAdmin {...detailData} postId={postId} onBack={handleBack} />;
+  else return <FlashRunUser {...detailData} postId={postId} onBack={handleBack} />;
 };
 
 export default FlashRunDetail;

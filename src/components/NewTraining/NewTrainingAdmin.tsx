@@ -8,7 +8,7 @@ import customAxios from '@/shared/lib/customAxios';
 import people from '../../assets/FlashRunDetail/people.svg';
 import place from '@assets/FlashRunDetail/place.svg';
 import time from '@assets/FlashRunDetail/time.svg';
-import BackBtnimg from '@assets/BackBtn.svg';
+import RunBackButton from '@shared/ui/RunBackButton';
 import pacermark from '@assets/pacer-mark.svg';
 import flashrunimage from '../../assets/Run-img/flashrunimage.jpg';
 
@@ -41,12 +41,12 @@ interface Pacer {
 }
 
 interface Props {
+  onBack: () => void;
   postId?: string;
 }
 
-const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
+const NewTrainingAdmin: React.FC<Props> = ({ postId, onBack }) => {
   const navigate = useNavigate();
-  const handleBack = () => navigate(-1);
 
   const [activeTab, setActiveTab] = useState<'소개' | '명단'>('소개');
   const waitlist = useRunQueue('training', postId, activeTab);
@@ -433,11 +433,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
     <div className="flex flex-col items-center text-center max-w-[430px] mx-auto justify-center">
       {/* 상단바 */}
       <div className="relative flex bg-kuDarkGreen w-full h-[56px] text-white text-xl font-semibold justify-center items-center">
-        <img
-          src={BackBtnimg}
-          className="absolute left-[24px] cursor-pointer"
-          onClick={handleBack}
-        />
+        <RunBackButton onClick={onBack} />
         훈련
         <div
           ref={dotButtonRef}
@@ -523,7 +519,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
                       if (data.isSuccess) {
                         alert('게시글이 성공적으로 취소되었습니다.');
                         setShowMenu(false);
-                        navigate('/training');
+                        navigate('/tab/training', { replace: true });
                       } else {
                         alert(data.responseMessage || '취소에 실패했습니다.');
                       }
@@ -563,7 +559,7 @@ const NewTrainingAdmin: React.FC<Props> = ({ postId }) => {
                     if (data.isSuccess) {
                       alert('게시글이 삭제되었습니다.');
                       setShowMenu(false);
-                      navigate('/training');
+                      navigate('/tab/training', { replace: true });
                     } else {
                       alert(data.responseMessage || '삭제에 실패했습니다.');
                     }

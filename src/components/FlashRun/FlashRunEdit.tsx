@@ -1,3 +1,4 @@
+import { goBackOrReplace } from '@shared/lib/runNavigation';
 import RunCoverField from '../common/RunCoverField';
 import { useOriginalRunFields } from '../../features/improvements/runEdit';
 import { errorMessage } from '../../features/improvements/shared';
@@ -194,7 +195,7 @@ function FlashRunEdit() {
       <div className="max-w-[430px] w-full">
         <div className="flex items-center justify-center w-full h-[56px] px-5 mb-5 relative bg-kuDarkGreen">
           <div className="text-2xl font-semibold text-white text-center">번개런 수정</div>
-          <button onClick={() => navigate(-1)} className="absolute left-4">
+          <button onClick={() => goBackOrReplace(navigate, `/flash/${postId}`)} className="absolute left-4">
             <img src={BackIcon} alt="뒤로가기" className="w-6 h-6" />
           </button>
         </div>

@@ -11,7 +11,7 @@ import TabButton from './TapButton';
 import customAxios from '@/shared/lib/customAxios';
 import flashrunimage from '@assets/Run-img/flashrunimage.jpg'; // 번개런 기본이미지
 import { useNavigate } from 'react-router-dom';
-import BackBtnimg from '@assets/BackBtn.svg';
+import RunBackButton from '@shared/ui/RunBackButton';
 import pacermark from '@assets/pacer-mark.svg';
 import CommentSection from '../common/CommentSection';
 import EditableAttendanceList from './EditableAttendanceList';
@@ -52,6 +52,7 @@ interface FlashRunUserData {
   content: string;
   userName: string;
   code?: string;
+  onBack: () => void;
   postId?: string; // 게시글 ID
   userStatus?: string; // 유저의 현재 상태 (참여, 출석 등)
   postimgurl?: string;
@@ -67,6 +68,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
   content,
   userName,
   postId,
+  onBack,
   postimgurl,
 }) => {
   const navigate = useNavigate();
@@ -348,7 +350,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
     <div className="flex flex-col items-center text-center max-w-[430px] overflow-y-auto mx-auto justify-center">
       {/* 상단바 */}
       <div className="relative flex bg-kuDarkGreen w-full h-[56px] text-white text-center text-xl font-semibold justify-center items-center">
-        <img src={BackBtnimg} className="absolute left-[24px]" onClick={() => navigate(-1)}></img>
+        <RunBackButton onClick={onBack} />
         번개런
         {userInfo.userRole === 'ADMIN' && (
           <div
@@ -399,7 +401,7 @@ const FlashRunUser: React.FC<FlashRunUserData> = ({
                     alert('게시글이 삭제되었습니다.');
                     setShowMenu(false);
 
-                    window.location.href = '/flash';
+                    navigate('/tab/flash', { replace: true });
                   } else {
                     alert(data.responseMessage || '삭제에 실패했습니다.');
                   }

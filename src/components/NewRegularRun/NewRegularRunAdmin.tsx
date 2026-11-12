@@ -11,7 +11,7 @@ import RegularRunlogo from '../../assets/regularRunMark.svg';
 import people from '../../assets/FlashRunDetail/people.svg';
 import place from '../../assets/FlashRunDetail/place.svg';
 import time from '../../assets/FlashRunDetail/time.svg';
-import BackBtnimg from '../../assets/BackBtn.svg';
+import RunBackButton from '@shared/ui/RunBackButton';
 import pacermark from '../../assets/pacer-mark.svg';
 import flashrunimage from '../../assets/Run-img/flashrunimage.jpg';
 
@@ -400,10 +400,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId, onBack }) => {
     <div {...swipeTabs} className="w-full max-w-[430px] mx-auto min-h-screen bg-white overflow-x-hidden">
       <div className="w-full max-w-[430px] mx-auto flex flex-col items-center text-center justify-center">
         <div className="relative flex bg-kuDarkGreen w-full h-[56px] z-50 text-white text-xl font-semibold justify-center items-center">
-          <button type="button" aria-label="정규런 목록으로" onClick={onBack}
-            className="absolute left-2.5 flex h-11 w-11 items-center justify-center">
-            <img src={BackBtnimg} alt="" />
-          </button>
+          <RunBackButton onClick={onBack} />
           정규런
           <div
             ref={dotButtonRef}
@@ -474,7 +471,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId, onBack }) => {
                         if (data.isSuccess) {
                           alert('게시글이 성공적으로 취소되었습니다.');
                           setShowMenu(false);
-                          navigate('/regular');
+                          navigate('/tab/regular', { replace: true });
                         } else {
                           alert(data.responseMessage || '취소에 실패했습니다.');
                         }
@@ -514,7 +511,7 @@ const NewRegularRunAdmin: React.FC<Props> = ({ postId, onBack }) => {
                       if (data.isSuccess) {
                         alert('게시글이 삭제되었습니다.');
                         setShowMenu(false);
-                        navigate('/regular');
+                        navigate('/tab/regular', { replace: true });
                       } else {
                         alert(data.responseMessage || '삭제에 실패했습니다.');
                       }

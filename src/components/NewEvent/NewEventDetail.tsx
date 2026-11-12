@@ -1,3 +1,4 @@
+import { useRunDetailBack } from '@shared/lib/runNavigation';
 //서버통신 페이지
 
 import React, { useEffect, useState } from 'react';
@@ -28,6 +29,7 @@ interface DetailData {
 const NewEventDetail: React.FC = () => {
   const { postId } = useParams<{ postId: string }>(); // URL의 postId 파라미터 가져오기
   const navigate = useNavigate(); // 페이지 이동 훅
+  const handleBack = useRunDetailBack('event');
   const [detailData, setDetailData] = useState<DetailData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const myId = JSON.parse(localStorage.getItem('MyId') || 'null');
@@ -83,8 +85,8 @@ const NewEventDetail: React.FC = () => {
   }
   if (detailData.adminId == myId)
     // 내 userId와 게시글 만든 사람의 Id 비교후 렌더링
-    return <NewEventAdmin {...detailData} postId={postId} />;
-  else return <NewEventUser {...detailData} postId={postId} />;
+    return <NewEventAdmin {...detailData} postId={postId} onBack={handleBack} />;
+  else return <NewEventUser {...detailData} postId={postId} onBack={handleBack} />;
 };
 
 export default NewEventDetail;
