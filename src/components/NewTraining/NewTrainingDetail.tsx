@@ -35,6 +35,7 @@ const NewTrainingDetail: React.FC = () => {
   useEffect(() => {
     let active = true;
     setIsLoading(true);
+    setDetailData(null);
     const fetchDetail = async () => {
       try {
         const token = localStorage.getItem('accessToken') || 'null';
@@ -58,7 +59,7 @@ const NewTrainingDetail: React.FC = () => {
             content: result.content,
             userName: result.userName,
             participantsNum: result.participantsNum,
-            participants: result.participants,
+            participants: result.participants ?? [],
             isCreator: result.userInfo?.userId != null && result.userInfo.userId === result.postCreatorInfo?.userId,
             postimgurl: result.postImageUrl,
           });

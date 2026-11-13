@@ -29,6 +29,7 @@ const FlashRunDetail: React.FC = () => {
   useEffect(() => {
     let active = true;
     setIsLoading(true);
+    setDetailData(null);
     const fetchDetail = async () => {
       try {
         const token = localStorage.getItem('accessToken') || 'null';

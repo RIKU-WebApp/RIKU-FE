@@ -37,6 +37,7 @@ const NewEventDetail: React.FC = () => {
   useEffect(() => {
     let active = true;
     setIsLoading(true);
+    setDetailData(null);
     const fetchDetail = async () => {
       try {
         const token = localStorage.getItem('accessToken') || 'null';
@@ -60,7 +61,7 @@ const NewEventDetail: React.FC = () => {
             content: result.content,
             userName: result.userName,
             participantsNum: (result.participants ?? []).length,
-            participants: result.participants,
+            participants: result.participants ?? [],
             isCreator: result.userInfo?.userId != null && result.userInfo.userId === result.postCreatorInfo?.userId,
             postimgurl: result.postImageUrl,
           });
