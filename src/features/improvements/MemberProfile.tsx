@@ -84,12 +84,15 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
     const badge = grants.find(b => b.code === key);
     return badge ? earnedItems([badge]) : [];
   });
-  const leadingKeys = new Set(leadingBadges.map(item => item.key));
-  const items = [...leadingBadges, ...earnedItems(grants).filter(item => !leadingKeys.has(item.key))];
-  const listed = new Set(items.map(item => item.key));
-  const otherTiers = grants.filter(badge => !listed.has(badge.code)).flatMap(badge => earnedItems([badge]));
-  const allItems = [...items, ...otherTiers];
-  const visibleItems = badgesExpanded ? allItems : allItems.slice(0, badgePreviewLimit);
+  const highest = earnedItems(grants);
+  const familyOf = (key: string) => profileCatalog.find(d =>
+    d.levels.some(target => (d.prefix ?? d.id) + '_' + target === key))?.id ?? key;
+  const featuredOrder = [...new Set(leadingBadges.map(item => familyOf(item.key)))];
+  const items = [
+    ...featuredOrder.flatMap(id => highest.filter(item => familyOf(item.key) === id)),
+    ...highest.filter(item => !featuredOrder.includes(familyOf(item.key))),
+  ];
+  const visibleItems = badgesExpanded ? items : items.slice(0, badgePreviewLimit);
   const picked = visibleItems.find(item => item.key === selected);
   function toggleList(group: 'ranks' | 'badges') {
     const el = dialog.current;
@@ -135,7 +138,7 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
         : <>
           <div className="profile-shelf-heading">
             <h3>획득 배지</h3>
-            {allItems.length > badgePreviewLimit && <button type="button" aria-controls={heading+'-badges'} aria-expanded={badgesExpanded}
+            {items.length > badgePreviewLimit && <button type="button" aria-controls={heading+'-badges'} aria-expanded={badgesExpanded}
               onClick={() => toggleList('badges')}>
               {badgesExpanded ? '접기' : '전체보기'} <ChevronDown size={14} aria-hidden="true"/>
             </button>}
