@@ -274,7 +274,7 @@ export default function AchievementsPage() {
                   </button>
                 );
               })}
-              {filter === '미획득' && <div className="patch-tile locked">
+              {filter !== '획득' && <div className="patch-tile locked">
                 <PendingBadgeOutline />
                 <strong>마라톤 관련</strong>
                 <small>준비 중</small>
