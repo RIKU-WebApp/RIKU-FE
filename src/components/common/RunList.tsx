@@ -1,7 +1,7 @@
 //러닝 리스트 Page
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, isValid, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
@@ -84,7 +84,8 @@ const RunList: React.FC = () => {
   }, []);
 
   const toKST = (dateStr: string) => {
-    const utc = new Date(dateStr);
+    const utc = typeof dateStr === 'string' ? parseISO(dateStr) : new Date(NaN);
+    if (!isValid(utc)) return { kst: utc, formattedDate: '일시 미정', formattedTime: '' };
     const kst = new Date(utc.getTime() + 9 * 60 * 60 * 1000);
     return {
       kst,

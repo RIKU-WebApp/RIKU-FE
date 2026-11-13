@@ -81,7 +81,7 @@ const EditableAttendanceList: React.FC<EditableAttendanceListProps> = ({
   };
 
   return (
-    <div data-no-swipe={editMode || undefined} className="flex flex-col p-5 gap-3">
+    <div data-no-swipe={editMode || undefined} className="flex w-full max-w-[375px] flex-col p-5 gap-3">
       {/* 상단 통계 & 버튼 */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-1">

@@ -200,11 +200,11 @@ function RankingPage() {
         </div>
 
         {/* "이번달 내 순위" 내용을 표현하는 부분 */}
-        <div className="w-full max-w-sm text-left m-4">
+        {myInfo && <div className="w-full max-w-sm text-left m-4">
           <span className="text-xl font-bold pr-4 text-whiteSmoke">이번 학기 내 순위</span>
           <span className="text-xl font-bold pr-4 text-whiteSmoke">|</span>
           <span className="text-xl font-bold text-kuLightGreen">{myRankingInfo}</span>
-        </div>
+        </div>}
 
         {/* 자신의 랭킹을 표시하는 카드 섹션 */}
         {myInfo && <div className="w-full max-w-sm bg-kuLightGray rounded-xl flex flex-row justify-between items-center px-3 py-2 mb-6">

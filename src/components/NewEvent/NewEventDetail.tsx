@@ -22,7 +22,7 @@ interface DetailData {
   userName: string;
   participantsNum: number;
   participants: Participant[];
-  adminId: number;
+  isCreator: boolean;
   postimgurl: string;
 }
 
@@ -32,9 +32,11 @@ const NewEventDetail: React.FC = () => {
   const handleBack = useRunDetailBack('event');
   const [detailData, setDetailData] = useState<DetailData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const myId = JSON.parse(localStorage.getItem('MyId') || 'null');
   // 서버에서 데이터를 가져오는 함수
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
+    let active = true;
+    setIsLoading(true);
     const fetchDetail = async () => {
       try {
         const token = localStorage.getItem('accessToken') || 'null';
@@ -44,6 +46,7 @@ const NewEventDetail: React.FC = () => {
           },
         });
 
+        if (!active) return;
         if (response.data.isSuccess) {
           const result = response.data.result;
           setDetailData({
@@ -56,34 +59,40 @@ const NewEventDetail: React.FC = () => {
             }),
             content: result.content,
             userName: result.userName,
-            participantsNum: result.participants.length,
+            participantsNum: (result.participants ?? []).length,
             participants: result.participants,
-            adminId: result.postCreatorInfo.userId,
+            isCreator: result.userInfo?.userId != null && result.userInfo.userId === result.postCreatorInfo?.userId,
             postimgurl: result.postImageUrl,
           });
         } else {
           console.error('데이터를 불러오지 못했습니다:', response.data.responseMessage);
-          navigate('/');
+          setDetailData(null);
         }
       } catch (error) {
+        if (!active) return;
         console.error('API 요청 오류:', error);
-        navigate('/');
+        setDetailData(null);
       } finally {
-        setIsLoading(false);
+        if (active) setIsLoading(false);
       }
     };
 
     fetchDetail();
-  }, [postId, navigate]);
+    return () => { active = false; };
+  }, [postId, attempt]);
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   if (!detailData) {
-    return <div>데이터가 없습니다.</div>;
+    return <div className="mx-auto max-w-[430px] p-5">
+      <p role="alert">{"러닝 정보를 불러오지 못했습니다."}</p>
+      <button className="mt-4 mr-5 text-kuDarkGreen" onClick={() => setAttempt(n => n + 1)}>다시 시도</button>
+      <button onClick={() => navigate('/tab/event', {replace: true})}>목록으로</button>
+    </div>;
   }
-  if (detailData.adminId == myId)
+  if (detailData.isCreator)
     // 내 userId와 게시글 만든 사람의 Id 비교후 렌더링
     return <NewEventAdmin {...detailData} postId={postId} onBack={handleBack} />;
   else return <NewEventUser {...detailData} postId={postId} onBack={handleBack} />;

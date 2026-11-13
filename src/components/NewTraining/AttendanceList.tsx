@@ -57,7 +57,7 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
     (user) => user.status === 'PENDING' || user.status === 'ATTENDED' || user.status === 'ABSENT'
   ).length;
   return (
-    <div data-no-swipe={isEditMode || undefined} className="flex flex-col gap-3 px-5 mt-[22px]">
+    <div data-no-swipe={isEditMode || undefined} className="flex w-full max-w-[375px] flex-col gap-3 px-5 mt-[22px]">
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center text-sm font-medium text-[#366943] gap-1">
           <img src={peopleimg} alt="people icon" className="w-[24px] h-[17px]" />
@@ -119,7 +119,7 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
                 )}
 
                 <div
-                  className={`flex items-center gap-2.5 w-[288px] h-[52px] px-4 py-2.5 rounded-lg text-base font-medium ${backgroundColor}`}
+                  className={`flex items-center gap-2.5 min-w-0 flex-1 h-[52px] px-4 py-2.5 rounded-lg text-base font-medium ${backgroundColor}`}
                 >
                   <div className="flex min-w-0 flex-1 items-center gap-2 text-left"><ProfileName photo={{ url: user.userProfileImg, size: 36 }} userId={user.userId} name={user.userName} editing={isEditMode} /></div>
 
