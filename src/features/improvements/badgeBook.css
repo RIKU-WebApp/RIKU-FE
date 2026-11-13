@@ -172,6 +172,7 @@
   margin-bottom: 3px;
   filter: drop-shadow(0 2px 1px #38372524);
 }
+.patch-tile .pending-outline { color: #9aa494; filter: none; }
 .patch-tile strong {
   font-size: clamp(12px, 3.2vw, 14px);
   line-height: 1.3;

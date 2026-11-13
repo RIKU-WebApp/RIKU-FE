@@ -14,13 +14,7 @@ export default function EventSection({ onShowDetailModal }: { onShowDetailModal:
   const [eventTop20, setEventTop20] = useState<SimpleUserInfo[]>([]);
   const [isLoaded, setIsLoaded] = useState(false); // 로딩이 다 되었는지에 대한 boolean 값
 
-  // 자신의 정보 myInfo (안 불러와졌을 경우 표시할 placeholder 격의 데이터 하나 넣어놓을 것임)
-  const [eventMyInfo, setEventMyInfo] = useState<SimpleUserInfo>({
-    userName: '라이꾸',
-    userProfileImg: 'https://via.placeholder.com/48',
-    totalPoints: 111,
-    userId: 1,
-  });
+  const [eventMyInfo, setEventMyInfo] = useState<SimpleUserInfo | null>(null);
 
   // 자신의 랭킹 정보 myRankingInfo
   const [myRankingInfo, setMyRankingInfo] = useState<number>(12);
@@ -187,6 +181,7 @@ export default function EventSection({ onShowDetailModal }: { onShowDetailModal:
       {isLoaded ? (
         <div className="animate-fade-in w-full flex flex-col items-center px-4">
           {/* "이번달 내 순위" 내용을 표현하는 부분 */}
+          {eventMyInfo && <>
           <div className="w-full max-w-sm text-left m-4">
             <span className="text-xl font-bold pr-4 text-whiteSmoke">이벤트 기간 내 순위</span>
             <span className="text-xl font-bold pr-4 text-whiteSmoke">|</span>
@@ -208,6 +203,8 @@ export default function EventSection({ onShowDetailModal }: { onShowDetailModal:
               {eventMyInfo.totalPoints}P
             </span>
           </div>
+
+          </>}
 
           {/* 그 밑의 4위부터 회원들 랭킹 프로필 카드 (받아온 랭킹 정보를 바탕으로 map 함수로 return할 것임) */}
           {eventTop20.slice(3, viewCount).map((user, index) => (

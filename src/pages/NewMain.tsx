@@ -6,9 +6,8 @@ import trainImage from '@assets/defalut_trainingRun.jpeg';
 import regularImg from '@assets/default_regular.jpeg';
 import eventImg from '@assets/default_event.jpeg';
 import plusBtn from '@assets/plus_Icon.svg';
-import img2 from '@assets/Main-img/main-moving-images/1.png';
-import img3 from '@assets/Main-img/main-moving-images/2.png';
-import img4 from '@assets/Main-img/main-moving-images/3.jpg';
+import seoulRace from '@assets/Main-img/main-moving-images/seoul-race.jpg';
+import clubFlag from '@assets/Main-img/main-moving-images/club-flag.jpg';
 
 import customAxios from '@shared/lib/customAxios';
 import NOWimg from '@assets/Main-img/NewOpenStatus.svg';
@@ -91,7 +90,10 @@ const NewMain: React.FC = () => {
   const [userRole, setUserRole] = useState<string | null>(null);
 
   const navigate = useNavigate();
-  const images = ['/share-cover.jpg', img2, img3, img4];
+  const images = [
+    { src: seoulRace, alt: '서울시청 앞 마라톤 단체 사진', position: 'center 55%' },
+    { src: clubFlag, alt: 'RIKU 깃발과 함께 찍은 단체 사진', position: 'center 78%' },
+  ];
 
   const formatDate = (isoDateString?: string): string => {
     if (!isoDateString) return '-';
@@ -250,9 +252,10 @@ const NewMain: React.FC = () => {
           <div className="max-w-[430px] w-full h-[300px] mx-auto relative overflow-hidden">
             {images.map((image, index) => (
               <img
-                key={image}
-                src={image}
-                alt={index === currentIndex ? `메인 배너 ${index + 1}` : ''}
+                key={image.src}
+                src={image.src}
+                style={{ objectPosition: image.position }}
+                alt={index === currentIndex ? image.alt : ''}
                 aria-hidden={index !== currentIndex}
                 className={`absolute inset-0 block h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
                   // 현재 이미지만 보이도록 (모든 이미지 겹친 상태에서 1000ms 동안 페이드인, 페이드아웃 효과)

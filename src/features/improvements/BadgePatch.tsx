@@ -1,3 +1,4 @@
+import { LockKeyhole } from 'lucide-react';
 import type { Patch, Motif } from './badgeCollection';
 import { useId, type ReactNode } from 'react';
 const frames: Partial<Record<Motif, string>> = {
@@ -10,6 +11,13 @@ const frames: Partial<Record<Motif, string>> = {
   road: 'M8 50A42 42 0 0 1 92 50V78Q92 88 82 88H18Q8 88 8 78Z',
   star: 'M50 5L61 12L75 12L81 24L92 31L91 45L96 57L87 68L84 82L70 85L59 95L46 91L32 94L23 83L10 77L11 63L4 50L10 37L10 24L24 19L33 9Z',
 };
+export function PendingBadgeOutline() {
+  return <svg className="patch-art pending-outline" viewBox="0 0 100 102" aria-hidden="true">
+    <path d={frames.summit} fill="none" stroke="currentColor" strokeWidth="2.4" strokeDasharray="5 3" strokeLinecap="round" />
+    <LockKeyhole x={35} y={36} width={30} height={30} strokeWidth={1.8} />
+  </svg>;
+}
+
 export const metals = [
   ['#773e2e', '#d89366', '#ffe1bd'],
   ['#465568', '#a7b9c9', '#f1f4ed'],
