@@ -30,16 +30,21 @@ function SemesterStar({accent,light}:{accent:string;light:string}) {
   </g>;
 }
 
+export function compactMedalPeriod(medal: RankMedal) {
+  const [year, month] = medal.start.split('-');
+  const period = medal.kind === 'SEMESTER' ? (Number(month) < 8 ? 'S1' : 'S2') : month;
+  return year.slice(-2) + '/' + period;
+}
+
 function PeriodStamp({medal, ink, base}:{medal:RankMedal;ink:string;base:string}){
-  const [year,month]=medal.start.split('-');
-  const semester=medal.kind==='SEMESTER';
-  const period=semester ? (Number(month)<8?'S1':'S2') : month;
+  const [year, period] = compactMedalPeriod(medal).split('/');
+  const semester = medal.kind === 'SEMESTER';
   const y=semester ? 88 : 82;
   return <g>
     {!semester && <rect x="29" y={y-11} width="42" height="14" rx="4" fill={base}/>}
     <text fill={ink} fontFamily="system-ui,sans-serif" fontSize={semester ? 16 : 13.5} fontWeight="700"
       style={{fontVariantNumeric:'tabular-nums'}} y={y}>
-      <tspan x="47.5" textAnchor="end">{year.slice(-2)}</tspan>{' '}
+      <tspan x="47.5" textAnchor="end">{year}</tspan>{' '}
       <tspan x="52.5" textAnchor="start">{period}</tspan>
     </text>
   </g>;

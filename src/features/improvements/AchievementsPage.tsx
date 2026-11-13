@@ -1,11 +1,12 @@
+import { BadgeDisplayEditor } from './BadgeDisplayEditor';
 import { getRankHonors } from './rankHonorsApi';
 import { useEffect, useRef, useState } from 'react';
-import { Check, ChevronRight, LockKeyhole, X } from 'lucide-react';
+import { Check, ChevronRight, SlidersHorizontal, LockKeyhole, X } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { Header, errorMessage, request } from './shared';
 import { collection, earned, type Activity, type Patch, type Progress } from './badgeCollection';
 import { minimumTarget } from './badgeCondition';
-import { BadgePatch } from './BadgePatch';
+import { BadgePatch, PendingBadgeOutline } from './BadgePatch';
 import { MedalCard, sampleMedals, type RankMedal } from './RankMedals';
 import './badgeBook.css';
 import './rankMedals.css';
@@ -97,8 +98,16 @@ export default function AchievementsPage() {
   const [live, setLive] = useState<[Progress, Activity, RankMedal[]]>();
   const [error, setError] = useState('');
   const [attempt, retry] = useState(0);
-  const [filter, setFilter] = useState<(typeof filters)[number]>(params.get('filter')==='earned'?'획득':'전체');
+  const [filter, setFilter] = useState<(typeof filters)[number]>(params.get('filter') === 'earned' ? '획득' : params.get('filter') === 'unearned' ? '미획득' : '전체');
   const medals = sample ? sampleMedals : live?.[2] ?? [];
+  const openRegularEditor = params.get('edit') === 'badges';
+  const [editing, setEditing] = useState(openRegularEditor);
+  const [savingDisplay, setSavingDisplay] = useState(false);
+  const editButton = useRef<HTMLButtonElement>(null);
+  function closeEditor() {
+    setEditing(false);
+    requestAnimationFrame(() => editButton.current?.focus({preventScroll: true}));
+  }
   const [detail, setDetail] = useState<Patch>();
   useEffect(() => {
     if (sample) return;
@@ -120,6 +129,10 @@ export default function AchievementsPage() {
     };
   }, [sample, attempt]);
   const data = sample ? ([demo, demoDistance] as const) : live;
+  const ready = Boolean(data);
+  useEffect(() => {
+    if (openRegularEditor && ready) editButton.current?.closest('.badge-toolbar')?.scrollIntoView({ block: 'start' });
+  }, [openRegularEditor, ready]);
   const families = data ? collection(data[0], data[1], sample) : [];
   const list = families.flat();
   const count = list.filter(earned).length;
@@ -215,13 +228,20 @@ export default function AchievementsPage() {
                 </button>
               )}
             </div>
-            <nav className="patch-filters" aria-label="배지 필터">
-              {filters.map((f) => (
-                <button key={f} aria-pressed={filter === f} onClick={() => setFilter(f)}>
-                  {f}
-                </button>
-              ))}
-            </nav>
+            <div className="badge-toolbar">
+              <nav className="patch-filters" aria-label="배지 필터">
+                {filters.map(f => <button key={f} aria-pressed={filter === f} disabled={savingDisplay}
+                  onClick={() => { setFilter(f); setEditing(false); }}>{f}</button>)}
+              </nav>
+              <button ref={editButton} type="button" className="showcase-toggle" aria-expanded={editing}
+                aria-controls="badge-display-panel" disabled={savingDisplay} onClick={() => setEditing(open => !open)}>
+                <SlidersHorizontal size={14} aria-hidden="true"/>대표 배지 편집
+              </button>
+            </div>
+            <div id="badge-display-panel" hidden={!editing}>
+              {editing && <BadgeDisplayEditor families={families} medals={medals} sample={sample} initialGroup={openRegularEditor ? 'badges' : undefined}
+                saving={savingDisplay} setSaving={setSavingDisplay} close={closeEditor}/>}
+            </div>
             <div className="patch-grid">
               {filter !== '미획득' && medals.map(m => <MedalCard key={m.kind+m.start} medal={m}/>)}
               {sections.map(({ f, card }) => {
@@ -254,8 +274,13 @@ export default function AchievementsPage() {
                   </button>
                 );
               })}
+              {filter === '미획득' && <div className="patch-tile locked">
+                <PendingBadgeOutline />
+                <strong>마라톤 관련</strong>
+                <small>준비 중</small>
+              </div>}
             </div>
-            {!sections.length && !(filter==='획득' && medals.length) && (
+            {!sections.length && filter === '획득' && !medals.length && (
               <p className="patch-empty">
                 {filter === '획득' ? '아직 획득한 배지가 없어요.' : '모든 배지를 모았어요.'}
               </p>

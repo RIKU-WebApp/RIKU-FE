@@ -1,17 +1,19 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { ChevronDown } from 'lucide-react';
 import { badgeCondition } from './badgeCondition';
 import { BadgePatch } from './BadgePatch';
 import type { Motif } from './badgeCollection';
 import catalog from './badgeSeries.json';
-import { type RankMedal, medalPeriod, rankPalette, RankPatch } from './RankMedals';
+import { type RankMedal, compactMedalPeriod, medalPeriod, rankPalette, RankPatch } from './RankMedals';
 import { errorMessage, request, type Badge } from './shared';
 import './rankMedals.css';
 import './memberProfile.css';
 
-type Profile = { name: string; badges: Badge[]; medals: RankMedal[] };
+type Profile = { name: string; badges: Badge[]; medals: RankMedal[]; featured?: { medals: string[] | null; badges: string[] | null } };
 type Item = { key: string; title: string; period?: string; accent?: string; detail: string; art: React.ReactNode };
 const previewLimit = 2;
+const badgePreviewLimit = 6;
 const profileCatalog = [...catalog].sort((a, b) =>
   (a.profileOrder ?? Number.MAX_SAFE_INTEGER) - (b.profileOrder ?? Number.MAX_SAFE_INTEGER));
 
@@ -46,6 +48,7 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
   const [error, setError] = useState('');
   const [attempt, retry] = useState(0);
   const [expanded, expand] = useState(false);
+  const [badgesExpanded, setBadgesExpanded] = useState(false);
   const [selected, select] = useState<string>();
   useEffect(() => {
     const el = dialog.current;
@@ -65,54 +68,85 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
     return () => { active = false; };
   }, [userId, attempt]);
   const ranks = profile ? profile.medals.map(m => ({
-    kind: m.kind,
+    kind: m.kind, caption: compactMedalPeriod(m) + ' ' + m.place + '위',
     key: m.kind + m.start, title: (m.kind === 'MONTH' ? '월간 ' : '학기 ') + m.place + '위',
     period: medalPeriod(m), accent: rankPalette(m)[1], art: <RankPatch medal={m}/>,
     detail: m.achievedOn.replace(/-/g, '.') + ' 달성',
   })) : [];
   const selectedRank = ranks.find(rank => rank.key === selected);
-  const items = profile ? earnedItems(profile.badges) : [];
-  const picked = items.find(item => item.key === selected);
-  const rankButton = (rank: Item, full = false) => <button className="profile-rank" key={rank.key}
+  const medalKeys = profile?.featured?.medals;
+  const leadingRanks = medalKeys == null ? ranks.slice(0, previewLimit)
+    : medalKeys.flatMap(key => ranks.filter(rank => rank.key === key));
+  const moreRanks = ranks.filter(rank => !leadingRanks.some(leading => leading.key === rank.key));
+  const orderedRanks = [...leadingRanks, ...moreRanks];
+  const grants = profile?.badges ?? [];
+  const leadingBadges = (profile?.featured?.badges ?? []).flatMap(key => {
+    const badge = grants.find(b => b.code === key);
+    return badge ? earnedItems([badge]) : [];
+  });
+  const leadingKeys = new Set(leadingBadges.map(item => item.key));
+  const items = [...leadingBadges, ...earnedItems(grants).filter(item => !leadingKeys.has(item.key))];
+  const listed = new Set(items.map(item => item.key));
+  const otherTiers = grants.filter(badge => !listed.has(badge.code)).flatMap(badge => earnedItems([badge]));
+  const allItems = [...items, ...otherTiers];
+  const visibleItems = badgesExpanded ? allItems : allItems.slice(0, badgePreviewLimit);
+  const picked = visibleItems.find(item => item.key === selected);
+  function toggleList(group: 'ranks' | 'badges') {
+    const el = dialog.current;
+    if (el && !el.style.getPropertyValue('--profile-top')) {
+      el.style.setProperty('--profile-top', el.getBoundingClientRect().top + 'px');
+    }
+    if (group === 'ranks') expand(!expanded);
+    else setBadgesExpanded(!badgesExpanded);
+    select(undefined);
+  }
+  const rankButton = (rank: (typeof ranks)[number]) => <button className="profile-rank" key={rank.key}
     style={{borderTopColor:rank.accent}} aria-label={rank.title + ', ' + rank.period}
     aria-pressed={selected === rank.key} onClick={() => select(selected === rank.key ? undefined : rank.key)}>
-    {rank.art}<span>{rank.title}</span>{full && <small>{rank.period}</small>}
+    {rank.art}<span>{rank.caption}</span>
   </button>;
   return <dialog ref={dialog} className="riku-dialog member-profile" aria-labelledby={heading}
     onCancel={onClose} onClick={e => { if (e.target === dialog.current) onClose(); }}>
     <div className="profile-body">
       <div className="profile-heading">
-      <h2 id={heading}>{profile?.name ?? '프로필'}</h2>
-      {ranks.length > 0 && !expanded && <div className="profile-ranks" aria-label="입상 배지">
-        {ranks.slice(0, previewLimit).map(rank => rankButton(rank))}
-      </div>}
-      <button className="dialog-close" onClick={onClose} aria-label="프로필 닫기">×</button>
+        <h2 id={heading}>{profile?.name ?? '프로필'}</h2>
+        <button className="dialog-close" onClick={onClose} aria-label="프로필 닫기">×</button>
       </div>
-      {ranks.length > previewLimit && <div className="rank-collection">
-        <button className="rank-disclosure" aria-expanded={expanded} aria-controls={heading+'-collection'} onClick={()=>{expand(!expanded);select(undefined);}}>
-          <span>입상 배지 <b>{ranks.length}</b></span><span>{expanded?'접기':'전체보기'} {expanded?'⌃':'⌄'}</span>
-        </button>
-        <div id={heading+'-collection'} hidden={!expanded}>{expanded && (['SEMESTER', 'MONTH'] as const).map(kind =>{
-          const group=ranks.filter(rank => rank.kind === kind);
-          return group.length>0 && <section key={kind}><h3>{kind === 'SEMESTER' ? '학기' : '월간'} <small>{group.length}</small></h3>
-            <div className="all-rank-grid">{group.map(r=><div key={r.key}>{rankButton(r,true)}
-              {selected===r.key && <small role="status">{r.detail}</small>}
-            </div>)}</div></section>;
-        })}</div>
-      </div>}
-      {selectedRank && !expanded && <div className="profile-detail" role="status"><strong>{selectedRank.title}</strong><p>{selectedRank.period} ({selectedRank.detail})</p></div>}
+      {ranks.length > 0 && <section aria-label="입상 배지">
+        <div className="profile-shelf-heading">
+          <h3>입상 배지 <small>{ranks.length}</small></h3>
+          {moreRanks.length > 0 && <button type="button" aria-expanded={expanded} aria-controls={heading+'-collection'}
+            onClick={() => toggleList('ranks')}>{expanded ? '접기' : '전체보기'} <ChevronDown size={14} aria-hidden="true"/></button>}
+        </div>
+        <div id={heading+'-collection'}>
+          {expanded ? (['SEMESTER', 'MONTH'] as const).map(kind => {
+            const group = orderedRanks.filter(rank => rank.kind === kind);
+            return group.length > 0 && <div className="profile-rank-group" key={kind}>
+              <h4>{kind === 'SEMESTER' ? '학기' : '월간'}</h4>
+              <div className="profile-ranks">{group.map(rankButton)}</div>
+            </div>;
+          }) : <div className="profile-ranks">{leadingRanks.map(rankButton)}</div>}
+        </div>
+        {selectedRank && <div className="profile-detail" role="status"><strong>{selectedRank.title}</strong><p>{selectedRank.period} ({selectedRank.detail})</p></div>}
+      </section>}
       {error ? <p role="alert">{error} <button onClick={() => retry(i => i + 1)}>다시 시도</button></p>
         : !profile ? <p role="status">불러오는 중…</p>
         : items.length === 0 ? (ranks.length ? null : <p>아직 획득한 배지가 없어요.</p>)
         : <>
-          <h3>획득 배지</h3>
-          <div className="profile-shelf">{items.map(item =>
+          <div className="profile-shelf-heading">
+            <h3>획득 배지</h3>
+            {allItems.length > badgePreviewLimit && <button type="button" aria-controls={heading+'-badges'} aria-expanded={badgesExpanded}
+              onClick={() => toggleList('badges')}>
+              {badgesExpanded ? '접기' : '전체보기'} <ChevronDown size={14} aria-hidden="true"/>
+            </button>}
+          </div>
+          <div id={heading+'-badges'} className="profile-shelf">{visibleItems.map(item =>
             <button key={item.key} aria-label={item.title} aria-pressed={selected === item.key}
               onClick={() => select(selected === item.key ? undefined : item.key)}>
               {item.art}<span>{item.title}</span>
             </button>)}
             {picked && <div className="profile-detail" role="status"
-              style={{ gridRow: Math.floor(items.indexOf(picked) / 3) + 2 }}>
+              style={{ gridRow: Math.floor(visibleItems.indexOf(picked) / 3) + 2 }}>
               <strong>{picked.title}</strong><p>{picked.detail}</p>
             </div>}
           </div>

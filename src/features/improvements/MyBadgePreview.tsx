@@ -19,7 +19,7 @@ export default function MyBadgePreview() {
       .catch(() => { if (active) setFailed(true); });
     return () => { active = false; };
   }, []);
-  const preview = summary && earnedItems(summary.badges ?? []);
+  const preview = summary && (summary.badges ?? []).flatMap(b => earnedItems([b]));
   const ranks = summary?.medals ?? [];
   return <section className="my-badge-preview w-full max-w-sm">
     <Link to="/my-achievements" className="my-badge-link">
@@ -34,7 +34,7 @@ export default function MyBadgePreview() {
       </>}
       {preview?.length ? <div className="my-badge-strip">{preview.map(item =>
         <div key={item.key}>{item.art}<span>{item.title}</span></div>)}</div> :
-        <p>{failed ? '배지를 불러오지 못했어요.' : preview ? '아직 획득한 배지가 없어요.' : '배지 불러오는 중…'}</p>}
+        <p>{failed ? '배지를 불러오지 못했어요.' : preview ? '표시할 일반 배지가 없어요.' : '배지 불러오는 중…'}</p>}
     </Link>
     <div className="my-shortcuts">
       <Link to="/record"><Image size={18}/>기록증 만들기</Link>
