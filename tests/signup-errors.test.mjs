@@ -47,3 +47,21 @@ test('구버전 서버의 HTTP 200 학번 중복 응답에서도 학번을 수�
   });
   assert.equal((await signup({})).step, 1);
 });
+
+test('서버가 오류 메시지에 객체나 잘못된 배열을 보내도 사용자가 읽을 안내를 표시한다', async () => {
+  for (const errors of [
+    { phone: 'format' },
+    [null, { fieldName: 'phone', message: { detail: 'format' } }],
+  ]) {
+    client.defaults.adapter = async (config) => {
+      throw new AxiosError('Request failed', undefined, config, null, {
+        status: 400,
+        config,
+        headers: {},
+        statusText: '',
+        data: { responseMessage: { detail: 'bad request' }, result: { errors } },
+      });
+    };
+    assert.match((await signup({})).message, /회원가입을 완료하지 못했습니다/);
+  }
+});

@@ -3,6 +3,8 @@ import RecordArchive from '../features/improvements/RecordArchive';
 import AchievementsPage from '../features/improvements/AchievementsPage';
 import { AdminOnly } from '../components/AdminPage/AdminMenu';
 import FeedbackPage from '../features/improvements/FeedbackPage';
+import AdminInbox from '../features/improvements/AdminInbox';
+import AccountHelpPage from '../pages/AccountHelpPage';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { previewFeaturesEnabled } from '@/shared/config/features';
 import SchedulePage from '../pages/SchedulePage';
@@ -68,6 +70,7 @@ function App() {
         <Routes>
           <Route path="/" element={<OnbordingPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/account-help" element={<AccountHelpPage />} />
           <Route
             path="/create-account"
             element={
@@ -95,7 +98,7 @@ function App() {
             <Route path="/admin" element={<AdminOnly />}>
               <Route index element={<Navigate to="members" replace />} />
               <Route path="members" element={<AdminPage />} />
-              {previewFeaturesEnabled && <Route path="feedback" element={<FeedbackPage admin />} />}
+              <Route path="feedback" element={<AdminInbox />} />
             </Route>
 
             <Route path="/make/flash" element={<FlashRunMake />} />

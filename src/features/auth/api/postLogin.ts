@@ -11,7 +11,6 @@ async function postLogin(id: string, password: string) {
   };
 
   const url = AUTH_ENDPOINTS.login;
-  console.log('data', data);
 
   try {
     const response = await customAxios.post(url, data); // 요청 보내기

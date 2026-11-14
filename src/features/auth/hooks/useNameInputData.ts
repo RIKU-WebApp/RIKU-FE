@@ -1,26 +1,24 @@
 import { useState } from 'react';
 import { useCreateAccountData } from '@features/auth/hooks/useCreateAccountData';
 
-// 이름 입력 컴포넌트에 대한 비즈니스 로직을 담당하는 훅
-function useNameInputData() {
-  const { setSignupData, handleNext, signupData } = useCreateAccountData(); // '회원가입 페이지' 전체의 비즈니스 로직을 담당하는 훅에서 필요한 것만 가져오기
-
+export default function useNameInputData() {
+  const { setSignupData, handleNext, signupData, showError } = useCreateAccountData();
   const [name, setName] = useState(signupData.name);
-
-  // '이름' 입력 란의 입력 값이 바뀔 때마다 취하는 액션을 정의한 handleChangeName 메소드
+  const ready = name.trim().length > 0 && name.length <= 20;
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    setName(input); // 이름 입력에 따라 '다음' 버튼의 활성화 여부를 결정해야 하므로, setName() 메소드를 통해 상태 변화를 일일이 추적해야 한다
+    const value = e.target.value;
+    if (value.length > 20) {
+      showError('이름은 공백을 포함해 20자까지 입력할 수 있습니다.');
+      return;
+    }
+    setName(value);
+    showError(value && !value.trim() ? '공백만으로는 이름을 입력할 수 없습니다.' : '');
   };
-
-  // '이름' 입력 후 '다음' 버튼을 입력했을 경우
   const handleSubmitName = (e: React.FormEvent) => {
     e.preventDefault();
-    setSignupData({ ...signupData, name: name }); // 이름 signupData에 저장
-    handleNext(); // 다음 step으로 핸들링
+    if (!ready) return;
+    setSignupData({ ...signupData, name: name.trim() });
+    handleNext();
   };
-
-  return { name, setName, handleChangeName, handleSubmitName };
+  return { name, ready, handleChangeName, handleSubmitName };
 }
-
-export default useNameInputData;

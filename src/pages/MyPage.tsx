@@ -4,7 +4,6 @@ import profile_Img from '@assets/default_profile.png'; //이미지 불러오기
 import rightArrow_Icon from '@assets/right_arrow.svg'; //라이쿠 로고 불러오기
 import customAxios from '@/shared/lib/customAxios';
 import { logout } from '@features/auth/api/tokenAuth';
-import { previewFeaturesEnabled } from '../shared/config/features';
 import MyBadgePreview from '../features/improvements/MyBadgePreview';
 
 import {
@@ -351,7 +350,7 @@ function MyPage() {
           <h2 id="admin-menu-title" className="bg-kuDarkGreen px-4 py-3 text-lg font-semibold text-white">관리자 메뉴</h2>
           <div className="divide-y divide-kuLightGray">
             {renderButton('회원 관리', rightArrow_Icon, () => navigate('/admin/members'))}
-            {previewFeaturesEnabled && renderButton('건의사항 관리', rightArrow_Icon, () => navigate('/admin/feedback'))}
+            {renderButton('건의사항 / 비밀번호 문의', rightArrow_Icon, () => navigate('/admin/feedback'))}
           </div>
         </section>
       )}

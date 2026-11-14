@@ -3,16 +3,9 @@ import customAxios from '@shared/lib/customAxios';
 import { AUTH_ENDPOINTS } from '@features/auth/constants';
 import { SignupData } from '@features/auth/types';
 
-export interface SignupProblem {
+interface SignupProblem {
   message: string;
   step?: number;
-}
-
-interface SignupResponse {
-  isSuccess?: boolean;
-  responseCode?: number;
-  responseMessage?: string;
-  result?: { errors?: { fieldName: string; message: string }[] };
 }
 
 const fields: Record<keyof SignupData, [number, string]> = {
@@ -24,31 +17,43 @@ const fields: Record<keyof SignupData, [number, string]> = {
   phone: [5, '전화번호'],
 };
 
-function signupProblem(body?: SignupResponse, fallback?: string): SignupProblem {
-  for (const [key, [step, label]] of Object.entries(fields)) {
-    const messages = body?.result?.errors
-      ?.filter((e) => e.fieldName === key && e.message)
-      .map((e) => e.message);
-    if (messages?.length) return { step, message: label + ' · ' + messages.join(' ') };
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+const readable = (value: unknown): value is string =>
+  typeof value === 'string' && value.trim().length > 0 && !value.includes('[object Object]');
+
+function signupProblem(body: unknown, fallback?: unknown): SignupProblem {
+  if (isRecord(body)) {
+    const errors = isRecord(body.result) ? body.result.errors : null;
+    if (Array.isArray(errors)) {
+      for (const [key, [step, label]] of Object.entries(fields)) {
+        const messages = errors
+          .filter(isRecord)
+          .filter((e) => e.fieldName === key)
+          .map((e) => e.message)
+          .filter(readable);
+        if (messages.length) return { step, message: label + ' · ' + messages.join(' ') };
+      }
+    }
+    if (body.responseCode === 2012)
+      return { step: 1, message: '이미 등록된 학번입니다. 학번을 확인해 주세요.' };
+    if (readable(body.responseMessage)) return { message: body.responseMessage };
   }
-  if (body?.responseCode === 2012)
-    return { step: 1, message: '이미 등록된 학번입니다. 학번을 확인해 주세요.' };
   return {
-    message:
-      body?.responseMessage ||
-      fallback ||
-      '회원가입을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+    message: readable(fallback)
+      ? fallback
+      : '회원가입을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.',
   };
 }
 
 export default async function postSignUpRequest(data: SignupData): Promise<SignupProblem | null> {
   try {
-    const { data: body } = await customAxios.post<SignupResponse>(AUTH_ENDPOINTS.signup, data);
-    return body.isSuccess === true ? null : signupProblem(body);
+    const { data: body } = await customAxios.post<unknown>(AUTH_ENDPOINTS.signup, data);
+    return isRecord(body) && body.isSuccess === true ? null : signupProblem(body);
   } catch (error) {
-    const wrapped = error as { raw?: unknown; message?: string };
-    const raw = axios.isAxiosError(error) ? error : wrapped?.raw;
-    const body = axios.isAxiosError<SignupResponse>(raw) ? raw.response?.data : undefined;
-    return signupProblem(body, wrapped?.message);
+    const wrapped = isRecord(error) ? error : {};
+    const raw = axios.isAxiosError(error) ? error : wrapped.raw;
+    const body = axios.isAxiosError(raw) ? raw.response?.data : undefined;
+    return signupProblem(body, wrapped.message);
   }
 }
