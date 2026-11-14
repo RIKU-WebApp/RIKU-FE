@@ -9,6 +9,11 @@ import { CreateAccountContext } from '@features/auth/context/CreateAccountContex
 export function CreateAccountProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const [step, setStep] = useState(1); // 초기 step은 1
+  const [errorMessage, setErrorMessage] = useState('');
+  const showError = (message: string, targetStep?: number) => {
+    setErrorMessage(message);
+    if (targetStep !== undefined) setStep(targetStep);
+  };
   const [signupData, setSignupData] = useState<SignupData>({
     // 초기 signupData는 빈 값으로 설정 (-> telNum은 nullable 값이므로 null로 설정)
     studentId: '',
@@ -20,8 +25,14 @@ export function CreateAccountProvider({ children }: { children: ReactNode }) {
   });
 
   // "회원가입" 페이지에서 해당하는 step으로 이동하는 핸들러
-  const handleNext = () => setStep((prev) => prev + 1);
-  const handlePrev = () => setStep((prev) => prev - 1);
+  const handleNext = () => {
+    setErrorMessage('');
+    setStep((prev) => prev + 1);
+  };
+  const handlePrev = () => {
+    setErrorMessage('');
+    setStep((prev) => prev - 1);
+  };
 
   // "회원가입" 페이지에서 step이 0 또는 6일 경우에는 로그인 페이지로 이동
   useEffect(() => {
@@ -34,6 +45,8 @@ export function CreateAccountProvider({ children }: { children: ReactNode }) {
     <CreateAccountContext.Provider
       value={{
         step,
+        errorMessage,
+        showError,
         handleNext,
         handlePrev,
         signupData,

@@ -1,27 +1,54 @@
+import axios from 'axios';
 import customAxios from '@shared/lib/customAxios';
 import { AUTH_ENDPOINTS } from '@features/auth/constants';
 import { SignupData } from '@features/auth/types';
 
-//서버에 회원가입 request 진행(POST 요청)
-const postSignUpRequest = async (data: SignupData) => {
-  //해당 구역에 axios 요청을 진행할 것임(서버에 입력된 회원 정보를 저장해야 함)
-  try {
-    console.log('data가 뭐임?', data);
-    const response = await customAxios.post(AUTH_ENDPOINTS.signup, data);
-    if (response.data.isSuccess === true) {
-      // 회원가입 성공
-      alert('정상적으로 회원 가입이 완료되었습니다');
-      return true; // 해당 boolean 값을 받아서, 기타 로직을 처리한다
-    } else if (response.data.isSuccess === false) {
-      // 회원가입 실패
-      alert(response.data.responseMessage);
-      return false;
-    }
-  } catch (error) {
-    // 기타 오류로 인해 회원가입 실패
-    alert('예상치 못한 오류가 발생했습니다, 관리자에게 문의하세요. \n 오류 내용: ' + error);
-    return false;
-  }
+export interface SignupProblem {
+  message: string;
+  step?: number;
+}
+
+interface SignupResponse {
+  isSuccess?: boolean;
+  responseCode?: number;
+  responseMessage?: string;
+  result?: { errors?: { fieldName: string; message: string }[] };
+}
+
+const fields: Record<keyof SignupData, [number, string]> = {
+  studentId: [1, '학번'],
+  password: [2, '비밀번호'],
+  name: [3, '이름'],
+  college: [4, '단과대학'],
+  major: [4, '학과'],
+  phone: [5, '전화번호'],
 };
 
-export default postSignUpRequest;
+function signupProblem(body?: SignupResponse, fallback?: string): SignupProblem {
+  for (const [key, [step, label]] of Object.entries(fields)) {
+    const messages = body?.result?.errors
+      ?.filter((e) => e.fieldName === key && e.message)
+      .map((e) => e.message);
+    if (messages?.length) return { step, message: label + ' · ' + messages.join(' ') };
+  }
+  if (body?.responseCode === 2012)
+    return { step: 1, message: '이미 등록된 학번입니다. 학번을 확인해 주세요.' };
+  return {
+    message:
+      body?.responseMessage ||
+      fallback ||
+      '회원가입을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+  };
+}
+
+export default async function postSignUpRequest(data: SignupData): Promise<SignupProblem | null> {
+  try {
+    const { data: body } = await customAxios.post<SignupResponse>(AUTH_ENDPOINTS.signup, data);
+    return body.isSuccess === true ? null : signupProblem(body);
+  } catch (error) {
+    const wrapped = error as { raw?: unknown; message?: string };
+    const raw = axios.isAxiosError(error) ? error : wrapped?.raw;
+    const body = axios.isAxiosError<SignupResponse>(raw) ? raw.response?.data : undefined;
+    return signupProblem(body, wrapped?.message);
+  }
+}

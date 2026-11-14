@@ -4,6 +4,8 @@ import { SignupData } from '@features/auth/types';
 // Context가 제공할 값의 타입 정의
 export interface CreateAccountContextType {
   step: number;
+  errorMessage: string;
+  showError: (message: string, step?: number) => void;
   handleNext: () => void;
   handlePrev: () => void;
   signupData: SignupData;
