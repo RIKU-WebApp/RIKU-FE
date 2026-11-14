@@ -6,7 +6,7 @@ import getIsStudentidValidate from '@features/auth/api/getIsStudentidValidate';
 function useStudentidInputData() {
   const { setSignupData, handleNext, signupData } = useCreateAccountData(); // '회원가입 페이지' 전체의 비즈니스 로직을 담당하는 훅에서 필요한 것만 가져오기
 
-  const [studentId, setStudentIdInput] = useState<string>(''); //학번을 저장하는 state
+  const [studentId, setStudentIdInput] = useState(signupData.studentId); //학번을 저장하는 state
 
   //Form의 입력 값이 바뀔 때마다 취하는 액션을 정의한 handleChange 메소드
   const handleChangeStudentid = (e: React.ChangeEvent<HTMLInputElement>) => {

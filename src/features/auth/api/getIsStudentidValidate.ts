@@ -14,8 +14,8 @@ async function getIsStudentidValidate(studentID: string) {
       alert('이미 가입된 학번입니다. 다른 학번으로 가입을 다시 시도해 주세요.');
       return false;
     }
-  } catch (error) {
-    console.error('예상치 못한 오류 발생, 오류 내용: ', error);
+  } catch {
+    alert('학번 중복 여부를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.');
     return false;
   }
 }
