@@ -8,7 +8,7 @@ export default function useNameInputData() {
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value.length > 20) {
-      showError('이름은 공백을 포함해 20자까지 입력할 수 있습니다.');
+      showError('이름은 최대 20자입니다.');
       return;
     }
     setName(value);
