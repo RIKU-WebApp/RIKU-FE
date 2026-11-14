@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useCreateAccountData } from '@features/auth/hooks/useCreateAccountData';
 import getIsStudentidValidate from '@features/auth/api/getIsStudentidValidate';
 
+const studentIdFormat = /^(?:[0-9]{9}|KL[0-9]{6})$/;
+
 export default function useStudentidInputData() {
   const { setSignupData, handleNext, signupData, showError } = useCreateAccountData();
   const [studentId, setStudentId] = useState(signupData.studentId);
   const [checking, setChecking] = useState(false);
-  const ready = /^(?:[0-9]{9}|KL[0-9]{6})$/.test(studentId) && !checking;
+  const ready = studentIdFormat.test(studentId) && !checking;
 
   const handleChangeStudentid = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toUpperCase();
@@ -15,7 +17,10 @@ export default function useStudentidInputData() {
       return;
     }
     setStudentId(value);
-    showError('');
+    const incomplete = value.length > 0 && !studentIdFormat.test(value);
+    showError(
+      incomplete ? '학번은 숫자 9자리, 언어교육원은 KL과 숫자 6자리를 모두 입력해 주세요.' : ''
+    );
   };
 
   const handleSubmitStudentid = async (e: React.FormEvent) => {

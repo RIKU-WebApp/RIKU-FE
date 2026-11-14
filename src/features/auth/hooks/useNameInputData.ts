@@ -6,8 +6,13 @@ export default function useNameInputData() {
   const [name, setName] = useState(signupData.name);
   const ready = name.trim().length > 0 && name.length <= 20;
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-    showError('');
+    const value = e.target.value;
+    if (value.length > 20) {
+      showError('이름은 공백을 포함해 20자까지 입력할 수 있습니다.');
+      return;
+    }
+    setName(value);
+    showError(value && !value.trim() ? '공백만으로는 이름을 입력할 수 없습니다.' : '');
   };
   const handleSubmitName = (e: React.FormEvent) => {
     e.preventDefault();

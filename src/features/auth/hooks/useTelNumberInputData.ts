@@ -26,17 +26,17 @@ export default function useTelNumberInputData() {
       setInputError('휴대전화 번호는 숫자 10~11자리입니다.');
       return;
     }
-    setInputError('');
     setPhone(digits);
+    if (digits && !/^01[016789][0-9]{7,8}$/.test(digits)) {
+      setInputError('01로 시작하는 휴대전화 번호 10~11자리를 입력하거나 번호를 지워 주세요.');
+    } else {
+      setInputError('');
+    }
   };
 
   const handleSubmitPhone = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitting || inputError) return;
-    if (phone && !/^01[016789][0-9]{7,8}$/.test(phone)) {
-      setInputError('01로 시작하는 휴대전화 번호 10~11자리를 확인하거나 번호를 지워 주세요.');
-      return;
-    }
     const data = { ...signupData, phone: phone || null };
     setSignupData(data);
     setSubmitting(true);

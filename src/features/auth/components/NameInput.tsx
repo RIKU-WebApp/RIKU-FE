@@ -11,7 +11,6 @@ export default function NameInput() {
         id="signup-name"
         type="text"
         autoComplete="name"
-        maxLength={20}
         value={name}
         onChange={handleChangeName}
         placeholder="이름"

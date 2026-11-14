@@ -15,7 +15,6 @@ export default function StudentidInput() {
         autoCorrect="off"
         spellCheck={false}
         pattern="([0-9]{9}|KL[0-9]{6})"
-        maxLength={9}
         readOnly={checking}
         value={studentId}
         onChange={handleChangeStudentid}
