@@ -27,7 +27,7 @@ export function earnedItems(badges: Badge[]): Item[] {
       if (!grants.delete(code)) return;
       const tier = d.tiers[grade];
       best = {
-        key: code, title: d.name + ' ' + tier,
+        key: code, title: d.levels.length === 1 ? d.name : d.name + ' ' + tier,
         detail: badgeCondition(d, grade),
         art: <BadgePatch patch={{ motif: d.motif as Motif, grade, single: d.levels.length === 1 }} />,
       };
