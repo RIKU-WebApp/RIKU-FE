@@ -349,6 +349,12 @@
   background: #e7eddf;
   border-color: #95aa93;
 }
+.level-ladder .tier-date {
+  display: block;
+  font-size: .72rem;
+  color: #526352;
+  font-variant-numeric: tabular-nums;
+}
 .level-ladder svg {
   justify-self: end;
 }

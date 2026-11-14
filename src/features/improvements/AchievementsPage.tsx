@@ -21,24 +21,39 @@ const demo: Progress = {
   hosted: 1,
   checkins: 26,
   fourSeasons: 2,
-  bestMonthlyRank: 3,
-  certificateDays: 0,
+  certificateDays: 1,
   byType: { REGULAR: 28, FLASH: 16, TRAINING: 5, EVENT: 6 },
 };
 const demoDistance: Activity = { verifiedKm: 122, personalKm: 65, badges: [] };
 const filters = ['전체', '획득', '미획득'] as const;
 const highest = (family: Patch[]) => family.filter(earned).slice(-1)[0];
+type BadgeDates = Record<string, {issuedOn: string; activityOn?: string | null}>;
+// Sample dates illustrate the detail view. A signed-in member's dates come from the grant ledger.
+const sampleTierDates = ['2025-09-04','2025-10-02','2025-11-13','2026-04-09','2026-10-29','2026-11-06'];
+const demoDates: BadgeDates = import.meta.env.DEV ? Object.fromEntries(
+  collection(demo, demoDistance, true).flat().filter(earned).map(patch => [
+    patch.id, {issuedOn: '2026-11-07', activityOn: patch.single ? null : sampleTierDates[patch.grade]},
+  ])
+) : {};
+function dateLabel(day: string, label: string) {
+  return <time dateTime={day}>{day.replace(/-/g, '.')} {label}</time>;
+}
 function Detail({
   family,
   initial,
   close,
+  dates, dateError, retryDates,
 }: {
   family: Patch[];
   initial: Patch;
   close: () => void;
+  dates?: BadgeDates;
+  dateError: boolean;
+  retryDates: () => void;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const [active, select] = useState(initial);
+  const stamp = dates?.[active.id];
   useEffect(() => {
     const el = ref.current;
     el?.showModal();
@@ -60,11 +75,12 @@ function Detail({
         </button>
         <BadgePatch patch={active} muted={!earned(active)} />
         <span className="patch-state">
-          {active.tier} {earned(active) ? '획득' : '미획득'}
+          {active.family !== 'certificateDays' && active.tier + ' '}{earned(active) ? '획득' : '미획득'}
         </span>
         <h2 id="patch-title">{active.name}</h2>
         <p>{active.rule}</p>
-        {active.standing && <small>{active.standing}</small>}
+        {earned(active) && stamp && <small>{dateLabel(stamp.issuedOn, '발급')}</small>}
+        {dateError && <small role="status">획득 날짜를 불러오지 못했습니다. <button onClick={retryDates}>다시 시도</button></small>}
         {active.unit && (
           <div className="patch-meter">
             <i style={{ width: Math.min(100, (active.value / active.target) * 100) + '%' }} />
@@ -78,6 +94,9 @@ function Detail({
                 <b>{b.tier}</b>
                 <span>
                   {b.condition ?? minimumTarget(b.target, b.unit)}
+                  {earned(b) && dates?.[b.id] && <small className="tier-date">
+                    {dateLabel(dates[b.id].activityOn ?? dates[b.id].issuedOn, '획득')}
+                  </small>}
                 </span>
                 {earned(b) ? (
                   <Check size={14} aria-label="획득" />
@@ -109,6 +128,23 @@ export default function AchievementsPage() {
     requestAnimationFrame(() => editButton.current?.focus({preventScroll: true}));
   }
   const [detail, setDetail] = useState<Patch>();
+  const [dates, setDates] = useState<BadgeDates>();
+  const [dateError, setDateError] = useState(false);
+  const [dateAttempt, retryDates] = useState(0);
+  const [loadDates, setLoadDates] = useState(false);
+  function showDetail(p: Patch) {
+    setDetail(p);
+    setLoadDates(true);
+  }
+  useEffect(() => {
+    if (sample || !loadDates) return;
+    let current = true;
+    setDateError(false);
+    request<BadgeDates | undefined>('get', '/user/activity/badge-dates').then(result => {
+      if (current) setDates(result ?? {});
+    }).catch(() => { if (current) setDateError(true); });
+    return () => { current = false; };
+  }, [loadDates, sample, dateAttempt]);
   useEffect(() => {
     if (sample) return;
     let active = true;
@@ -211,18 +247,18 @@ export default function AchievementsPage() {
                 {hero && (
                   <button
                     className="patch-feature"
-                    onClick={() => setDetail(hero)}
-                    aria-label={hero.name + ' ' + hero.tier + ' 상세'}
+                    onClick={() => showDetail(hero)}
+                    aria-label={hero.name + (hero.single ? '' : ' ' + hero.tier) + ' 상세'}
                   >
                     <BadgePatch patch={hero} muted={!earned(hero)} />
                   </button>
                 )}
               </div>
               {hero && (
-                <button className="patch-next" onClick={() => setDetail(hero)}>
+                <button className="patch-next" onClick={() => showDetail(hero)}>
                   <span>{next ? '다음 배지' : '획득한 배지'}</span>
                   <strong>
-                    {hero.name} {hero.tier}
+                    {hero.name}{!hero.single && ' ' + hero.tier}
                   </strong>
                   <ChevronRight size={14} />
                 </button>
@@ -250,7 +286,7 @@ export default function AchievementsPage() {
                   <button
                     key={p.family}
                     className={'patch-tile ' + (earned(p) ? 'won' : 'locked')}
-                    onClick={() => setDetail(p)}
+                    onClick={() => showDetail(p)}
                   >
                     <BadgePatch patch={p} muted={!earned(p)} />
                     <strong>{p.name}</strong>
@@ -262,7 +298,6 @@ export default function AchievementsPage() {
                       )}{' '}
                       {f.length === 1 ? (earned(p) ? '획득' : '미획득') : (earned(p) ? '보유 ' : '다음 목표 ') + p.tier}
                     </small>
-                    {f.length === 1 && <span className="patch-cap">단일 배지</span>}
                       <span
                         className="rank-steps"
                         aria-label={f.filter(earned).length + ' / ' + f.length + '단계 획득'}
@@ -289,7 +324,8 @@ export default function AchievementsPage() {
         )}
       </div>
       {detail && selected && (
-        <Detail family={selected} initial={detail} close={() => setDetail(undefined)} />
+        <Detail family={selected} initial={detail} close={() => setDetail(undefined)}
+          dates={sample ? demoDates : dates} dateError={dateError} retryDates={() => retryDates(n => n + 1)} />
       )}
     </main>
   );

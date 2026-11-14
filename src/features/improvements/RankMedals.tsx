@@ -2,13 +2,13 @@ import { type CSSProperties, type ReactNode } from 'react';
 import {rankSeason, SeasonMark} from './rankSeasons';
 import { PatchFrame, metals } from './BadgePatch';
 
-export type RankMedal = {kind:'MONTH'|'SEMESTER';start:string;achievedOn:string;place:number};
+export type RankMedal = {kind:'MONTH'|'SEMESTER';start:string;achievedOn:string;place:number;issuedOn?:string};
 
 
 export const sampleMedals: RankMedal[] = [
-  {kind:'SEMESTER',start:'2025-09-01',achievedOn:'2026-03-01',place:2},
-  {kind:'MONTH',start:'2026-10-01',achievedOn:'2026-10-31',place:1},
-  {kind:'MONTH',start:'2026-09-01',achievedOn:'2026-09-30',place:3},
+  {kind:'SEMESTER',start:'2025-09-01',achievedOn:'2026-03-01',issuedOn:'2026-11-07',place:2},
+  {kind:'MONTH',start:'2026-10-01',achievedOn:'2026-10-31',issuedOn:'2026-11-07',place:1},
+  {kind:'MONTH',start:'2026-09-01',achievedOn:'2026-09-30',issuedOn:'2026-11-07',place:3},
 ];
 
 export function medalPeriod(m:RankMedal) {
@@ -101,5 +101,6 @@ export function MedalCard({medal, stamped=true}:{medal:RankMedal;stamped?:boolea
     <strong>{semester?'학기':'월간'} {medal.place}위</strong>
     <span>{medalPeriod(medal)}</span>
     <small><time dateTime={medal.achievedOn}>{medal.achievedOn.replace(/-/g,'.')}</time> 달성</small>
+    {medal.issuedOn && <small><time dateTime={medal.issuedOn}>{medal.issuedOn.replace(/-/g,'.')}</time> 발급</small>}
   </div>;
 }

@@ -28,7 +28,6 @@ export interface Progress {
   fourSeasons: number;
   seasonVisits?: number[];
   certificateDays: number;
-  bestMonthlyRank: number | null;
   byType: Record<string, number>;
 }
 export interface Activity {
@@ -50,7 +49,6 @@ export interface Patch {
   granted?: boolean;
   tier: string;
   condition?: string;
-  standing?: string;
 }
 export const earned = (p: Patch) => p.granted ?? (p.value >= p.target);
 export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
@@ -68,11 +66,10 @@ export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
     checkins: p.checkins,
     fourSeasons: p.fourSeasons,
     certificateDays: p.certificateDays,
-    monthlyRank: p.bestMonthlyRank && p.bestMonthlyRank > 0 && p.bestMonthlyRank <= 10 ? (p.bestMonthlyRank===1?3:p.bestMonthlyRank<=3?2:1) : 0,
   };
   const known = new Set<string>();
   const granted = new Set(a.badges.map((b) => b.code));
-  const series = definitions.filter(d => sample || d.id !== 'monthlyRank').map((d) =>
+  const series = definitions.filter(d => d.id !== 'monthlyRank').map((d) =>
     d.levels.map((target, i) => {
       const id = (d.prefix ?? d.id) + '_' + target;
       known.add(id);
@@ -100,11 +97,10 @@ export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
         granted: sample ? undefined : granted.has(id),
         tier: d.tiers[i],
         condition: d.conditions?.[i],
-        standing: d.id === 'monthlyRank' ? (p.bestMonthlyRank ? '월간 최고 '+p.bestMonthlyRank+'위' : '집계된 월간 순위 없음') : undefined,
       };
     }).filter(patch => patch.family !== 'personalKm' || granted.has(patch.id))
   ).filter(family => family.length > 0);
-  for (const b of a.badges.filter((b) => !known.has(b.code) && (sample || !b.code.startsWith('monthlyRank_'))))
+  for (const b of a.badges.filter((b) => !known.has(b.code) && !b.code.startsWith('monthlyRank_')))
     series.push([
       {
         id: b.code,
@@ -120,7 +116,6 @@ export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
         granted: true,
         tier: b.source === 'ADMIN' ? '운영진 수여' : '획득',
         condition: undefined,
-        standing: undefined,
       },
     ]);
   return series;
