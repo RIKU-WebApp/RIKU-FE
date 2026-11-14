@@ -12,15 +12,16 @@ export default function useStudentidInputData() {
 
   const handleChangeStudentid = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toUpperCase();
+    const warning = value.startsWith('K')
+      ? '언어교육원 번호는 KL과 숫자 6자리입니다.'
+      : '학번은 숫자 9자리입니다.';
     if (!/^(?:[0-9]{0,9}|K|KL[0-9]{0,6})$/.test(value)) {
-      showError('학번은 숫자 9자리, 언어교육원 수강생 번호는 KL과 숫자 6자리로 입력해 주세요.');
+      showError(warning);
       return;
     }
     setStudentId(value);
     const incomplete = value.length > 0 && !studentIdFormat.test(value);
-    showError(
-      incomplete ? '학번은 숫자 9자리, 언어교육원은 KL과 숫자 6자리를 모두 입력해 주세요.' : ''
-    );
+    showError(incomplete ? warning : '');
   };
 
   const handleSubmitStudentid = async (e: React.FormEvent) => {

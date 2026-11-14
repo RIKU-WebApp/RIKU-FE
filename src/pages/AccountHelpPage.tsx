@@ -38,38 +38,23 @@ export default function AccountHelpPage() {
 
   return (
     <main className="riku-page">
-      <Header title="ID/PW 찾기" back="/login" />
+      <Header title="아이디 · 비밀번호 찾기" back="/login" />
       <div className="riku-section">
         <section>
-          <h2>아이디 찾기</h2>
-          <p className="text-sm">
-            아이디는 회원가입 시 입력하신 학번입니다. 학번을 잘못 입력하셨다면 운영진에게 문의해
-            주세요.
-          </p>
+          <h2>아이디는 가입할 때 입력한 학번입니다.</h2>
+          <p className="text-sm">학번을 잘못 입력했다면 운영진에게 문의해 주세요.</p>
         </section>
         <section>
-          <h2>비밀번호 찾기 신청</h2>
+          <h2>비밀번호 문의</h2>
           {sent ? (
             <div className="riku-card" role="status">
-              <h3>비밀번호 문의를 접수했습니다.</h3>
-              <p>
-                운영진이 본인 확인 후 비밀번호 재설정을 도와드립니다. 가입 시 전화번호를 남기지
-                않았다면 동아리 운영진에게 직접 연락해 주세요.
-              </p>
-              <p className="mt-2">
-                임시 비밀번호를 받으면 로그인한 뒤 마이페이지의 ‘프로필 수정’에서 새 비밀번호로
-                변경해 주세요.
-              </p>
+              <h3>문의가 접수됐습니다.</h3>
               <Link className="riku-link" to="/login">
                 로그인으로 돌아가기
               </Link>
             </div>
           ) : (
             <form className="riku-form riku-card" onSubmit={submit}>
-              <p>
-                회원가입 시 입력하신 정보를 적어 주세요. 운영진이 본인을 확인한 뒤 재설정을
-                안내합니다.
-              </p>
               <label>
                 학번
                 <input name="studentId" autoComplete="username" required maxLength={255} />
@@ -103,7 +88,7 @@ export default function AccountHelpPage() {
                 </p>
               )}
               <button className="riku-primary" disabled={busy}>
-                {busy ? '접수 중…' : '비밀번호 찾기 신청'}
+                {busy ? '접수 중…' : '문의하기'}
               </button>
             </form>
           )}
