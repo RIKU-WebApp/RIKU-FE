@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { ChevronDown } from 'lucide-react';
 import { badgeCondition } from './badgeCondition';
 import { BadgePatch } from './BadgePatch';
-import type { Motif } from './badgeCollection';
+import { badgeCode, type Motif } from './badgeCollection';
 import catalog from './badgeSeries.json';
 import { type RankMedal, compactMedalPeriod, medalPeriod, rankPalette, RankPatch } from './RankMedals';
 import { errorMessage, request, type Badge } from './shared';
@@ -22,8 +22,8 @@ export function earnedItems(badges: Badge[]): Item[] {
   const grants = new Map(badges.filter(b => !b.code.startsWith('monthlyRank_')).map(b => [b.code, b]));
   for (const d of profileCatalog) {
     let best: Item | undefined;
-    d.levels.forEach((target, grade) => {
-      const code = (d.prefix ?? d.id) + '_' + target;
+    d.levels.forEach((_, grade) => {
+      const code = badgeCode(d, grade);
       if (!grants.delete(code)) return;
       const tier = d.tiers[grade];
       best = {
@@ -86,7 +86,7 @@ function MemberProfile({ userId, onClose }: { userId: number; onClose: () => voi
   });
   const highest = earnedItems(grants);
   const familyOf = (key: string) => profileCatalog.find(d =>
-    d.levels.some(target => (d.prefix ?? d.id) + '_' + target === key))?.id ?? key;
+    d.levels.some((_, grade) => badgeCode(d, grade) === key))?.id ?? key;
   const featuredOrder = [...new Set(leadingBadges.map(item => familyOf(item.key)))];
   const items = [
     ...featuredOrder.flatMap(id => highest.filter(item => familyOf(item.key) === id)),
