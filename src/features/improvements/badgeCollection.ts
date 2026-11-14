@@ -50,6 +50,10 @@ export interface Patch {
   tier: string;
   condition?: string;
 }
+export function badgeCode(series: { id: string; prefix?: string; levels: number[]; codeLevels?: number[] }, grade: number) {
+  return (series.prefix ?? series.id) + '_' + (series.codeLevels ?? series.levels)[grade];
+}
+
 export const earned = (p: Patch) => p.granted ?? (p.value >= p.target);
 export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
   const values: Record<string, number> = {
@@ -71,7 +75,7 @@ export function collection(p: Progress, a: Activity, sample=false): Patch[][] {
   const granted = new Set(a.badges.map((b) => b.code));
   const series = definitions.filter(d => d.id !== 'monthlyRank').map((d) =>
     d.levels.map((target, i) => {
-      const id = (d.prefix ?? d.id) + '_' + target;
+      const id = badgeCode(d, i);
       known.add(id);
       let achieved = values[d.id] ?? 0, goal = target;
       if (i >= 3 && d.id === 'kinds') {
