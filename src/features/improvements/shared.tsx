@@ -4,13 +4,22 @@ import api from '@shared/lib/customAxios';
 import BackIcon from '../../assets/BackBtn.svg';
 import './improvements.css';
 
+function readable(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim() && !value.includes('[object Object]')
+    ? value.trim()
+    : undefined;
+}
+
 export async function request<T>(method: string, url: string, data?: unknown): Promise<T> {
   const response = await api.request({ method, url, data });
-  if (!response.data.isSuccess) throw new Error(response.data.responseMessage || '요청을 처리할 수 없습니다.');
+  if (!response.data?.isSuccess) {
+    throw new Error(readable(response.data?.responseMessage) || '요청을 처리할 수 없습니다.');
+  }
   return response.data.result as T;
 }
-export function errorMessage(error: unknown) {
-  return (error as {response?: {data?: {responseMessage?: string}}})?.response?.data?.responseMessage || (error as { message?: string })?.message || '요청을 처리하지 못했습니다. 다시 시도해주세요.';
+export function errorMessage(error: unknown): string {
+  const problem = error as { response?: { data?: { responseMessage?: unknown } }; message?: unknown } | null;
+  return readable(problem?.response?.data?.responseMessage) || readable(problem?.message) || '요청을 처리하지 못했습니다. 다시 시도해 주세요.';
 }
 export function utcDate(value: string) { return new Date(/[Zz]|[+-]\d\d:\d\d$/.test(value) ? value : value + 'Z'); }
 export function Header({ title, back = '/tab/my-page' }: { title: string; back?: string }) {

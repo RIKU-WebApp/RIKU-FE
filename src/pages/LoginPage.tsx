@@ -11,7 +11,6 @@ function LoginPage() {
     setPassword,
     handleKeyDown,
     handleLoginClick,
-    handleFindIDPW,
     isLoginBtnValid,
   } = useLoginPage(); // '로그인 페이지'에 대한 비즈니스 로직을 담당하는 훅에서 필요한 것만 가져오기
 
@@ -64,16 +63,9 @@ function LoginPage() {
               회원가입하기
             </Link>
             <span>|</span>
-            <a
-              href="#"
-              className="hover:text-gray-700"
-              onClick={(e) => {
-                e.preventDefault(); //기본 동작인 페이지 새로고침 방지
-                handleFindIDPW(); //핸들링 함수 호출
-              }}
-            >
+            <Link to="/account-help" className="hover:text-gray-700">
               ID/PW 찾기
-            </a>
+            </Link>
           </div>
         </div>
       </div>
