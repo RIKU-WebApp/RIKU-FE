@@ -1,3 +1,4 @@
+import { majorsByCollege } from '@features/auth/majorsByCollege';
 import useSchoolInfoInputData from '@features/auth/hooks/useSchoolInfoInputData';
 
 // 학교 정보 입력 컴포넌트
@@ -5,6 +6,8 @@ function SchoolInfoInput() {
   const {
     college,
     major,
+    suggestions,
+    needsConfirmation,
     gotoNextScreenValid,
     handleChangeCollege,
     handleChangeMajor,
@@ -30,40 +33,50 @@ function SchoolInfoInput() {
             className={`w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none`}
           >
             <option value="">단과대를 선택해 주세요</option>
-            <option value="문과대학">문과대학</option>
-            <option value="이과대학">이과대학</option>
-            <option value="건축대학">건축대학</option>
-            <option value="공과대학">공과대학</option>
-            <option value="사회과학대학">사회과학대학</option>
-            <option value="경영대학">경영대학</option>
-            <option value="부동산과학원">부동산과학원</option>
-            <option value="KU융합과학기술원">KU융합과학기술원</option>
-            <option value="상허생명과학대학">상허생명과학대학</option>
-            <option value="수의과대학">수의과대학</option>
-            <option value="예술디자인대학">예술디자인대학</option>
-            <option value="사범대학">사범대학</option>
+            {Object.keys(majorsByCollege).map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
             <option value="언어교육원">언어교육원</option>
             <option value="KU자율전공학부">KU자율전공학부</option>
             <option value="대학원">대학원</option>
           </select>
           {college !== '' && college !== 'KU자율전공학부' ? (
-            <input
-              type="text"
-              value={major}
-              onChange={handleChangeMajor}
-              placeholder="학과(학부)를 입력해주세요"
-              className={`w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none mt-4`}
-            />
+            <>
+              <input
+                type="text"
+                list="signup-major-list"
+                maxLength={255}
+                aria-label="학과 또는 학부"
+                aria-describedby={needsConfirmation ? 'major-hint' : undefined}
+                value={major}
+                onChange={handleChangeMajor}
+                placeholder="학과(학부)를 입력해주세요"
+                className={`w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none mt-4`}
+              />
+              <datalist id="signup-major-list">
+                {suggestions.map((option) => (
+                  <option key={option} value={option} />
+                ))}
+              </datalist>
+              {needsConfirmation && (
+                <p id="major-hint" role="alert" className="mt-2 text-sm text-red-700">
+                  선택한 단과대학의 학과 목록에서 찾을 수 없습니다. 단과대학과 학과명을 확인해
+                  주세요. 개편 전 학과명이나 세부 전공명이 맞다면 그대로 진행할 수 있습니다.
+                </p>
+              )}
+            </>
           ) : null}
         </div>
 
         {/* 다음 버튼 */}
         <button
           type="submit"
-          className={`w-full py-3 mt-72 rounded-md ${college !== '' && (college === 'KU자율전공학부' || major !== '') ? 'bg-kuDarkGreen text-kuWhite hover:bg-kuGreen' : ' text-gray-500 bg-gray-100'} transition-colors`}
+          className={`w-full py-3 mt-72 rounded-md ${gotoNextScreenValid ? 'bg-kuDarkGreen text-kuWhite hover:bg-kuGreen' : ' text-gray-500 bg-gray-100'} transition-colors`}
           disabled={!gotoNextScreenValid}
         >
-          다음
+          {needsConfirmation ? '입력한 학과명으로 계속' : '다음'}
         </button>
       </form>
 

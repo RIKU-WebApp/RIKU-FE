@@ -5,12 +5,12 @@ import { useCreateAccountData } from '@features/auth/hooks/useCreateAccountData'
 function usePasswordInputData() {
   const { setSignupData, handleNext, signupData } = useCreateAccountData(); // '회원가입 페이지' 전체의 비즈니스 로직을 담당하는 훅에서 필요한 것만 가져오기
 
-  const [password, setPasswordInput] = useState<string>(''); // 비밀번호를 저장하는 state
-  const [passwordConfirm, setPasswordConfirm] = useState<string>(''); // '비밀번호 확인' 입력 란의 입력 값을 저장하는 state
+  const [password, setPasswordInput] = useState(signupData.password); // 비밀번호를 저장하는 state
+  const [passwordConfirm, setPasswordConfirm] = useState(signupData.password); // '비밀번호 확인' 입력 란의 입력 값을 저장하는 state
   const [validationMessage, setValidationMessage] = useState<string>(''); // '비밀번호' 입력 란의 유효성 검사 메시지를 저장하는 state
   const [validationMessageInConfirm, setValidationMessageInConfirm] = useState<string>(''); // '비밀번호 확인' 입력 란의 유효성 검사 메시지를 저장하는 state
-  const [isValidPW, setIsValidPW] = useState<boolean>(false); // '비밀번호' 입력 란의 유효성 검사 결과를 저장하는 state
-  const [isValidPWConfirm, setIsValidPWConfirm] = useState<boolean>(false); // '비밀번호 확인' 입력 란의 유효성 검사 결과를 저장하는 state
+  const [isValidPW, setIsValidPW] = useState(Boolean(signupData.password)); // '비밀번호' 입력 란의 유효성 검사 결과를 저장하는 state
+  const [isValidPWConfirm, setIsValidPWConfirm] = useState(Boolean(signupData.password)); // '비밀번호 확인' 입력 란의 유효성 검사 결과를 저장하는 state
 
   //비밀번호가 유효한지 확인하는 메소드 validatePassword
   const validatePassword = (password: string) => {
@@ -28,6 +28,7 @@ function usePasswordInputData() {
   const handleChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     setPasswordInput(input);
+    setIsValidPWConfirm(input === passwordConfirm);
 
     const result = validatePassword(input);
     setValidationMessage(result.message);
@@ -54,7 +55,7 @@ function usePasswordInputData() {
     e.preventDefault();
 
     //비밀번호가 유효한 경우
-    if (isValidPW) {
+    if (isValidPW && password === passwordConfirm) {
       setSignupData({ ...signupData, password: password }); // 비밀번호 signupData에 저장
       handleNext(); // 다음 step으로 핸들링
     } else {
