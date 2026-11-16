@@ -8,6 +8,8 @@ import eventImg from '@assets/default_event.jpeg';
 import plusBtn from '@assets/plus_Icon.svg';
 import seoulRace from '@assets/Main-img/main-moving-images/seoul-race.jpg';
 import clubFlag from '@assets/Main-img/main-moving-images/club-flag.jpg';
+import runSign from '@assets/Main-img/main-moving-images/run-sign.jpg';
+import eveningRun from '@assets/Main-img/main-moving-images/evening-run.jpg';
 
 import customAxios from '@shared/lib/customAxios';
 import NOWimg from '@assets/Main-img/NewOpenStatus.svg';
@@ -93,6 +95,8 @@ const NewMain: React.FC = () => {
   const images = [
     { src: seoulRace, alt: '서울시청 앞 마라톤 단체 사진', position: 'center 55%' },
     { src: clubFlag, alt: 'RIKU 깃발과 함께 찍은 단체 사진', position: 'center 78%' },
+    { src: runSign, alt: 'RUN 글자 앞에서 RIKU 깃발을 든 회원들', position: 'center 70%' },
+    { src: eveningRun, alt: '해 질 무렵 다리 아래에서 찍은 RIKU 단체 사진', position: 'center 80%' },
   ];
 
   const formatDate = (isoDateString?: string): string => {
